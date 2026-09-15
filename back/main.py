@@ -26,7 +26,10 @@ from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from firebase_admin import credentials, firestore
-from back.content_routes import router as content_router
+try:
+    from back.content_routes import router as content_router
+except ModuleNotFoundError:
+    from content_routes import router as content_router
 
 # La racine du projet est le dossier parent de back/.
 PROJECT_ROOT = Path(__file__).resolve().parent.parent

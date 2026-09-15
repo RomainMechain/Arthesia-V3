@@ -1,0 +1,221 @@
+{
+  "id": "jardins_suspendus",
+  "name": "Les Jardins Suspendus",
+  "type": "wilderness",
+  "position": {
+    "x": 32,
+    "y": 42
+  },
+  "visibility": "visible",
+  "description": "D'anciens vergers architectes poussent encore ici, leurs fruits luisant d'une couleur qui n'existe nulle part ailleurs. Des créatures faites de pétales et de lumière errent entre les rangées d'arbres flottants, indifférentes à la chute qui les entoure.",
+  "unlock_condition": {
+    "type": "level",
+    "min": 3
+  },
+  "hint": "On raconte que seuls ceux qui ont déjà pris de l'altitude dans leur voyage peuvent sentir le vent porteur qui mène à ces jardins.",
+  "generation_brief": {
+    "level_range": [
+      3,
+      5
+    ],
+    "tags": [
+      "récolte",
+      "faune étrange",
+      "couleurs vives",
+      "combat léger"
+    ],
+    "content_intent": "Mélange de récolte (fruits et essences lumineuses) et de combats légers contre une faune curieuse. Une quête donne à réfléchir sur les Architectes disparus, et fournit à terme un objet-relique et une quête menant plus loin dans l'étage.",
+    "provides": [
+      {
+        "type": "quest",
+        "id_suggere": "vents_ascendants",
+        "via": "Une quête narrative où le joueur aide un botaniste à retrouver une graine ancienne ; sa complétion ouvre la voie vers un lieu plus reculé."
+      },
+      {
+        "type": "item",
+        "id_suggere": "relique_du_vent",
+        "via": "Récompense d'une quête secondaire ou drop rare d'une des créatures de pétales, un fragment gravé d'une rune architecte."
+      }
+    ]
+  },
+  "entries": [
+    {
+      "id": "sylphe_petales_1",
+      "template_type": "monster",
+      "template_id": "sylphe_petales",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 40,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "papillon_prismatique_1",
+      "template_type": "monster",
+      "template_id": "papillon_prismatique",
+      "state_scope": "shared",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 75,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "gardien_fleuri_1",
+      "template_type": "monster",
+      "template_id": "gardien_fleuri",
+      "state_scope": "shared",
+      "rarity": "very_rare",
+      "group_required": true,
+      "spawn": {
+        "mode": "conditional",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": {
+          "type": "group",
+          "mode": "all",
+          "conditions": [
+            {
+              "type": "kill_count",
+              "monster_id": "sylphe_petales",
+              "count": 50
+            },
+            {
+              "type": "level",
+              "min": 4
+            }
+          ]
+        },
+        "visibility_when_locked": "hinted",
+        "hint": "Les pétales tombés en masse près des allées semblent parfois s'assembler en une silhouette immense, comme si le jardin lui-même se souvenait d'une forme oubliée."
+      }
+    },
+    {
+      "id": "fruit_lumineux_1",
+      "template_type": "resource",
+      "template_id": "fruit_lumineux",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 25,
+        "stock": 3,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "essence_lumineuse_1",
+      "template_type": "resource",
+      "template_id": "essence_lumineuse",
+      "state_scope": "shared",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 90,
+        "stock": 1,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "graine_ancienne_1",
+      "template_type": "resource",
+      "template_id": "graine_ancienne",
+      "state_scope": "shared",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 300,
+        "stock": 1,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "npc_botaniste_1",
+      "template_type": "npc",
+      "template_id": "botaniste_sarenne",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quest_vergers_oublies_1",
+      "template_type": "quest_giver",
+      "template_id": "vergers_oublies",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quest_vents_ascendants_1",
+      "template_type": "quest_giver",
+      "template_id": "vents_ascendants",
+      "state_scope": "per_player",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "conditional",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": {
+          "type": "quest",
+          "quest_id": "vergers_oublies",
+          "state": "completed"
+        },
+        "visibility_when_locked": "hinted",
+        "hint": "Sarenne pourrait avoir plus à te confier, une fois qu'elle aura appris à te faire confiance."
+      }
+    },
+    {
+      "id": "echo_archiviste_1",
+      "template_type": "npc",
+      "template_id": "echo_archiviste_vergers",
+      "state_scope": "shared",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    }
+  ]
+}

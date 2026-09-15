@@ -1,0 +1,50 @@
+{
+  "id": "sylphe_petales",
+  "name": "Sylphe de Pétales",
+  "description": "Un amas de pétales et de lumière tiède, flottant sans bruit entre les rangées d'arbres suspendus. Il se disperse et se reforme au moindre effleurement, comme s'il n'était jamais tout à fait entier.",
+  "level": 3,
+  "role": "normal",
+  "stats": {
+    "hp": 280,
+    "atk": 16,
+    "def": 10,
+    "agi": 14,
+    "int": 10,
+    "sag": 8
+  },
+  "moveset": [
+    {
+      "id": "rafale_petales",
+      "damage_type": "magical",
+      "cooldown_seconds": 3,
+      "damage": 20,
+      "weight": 3,
+      "telegraph_seconds": 0.5,
+      "avoidable_by": "dodge"
+    },
+    {
+      "id": "tourbillon",
+      "damage_type": "physical",
+      "cooldown_seconds": 5,
+      "damage": 14,
+      "weight": 2,
+      "telegraph_seconds": 1,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "petale_irise",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 8
+    },
+    {
+      "item_id": "essence_lumineuse",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 2
+    }
+  ]
+}

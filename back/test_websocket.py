@@ -6,9 +6,9 @@ async def test():
     async with websockets.connect("ws://127.0.0.1:8000/ws/combat") as ws:
         await ws.send(json.dumps({
             "action": "start_combat",
-            "player_id": "Newsimi",
-            "zone_id": "sentier_roseaux",
-            "entry_id": "entry_rat_roseaux_01",
+            "player_id": "test",
+            "zone_id": "jardins_suspendus",
+            "entry_id": "sylphe_petales_1",
         }))
         print(await ws.recv())
         await asyncio.sleep(1)
@@ -16,7 +16,7 @@ async def test():
             await ws.send(json.dumps({"action": "basic_attack"}))
             print(await ws.recv())
 
-            await ws.send(json.dumps({"action": "use_skill", "skill_id": "charge_du_sanglier"}))
+            await ws.send(json.dumps({"action": "use_skill", "skill_id": "lame_du_vent_ancien"}))
             print(await ws.recv())
 
             await asyncio.sleep(0.3)

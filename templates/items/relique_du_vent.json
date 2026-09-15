@@ -1,0 +1,9 @@
+{
+  "id": "relique_du_vent",
+  "name": "Relique du Vent",
+  "description": "Un fragment gravé d'une rune architecte, léger comme s'il n'appartenait pas tout à fait au poids du monde. Il vibre imperceptiblement lorsqu'on l'approche du vide.",
+  "category": "material",
+  "level": 5,
+  "base_value": 40,
+  "stack_size": 1
+}

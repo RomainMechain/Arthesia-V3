@@ -1,0 +1,9 @@
+{
+  "id": "poussiere_prismatique",
+  "name": "Poussière Prismatique",
+  "description": "Une poussière scintillante, tombée des ailes d'un papillon, qui décompose la lumière en teintes changeantes.",
+  "category": "material",
+  "level": 4,
+  "base_value": 20,
+  "stack_size": 20
+}

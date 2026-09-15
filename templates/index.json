@@ -427,5 +427,194 @@
     "tags": [],
     "description": "Un fragment du métal inconnu qui retenait Sommeil-de-Fer, encore chaud d'avoir été rompu. On raconte que ceux qui le portent entendent, parfois, un très lointain grondement — comme un rêve qui refuse de se terminer.",
     "base_value": 2000
+  },
+  {
+    "id": "sylphe_petales",
+    "name": "Sylphe de Pétales",
+    "kind": "monster",
+    "level": 3,
+    "tags": [],
+    "description": "Un amas de pétales et de lumière tiède, flottant sans bruit entre les rangées d'arbres suspendus. Il se disperse et se reforme au moindre effleurement, comme s'il n'était jamais tout à fait entier.",
+    "base_value": null
+  },
+  {
+    "id": "papillon_prismatique",
+    "name": "Papillon Prismatique",
+    "kind": "monster",
+    "level": 4,
+    "tags": [],
+    "description": "Ses ailes décomposent la lumière en teintes qui n'ont pas de nom. Il vole en spirales lentes au-dessus des vergers, laissant une traînée de poussière scintillante.",
+    "base_value": null
+  },
+  {
+    "id": "gardien_fleuri",
+    "name": "Gardien Fleuri",
+    "kind": "monster",
+    "level": 5,
+    "tags": [],
+    "description": "Ce n'est plus tout à fait une créature de pétales : c'est ce qu'elles deviennent lorsqu'elles s'assemblent trop longtemps au même endroit. Une silhouette humanoïde, haute comme trois hommes, faite de fleurs entrelacées et d'un noyau de lumière froide qui bat comme un cœur mécanique. Les rares témoins racontent qu'il ne bouge que lorsque le jardin a été trop souvent visité — comme s'il jaugeait la présence d'un intrus qui revient sans cesse. Certains y voient un reste de gardien architecte, oublié dans sa propre floraison.",
+    "base_value": null
+  },
+  {
+    "id": "fruit_lumineux",
+    "name": "Fruit Lumineux",
+    "kind": "resource",
+    "level": 3,
+    "tags": [],
+    "description": "Un fruit d'une couleur qui n'existe nulle part ailleurs, pendu aux branches des vergers architectes. Il pulse doucement, comme s'il respirait encore.",
+    "base_value": null
+  },
+  {
+    "id": "essence_lumineuse",
+    "name": "Essence Lumineuse",
+    "kind": "resource",
+    "level": 4,
+    "tags": [],
+    "description": "Un résidu de lumière condensée, suintant des troncs flottants comme une sève impossible. Les runographes s'en disputent les moindres traces.",
+    "base_value": null
+  },
+  {
+    "id": "graine_ancienne",
+    "name": "Graine Ancienne",
+    "kind": "resource",
+    "level": 5,
+    "tags": [],
+    "description": "Enfouie sous les racines d'un arbre qui ne devrait plus tenir en l'air, cette graine porte une gravure à peine visible — un symbole architecte que le temps n'a pas réussi à effacer.",
+    "base_value": null
+  },
+  {
+    "id": "botaniste_sarenne",
+    "name": "Sarenne",
+    "kind": "npc",
+    "level": null,
+    "tags": [],
+    "description": "Une botaniste installée à l'entrée des vergers flottants depuis plus d'années qu'elle ne veut l'admettre. Elle parle aux arbres comme à de vieux amis et garde un carnet où elle consigne chaque fruit qui change de couleur.",
+    "base_value": null
+  },
+  {
+    "id": "echo_archiviste_vergers",
+    "name": "Un Reflet aux Vergers",
+    "kind": "npc",
+    "level": null,
+    "tags": [],
+    "description": "Une silhouette de lumière pâle, à peine visible entre deux rangées d'arbres, qui s'efface dès qu'on s'approche trop. Elle ne parle pas vraiment — elle laisse échapper des fragments, comme une mémoire qui fuit.",
+    "base_value": null
+  },
+  {
+    "id": "vergers_oublies",
+    "name": "Les Vergers Oubliés",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Sarenne veut comprendre pourquoi les créatures de pétales prolifèrent depuis peu, et a besoin de fruits frais pour ses études. Elle te demande d'écarter quelques-unes de ces créatures et de lui rapporter des fruits lumineux.",
+    "base_value": null
+  },
+  {
+    "id": "vents_ascendants",
+    "name": "Vents Ascendants",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Sarenne t'avoue enfin ce qu'elle cherche depuis des années : une graine ancienne, gravée d'un symbole architecte, enfouie quelque part sous les racines des vergers. Elle pense qu'elle pourrait indiquer un chemin vers un lieu plus reculé — porté par un vent que peu de gens savent encore sentir.",
+    "base_value": null
+  },
+  {
+    "id": "petale_irise",
+    "name": "Pétale Irisé",
+    "kind": "item",
+    "level": 3,
+    "tags": [],
+    "description": "Un pétale qui garde sa lumière propre bien après avoir été cueilli, comme s'il refusait de se faner.",
+    "base_value": 15
+  },
+  {
+    "id": "poussiere_prismatique",
+    "name": "Poussière Prismatique",
+    "kind": "item",
+    "level": 4,
+    "tags": [],
+    "description": "Une poussière scintillante, tombée des ailes d'un papillon, qui décompose la lumière en teintes changeantes.",
+    "base_value": 20
+  },
+  {
+    "id": "essence_lumineuse",
+    "name": "Essence Lumineuse",
+    "kind": "item",
+    "level": 4,
+    "tags": [],
+    "description": "Une lumière condensée, presque liquide, extraite des troncs flottants des vergers.",
+    "base_value": 20
+  },
+  {
+    "id": "fruit_lumineux",
+    "name": "Fruit Lumineux",
+    "kind": "item",
+    "level": 3,
+    "tags": [],
+    "description": "Un fruit d'une couleur inconnue ailleurs dans la Tour, dont la chair semble irradier une chaleur douce.",
+    "base_value": 45
+  },
+  {
+    "id": "graine_ancienne",
+    "name": "Graine Ancienne",
+    "kind": "item",
+    "level": 5,
+    "tags": [],
+    "description": "Une graine gravée d'un symbole architecte à peine lisible. Elle semble attendre quelque chose.",
+    "base_value": 25
+  },
+  {
+    "id": "relique_du_vent",
+    "name": "Relique du Vent",
+    "kind": "item",
+    "level": 5,
+    "tags": [],
+    "description": "Un fragment gravé d'une rune architecte, léger comme s'il n'appartenait pas tout à fait au poids du monde. Il vibre imperceptiblement lorsqu'on l'approche du vide.",
+    "base_value": 40
+  },
+  {
+    "id": "grace_dispersee",
+    "name": "Grâce Dispersée",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "À force d'affronter les Sylphes de Pétales, tu as appris leur secret : ne jamais être tout à fait là où l'on te frappe. Tes mouvements gagnent la légèreté d'un pétale porté par le vent.",
+    "floor_origin": 3
+  },
+  {
+    "id": "morsure_de_lumiere",
+    "name": "Morsure de Lumière",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "Tu presses la chair pulsante d'un Fruit Lumineux entre tes mains, libérant une chaleur douce qui referme les blessures comme une aube qui se lève.",
+    "floor_origin": 3
+  },
+  {
+    "id": "eclat_prismatique",
+    "name": "Éclat Prismatique",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "Les ailes des Papillons Prismatiques décomposent la lumière au point de tromper l'œil. Tu as appris à faire de même avec ton propre corps, brouillant les trajectoires ennemies.",
+    "floor_origin": 3
+  },
+  {
+    "id": "lame_du_vent_ancien",
+    "name": "Lame du Vent Ancien",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "La Relique du Vent vibre entre tes doigts, comme si elle refusait le poids du monde. En la brandissant, tu libères une lame d'air tranchante comme les ponts de lumière qui traversent le vide.",
+    "floor_origin": 3
+  },
+  {
+    "id": "eveil_du_gardien_fleuri",
+    "name": "Éveil du Gardien Fleuri",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "Tu as vaincu ce que deviennent les pétales lorsqu'ils s'assemblent trop longtemps, et découvert la graine que Sarenne cherchait depuis des années. Quelque chose de cette floraison ancienne s'est enraciné en toi : un fragment de la force qui fait naître les géants de pétales.",
+    "floor_origin": 3
   }
 ]

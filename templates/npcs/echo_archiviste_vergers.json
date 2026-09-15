@@ -1,0 +1,11 @@
+{
+  "id": "echo_archiviste_vergers",
+  "name": "Un Reflet aux Vergers",
+  "description": "Une silhouette de lumière pâle, à peine visible entre deux rangées d'arbres, qui s'efface dès qu'on s'approche trop. Elle ne parle pas vraiment — elle laisse échapper des fragments, comme une mémoire qui fuit.",
+  "role": "Écho",
+  "dialogues": [
+    "...les graines... il fallait les compter, toutes...",
+    "Le vent porte encore ce qu'on a semé ici.",
+    "Nous avons cultivé la chute elle-même. Personne ne nous a crus."
+  ]
+}

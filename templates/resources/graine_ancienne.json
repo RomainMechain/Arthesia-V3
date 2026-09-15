@@ -1,0 +1,21 @@
+{
+  "id": "graine_ancienne",
+  "name": "Graine Ancienne",
+  "description": "Enfouie sous les racines d'un arbre qui ne devrait plus tenir en l'air, cette graine porte une gravure à peine visible — un symbole architecte que le temps n'a pas réussi à effacer.",
+  "level": 5,
+  "profession_required": {
+    "profession_id": "archeologie",
+    "min_level": 3,
+    "xp_reward": 20
+  },
+  "tool_required": null,
+  "gather_time_seconds": 6,
+  "yields": [
+    {
+      "item_id": "graine_ancienne",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 10
+    }
+  ]
+}

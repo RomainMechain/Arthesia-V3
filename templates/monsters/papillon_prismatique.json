@@ -1,0 +1,56 @@
+{
+  "id": "papillon_prismatique",
+  "name": "Papillon Prismatique",
+  "description": "Ses ailes décomposent la lumière en teintes qui n'ont pas de nom. Il vole en spirales lentes au-dessus des vergers, laissant une traînée de poussière scintillante.",
+  "level": 4,
+  "role": "normal",
+  "stats": {
+    "hp": 320,
+    "atk": 18,
+    "def": 12,
+    "agi": 16,
+    "int": 14,
+    "sag": 9
+  },
+  "moveset": [
+    {
+      "id": "poussiere_aveuglante",
+      "damage_type": "magical",
+      "cooldown_seconds": 4,
+      "damage": 22,
+      "weight": 3,
+      "telegraph_seconds": 0.5,
+      "avoidable_by": "dodge"
+    },
+    {
+      "id": "morsure_prismatique",
+      "damage_type": "physical",
+      "cooldown_seconds": 3,
+      "damage": 16,
+      "weight": 2,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "poussiere_prismatique",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 7
+    },
+    {
+      "item_id": "essence_lumineuse",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 3
+    },
+    {
+      "item_id": "graine_ancienne",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 1
+    }
+  ]
+}

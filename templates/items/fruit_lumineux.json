@@ -1,0 +1,14 @@
+{
+  "id": "fruit_lumineux",
+  "name": "Fruit Lumineux",
+  "description": "Un fruit d'une couleur inconnue ailleurs dans la Tour, dont la chair semble irradier une chaleur douce.",
+  "category": "consumable",
+  "level": 3,
+  "base_value": 45,
+  "stack_size": 10,
+  "consumable": {
+    "effect_type": "heal",
+    "amount": 55,
+    "duration_seconds": 0
+  }
+}

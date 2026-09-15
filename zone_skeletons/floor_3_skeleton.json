@@ -1,0 +1,232 @@
+{
+  "id": "floor_3",
+  "name": "Les Archipels Suspendus",
+  "description": "Un chapelet d'îles arrachées au sol par une technologie oubliée des Architectes flotte ici dans une lumière dorée et changeante. Des cascades tombent dans le vide sans jamais atteindre le sol, et des ponts de lumière relient parfois les éclats de roche. La beauté du lieu contraste avec l'instabilité qui gronde sous chaque pierre.",
+  "start_zone_id": "aerocite_haleine",
+  "boss_zone_id": "citadelle_ancree",
+  "zones": [
+    {
+      "id": "aerocite_haleine",
+      "name": "Aérocité de la Halène",
+      "type": "town",
+      "position": {
+        "x": 10,
+        "y": 50
+      },
+      "visibility": "visible",
+      "description": "Bâtie sur la plus stable des îles flottantes, cette cité aux toits de cuivre patiné vibre au rythme des courants ascendants. Des marchands vendent des ancres de vent gravées de runes, et des enfants regardent le vide sans peur, habitués à vivre au-dessus de rien.",
+      "unlock_condition": null,
+      "hint": null,
+      "generation_brief": {
+        "level_range": [
+          1,
+          3
+        ],
+        "tags": [
+          "ville",
+          "sécurité",
+          "marchands",
+          "vue imprenable"
+        ],
+        "content_intent": "Zone sociale calme : PNJ marchands, quêtes d'introduction à l'étage, artisanat léger. Peu ou pas de combat. Ambiance émerveillée face au paysage.",
+        "provides": []
+      }
+    },
+    {
+      "id": "jardins_suspendus",
+      "name": "Les Jardins Suspendus",
+      "type": "wilderness",
+      "position": {
+        "x": 32,
+        "y": 42
+      },
+      "visibility": "visible",
+      "description": "D'anciens vergers architectes poussent encore ici, leurs fruits luisant d'une couleur qui n'existe nulle part ailleurs. Des créatures faites de pétales et de lumière errent entre les rangées d'arbres flottants, indifférentes à la chute qui les entoure.",
+      "unlock_condition": {
+        "type": "level",
+        "min": 3
+      },
+      "hint": "On raconte que seuls ceux qui ont déjà pris de l'altitude dans leur voyage peuvent sentir le vent porteur qui mène à ces jardins.",
+      "generation_brief": {
+        "level_range": [
+          3,
+          5
+        ],
+        "tags": [
+          "récolte",
+          "faune étrange",
+          "couleurs vives",
+          "combat léger"
+        ],
+        "content_intent": "Mélange de récolte (fruits et essences lumineuses) et de combats légers contre une faune curieuse. Une quête donne à réfléchir sur les Architectes disparus, et fournit à terme un objet-relique et une quête menant plus loin dans l'étage.",
+        "provides": [
+          {
+            "type": "quest",
+            "id_suggere": "vents_ascendants",
+            "via": "Une quête narrative où le joueur aide un botaniste à retrouver une graine ancienne ; sa complétion ouvre la voie vers un lieu plus reculé."
+          },
+          {
+            "type": "item",
+            "id_suggere": "relique_du_vent",
+            "via": "Récompense d'une quête secondaire ou drop rare d'une des créatures de pétales, un fragment gravé d'une rune architecte."
+          }
+        ]
+      }
+    },
+    {
+      "id": "sanctuaire_eclats",
+      "name": "Le Sanctuaire des Éclats",
+      "type": "ruins",
+      "position": {
+        "x": 55,
+        "y": 60
+      },
+      "visibility": "hidden",
+      "description": "Un temple architecte à demi englouti par le vide, suspendu par des chaînes de lumière qui semblent se souvenir d'un but oublié. Des échos residuels d'une civilisation disparue résonnent entre les colonnes brisées.",
+      "unlock_condition": {
+        "type": "group",
+        "mode": "all",
+        "conditions": [
+          {
+            "type": "quest",
+            "quest_id": "vents_ascendants",
+            "state": "completed"
+          },
+          {
+            "type": "item",
+            "item_id": "relique_du_vent",
+            "state": "owned"
+          }
+        ]
+      },
+      "hint": null,
+      "generation_brief": {
+        "level_range": [
+          5,
+          7
+        ],
+        "tags": [
+          "ruines",
+          "mystère",
+          "architectes",
+          "exploration"
+        ],
+        "content_intent": "Zone d'exploration et de combat modéré autour de gardiens résiduels des Architectes. Ambiance solennelle et mélancolique, révélations de lore sur la Fracture. Sert de porte d'accès vers la citadelle finale.",
+        "provides": []
+      }
+    },
+    {
+      "id": "citadelle_ancree",
+      "name": "La Citadelle Ancrée",
+      "type": "boss",
+      "position": {
+        "x": 78,
+        "y": 50
+      },
+      "visibility": "visible",
+      "description": "La plus grande des îles, retenue par des ancres de lumière tendues à se rompre. En son centre, une entité née des dérèglements de la technologie architecte veille sur un noyau instable, dernier vestige d'un mécanisme oublié.",
+      "unlock_condition": {
+        "type": "zone",
+        "zone_id": "sanctuaire_eclats",
+        "state": "unlocked"
+      },
+      "hint": null,
+      "generation_brief": {
+        "level_range": [
+          7,
+          9
+        ],
+        "tags": [
+          "boss",
+          "climax",
+          "technologie architecte",
+          "danger"
+        ],
+        "content_intent": "Combat de boss final de l'étage : une entité liée au noyau qui maintient les îles en suspension. Mise en scène spectaculaire, seul contenu de combat majeur, pas de récolte ni de PNJ.",
+        "provides": []
+      }
+    },
+    {
+      "id": "seuil_suivant",
+      "name": "Le Seuil du Vide",
+      "type": "passage",
+      "position": {
+        "x": 95,
+        "y": 50
+      },
+      "visibility": "visible",
+      "description": "Une brèche de lumière froide s'est ouverte après la chute du gardien de la Citadelle, révélant l'accès à l'étage supérieur de la Tour.",
+      "unlock_condition": {
+        "type": "boss",
+        "zone_id": "citadelle_ancree",
+        "state": "defeated"
+      },
+      "hint": null,
+      "generation_brief": {
+        "level_range": [
+          9,
+          9
+        ],
+        "tags": [
+          "transition",
+          "passage"
+        ],
+        "content_intent": "Aucun contenu de jeu à générer : simple point de transition vers l'étage suivant.",
+        "provides": []
+      }
+    }
+  ],
+  "connections": [
+    [
+      "aerocite_haleine",
+      "jardins_suspendus"
+    ],
+    [
+      "jardins_suspendus",
+      "sanctuaire_eclats"
+    ],
+    [
+      "sanctuaire_eclats",
+      "citadelle_ancree"
+    ],
+    [
+      "citadelle_ancree",
+      "seuil_suivant"
+    ]
+  ],
+  "condition_manifest": [
+    {
+      "condition": {
+        "type": "quest",
+        "quest_id": "vents_ascendants",
+        "state": "completed"
+      },
+      "used_by": [
+        "zone:sanctuaire_eclats.unlock_condition"
+      ],
+      "resolved_by": "zone:jardins_suspendus (fournit la quête narrative du botaniste et de la graine ancienne)"
+    },
+    {
+      "condition": {
+        "type": "item",
+        "item_id": "relique_du_vent",
+        "state": "owned"
+      },
+      "used_by": [
+        "zone:sanctuaire_eclats.unlock_condition"
+      ],
+      "resolved_by": "zone:jardins_suspendus (fournit la relique en récompense de quête ou en drop rare)"
+    },
+    {
+      "condition": {
+        "type": "boss",
+        "zone_id": "citadelle_ancree",
+        "state": "defeated"
+      },
+      "used_by": [
+        "zone:seuil_suivant.unlock_condition"
+      ],
+      "resolved_by": "zone:citadelle_ancree (le combat de boss de fin d'étage)"
+    }
+  ]
+}

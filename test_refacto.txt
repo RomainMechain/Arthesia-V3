@@ -1,0 +1,31 @@
+Test après refacto de l'arboressence : 
+
+STATIC FILES : 
+
+- floor_skeleton : 
+	- Fonctionne correctement, fichié généré au bonne endroit 
+	- Regarder la gestion des niveau des zonnes en fonction de l'étage, peut etre ajouter la range de niveau en paramètre 
+
+- Zone_content : 
+	- Fonctionne correctement, fichié au bonne endroit 
+	- Dans la table de loot des monstres, jamais d'itemes avec un loot minimum de 0. Regarder comment est calculer le taux de loot 
+	- Revoir équilibrage des prix de bases des items 
+
+- Skill : 
+	- Fonctionne correctement 
+	- Voir l'équilibrage aussi en fonction de l'étage 
+
+
+BACKEND : 
+
+- Création joueur : Ok mais pas les niveaux de métier initialisé 
+- Get joueur : OK 
+- Get stats joueur : OK 
+- Combat : OK mais voir la formule des dégats des skills 
+
+TODO : 
+
+- Séparer le fichier main en plusieurs module pour le rendre plus lisible 
+- Finir la partie combat pour pouvoir ce mettre à plusieurs dans un combat 
+- Revoir un peu l'équilibrage 
+- Commencer à regarder pour le front 

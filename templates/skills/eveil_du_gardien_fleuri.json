@@ -1,0 +1,40 @@
+{
+  "id": "eveil_du_gardien_fleuri",
+  "name": "Éveil du Gardien Fleuri",
+  "description": "Tu as vaincu ce que deviennent les pétales lorsqu'ils s'assemblent trop longtemps, et découvert la graine que Sarenne cherchait depuis des années. Quelque chose de cette floraison ancienne s'est enraciné en toi : un fragment de la force qui fait naître les géants de pétales.",
+  "kind": "active",
+  "unlock_condition": {
+    "type": "group",
+    "mode": "all",
+    "conditions": [
+      {
+        "type": "kill_count",
+        "monster_id": "gardien_fleuri",
+        "count": 3
+      },
+      {
+        "type": "quest",
+        "quest_id": "vents_ascendants",
+        "state": "completed"
+      }
+    ]
+  },
+  "damage_type": "magical",
+  "cooldown_seconds": 20,
+  "mana_cost": 35,
+  "telegraph_seconds": 0,
+  "avoidable_by": null,
+  "effects": [
+    {
+      "type": "damage",
+      "power": 2.8
+    },
+    {
+      "type": "debuff",
+      "stat": "def",
+      "amount_percent": 15,
+      "duration_seconds": 8,
+      "target": "enemy"
+    }
+  ]
+}

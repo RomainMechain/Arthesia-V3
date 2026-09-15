@@ -1,0 +1,22 @@
+{
+  "id": "lame_du_vent_ancien",
+  "name": "Lame du Vent Ancien",
+  "description": "La Relique du Vent vibre entre tes doigts, comme si elle refusait le poids du monde. En la brandissant, tu libères une lame d'air tranchante comme les ponts de lumière qui traversent le vide.",
+  "kind": "active",
+  "unlock_condition": {
+    "type": "item",
+    "item_id": "relique_du_vent",
+    "state": "owned"
+  },
+  "damage_type": "physical",
+  "cooldown_seconds": 8,
+  "mana_cost": 15,
+  "telegraph_seconds": 0,
+  "avoidable_by": null,
+  "effects": [
+    {
+      "type": "damage",
+      "power": 1.9
+    }
+  ]
+}

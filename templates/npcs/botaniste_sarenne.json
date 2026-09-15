@@ -1,0 +1,11 @@
+{
+  "id": "botaniste_sarenne",
+  "name": "Sarenne",
+  "description": "Une botaniste installée à l'entrée des vergers flottants depuis plus d'années qu'elle ne veut l'admettre. Elle parle aux arbres comme à de vieux amis et garde un carnet où elle consigne chaque fruit qui change de couleur.",
+  "role": "Botaniste",
+  "dialogues": [
+    "Ces arbres ne devraient pas tenir en l'air. Et pourtant, regarde-les.",
+    "Il y a une graine, quelque part sous ces racines, que je cherche depuis des années.",
+    "Les Architectes cultivaient quelque chose ici. Je ne crois pas que c'était seulement des fruits."
+  ]
+}

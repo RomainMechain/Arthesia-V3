@@ -1,0 +1,9 @@
+{
+  "id": "essence_lumineuse",
+  "name": "Essence Lumineuse",
+  "description": "Une lumière condensée, presque liquide, extraite des troncs flottants des vergers.",
+  "category": "material",
+  "level": 4,
+  "base_value": 20,
+  "stack_size": 15
+}

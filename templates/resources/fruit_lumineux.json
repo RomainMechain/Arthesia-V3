@@ -1,0 +1,21 @@
+{
+  "id": "fruit_lumineux",
+  "name": "Fruit Lumineux",
+  "description": "Un fruit d'une couleur qui n'existe nulle part ailleurs, pendu aux branches des vergers architectes. Il pulse doucement, comme s'il respirait encore.",
+  "level": 3,
+  "profession_required": {
+    "profession_id": "herboristerie",
+    "min_level": 1,
+    "xp_reward": 5
+  },
+  "tool_required": null,
+  "gather_time_seconds": 3,
+  "yields": [
+    {
+      "item_id": "fruit_lumineux",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 10
+    }
+  ]
+}

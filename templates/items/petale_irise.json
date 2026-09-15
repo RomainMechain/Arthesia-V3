@@ -1,0 +1,9 @@
+{
+  "id": "petale_irise",
+  "name": "Pétale Irisé",
+  "description": "Un pétale qui garde sa lumière propre bien après avoir été cueilli, comme s'il refusait de se faner.",
+  "category": "material",
+  "level": 3,
+  "base_value": 15,
+  "stack_size": 20
+}

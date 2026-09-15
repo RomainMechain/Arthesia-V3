@@ -1,0 +1,22 @@
+{
+  "id": "morsure_de_lumiere",
+  "name": "Morsure de Lumière",
+  "description": "Tu presses la chair pulsante d'un Fruit Lumineux entre tes mains, libérant une chaleur douce qui referme les blessures comme une aube qui se lève.",
+  "kind": "active",
+  "unlock_condition": {
+    "type": "gather_count",
+    "resource_id": "fruit_lumineux",
+    "count": 8
+  },
+  "damage_type": "magical",
+  "cooldown_seconds": 10,
+  "mana_cost": 18,
+  "telegraph_seconds": 0,
+  "avoidable_by": null,
+  "effects": [
+    {
+      "type": "heal",
+      "power": 1.2
+    }
+  ]
+}

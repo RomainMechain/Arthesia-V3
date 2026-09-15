@@ -1,0 +1,28 @@
+{
+  "id": "vents_ascendants",
+  "name": "Vents Ascendants",
+  "description": "Sarenne t'avoue enfin ce qu'elle cherche depuis des années : une graine ancienne, gravée d'un symbole architecte, enfouie quelque part sous les racines des vergers. Elle pense qu'elle pourrait indiquer un chemin vers un lieu plus reculé — porté par un vent que peu de gens savent encore sentir.",
+  "objectives": [
+    {
+      "type": "deliver_item",
+      "item_id": "graine_ancienne",
+      "count": 1
+    },
+    {
+      "type": "kill_count",
+      "monster_id": "papillon_prismatique",
+      "count": 5
+    }
+  ],
+  "rewards": {
+    "xp": 300,
+    "gold": 60,
+    "items": [
+      {
+        "item_id": "relique_du_vent",
+        "quantity": 1
+      }
+    ]
+  },
+  "repeatable": false
+}

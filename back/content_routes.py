@@ -4,9 +4,10 @@ import json
 from fastapi import APIRouter, HTTPException
 
 
-BASE_DIR = Path(__file__).resolve().parent
-ZONES_DIR = BASE_DIR / "zones"
-TEMPLATES_DIR = BASE_DIR / "templates"
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+SKELETONS_DIR = PROJECT_ROOT / "zone_skeletons"
+ZONES_DIR = PROJECT_ROOT / "zones"
+TEMPLATES_DIR = PROJECT_ROOT / "templates"
 
 KIND_TO_FOLDER = {
     "monster": "monsters",
@@ -42,13 +43,13 @@ def load_zone(zone_id: str) -> dict:
 
 
 def load_floor(floor_id: str) -> dict:
-    return read_json(BASE_DIR / f"{floor_id}_skeleton.json")
+    return read_json(SKELETONS_DIR / f"{floor_id}_skeleton.json")
 
 
 @router.get("/floors")
 def list_floors() -> list[dict]:
     result = []
-    for path in sorted(BASE_DIR.glob("floor_*_skeleton.json")):
+    for path in sorted(SKELETONS_DIR.glob("floor_*_skeleton.json")):
         floor = read_json(path)
         result.append({
             "id": floor.get("id", path.stem.removesuffix("_skeleton")),
@@ -77,7 +78,7 @@ def get_floor(floor_id: str) -> dict:
 
 @router.get("/zones")
 def list_zones(floor_id: str | None = None) -> list[dict]:
-    floor_paths = [BASE_DIR / f"{floor_id}_skeleton.json"] if floor_id else sorted(BASE_DIR.glob("floor_*_skeleton.json"))
+    floor_paths = [SKELETONS_DIR / f"{floor_id}_skeleton.json"] if floor_id else sorted(SKELETONS_DIR.glob("floor_*_skeleton.json"))
     result = []
     for path in floor_paths:
         floor = read_json(path)

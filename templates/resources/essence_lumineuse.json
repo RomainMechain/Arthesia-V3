@@ -1,0 +1,21 @@
+{
+  "id": "essence_lumineuse",
+  "name": "Essence Lumineuse",
+  "description": "Un résidu de lumière condensée, suintant des troncs flottants comme une sève impossible. Les runographes s'en disputent les moindres traces.",
+  "level": 4,
+  "profession_required": {
+    "profession_id": "runographie",
+    "min_level": 2,
+    "xp_reward": 10
+  },
+  "tool_required": null,
+  "gather_time_seconds": 4,
+  "yields": [
+    {
+      "item_id": "essence_lumineuse",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 10
+    }
+  ]
+}

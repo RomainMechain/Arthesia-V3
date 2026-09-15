@@ -1,0 +1,20 @@
+{
+  "id": "eclat_prismatique",
+  "name": "Éclat Prismatique",
+  "description": "Les ailes des Papillons Prismatiques décomposent la lumière au point de tromper l'œil. Tu as appris à faire de même avec ton propre corps, brouillant les trajectoires ennemies.",
+  "kind": "passive",
+  "unlock_condition": {
+    "type": "kill_count",
+    "monster_id": "papillon_prismatique",
+    "count": 15
+  },
+  "trigger": "always",
+  "condition": null,
+  "effects": [
+    {
+      "type": "stat_bonus_percent",
+      "stat": "agi",
+      "amount_percent": 8
+    }
+  ]
+}

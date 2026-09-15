@@ -1,0 +1,9 @@
+{
+  "id": "graine_ancienne",
+  "name": "Graine Ancienne",
+  "description": "Une graine gravée d'un symbole architecte à peine lisible. Elle semble attendre quelque chose.",
+  "category": "material",
+  "level": 5,
+  "base_value": 25,
+  "stack_size": 5
+}

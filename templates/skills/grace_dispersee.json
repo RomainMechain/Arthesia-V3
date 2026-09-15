@@ -1,0 +1,20 @@
+{
+  "id": "grace_dispersee",
+  "name": "Grâce Dispersée",
+  "description": "À force d'affronter les Sylphes de Pétales, tu as appris leur secret : ne jamais être tout à fait là où l'on te frappe. Tes mouvements gagnent la légèreté d'un pétale porté par le vent.",
+  "kind": "passive",
+  "unlock_condition": {
+    "type": "kill_count",
+    "monster_id": "sylphe_petales",
+    "count": 10
+  },
+  "trigger": "always",
+  "condition": null,
+  "effects": [
+    {
+      "type": "stat_bonus",
+      "stat": "agi",
+      "amount": 2
+    }
+  ]
+}

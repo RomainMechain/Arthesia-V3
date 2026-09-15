@@ -1,0 +1,65 @@
+{
+  "id": "gardien_fleuri",
+  "name": "Gardien Fleuri",
+  "description": "Ce n'est plus tout à fait une créature de pétales : c'est ce qu'elles deviennent lorsqu'elles s'assemblent trop longtemps au même endroit. Une silhouette humanoïde, haute comme trois hommes, faite de fleurs entrelacées et d'un noyau de lumière froide qui bat comme un cœur mécanique. Les rares témoins racontent qu'il ne bouge que lorsque le jardin a été trop souvent visité — comme s'il jaugeait la présence d'un intrus qui revient sans cesse. Certains y voient un reste de gardien architecte, oublié dans sa propre floraison.",
+  "level": 5,
+  "role": "elite",
+  "stats": {
+    "hp": 1250,
+    "atk": 32,
+    "def": 20,
+    "agi": 18,
+    "int": 24,
+    "sag": 16
+  },
+  "moveset": [
+    {
+      "id": "floraison_devastatrice",
+      "damage_type": "magical",
+      "cooldown_seconds": 6,
+      "damage": 45,
+      "weight": 3,
+      "telegraph_seconds": 1.5,
+      "avoidable_by": "dodge"
+    },
+    {
+      "id": "vent_tranchant",
+      "damage_type": "physical",
+      "cooldown_seconds": 4,
+      "damage": 30,
+      "weight": 2,
+      "telegraph_seconds": 0.5,
+      "avoidable_by": null
+    },
+    {
+      "id": "petales_empoisonnes",
+      "damage_type": "magical",
+      "cooldown_seconds": 8,
+      "damage": 25,
+      "weight": 1,
+      "telegraph_seconds": 2,
+      "avoidable_by": "dodge"
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "poussiere_prismatique",
+      "quantity_min": 2,
+      "quantity_max": 3,
+      "weight": 5
+    },
+    {
+      "item_id": "essence_lumineuse",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 5
+    },
+    {
+      "item_id": "relique_du_vent",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 1
+    }
+  ]
+}

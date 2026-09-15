@@ -1,0 +1,28 @@
+{
+  "id": "vergers_oublies",
+  "name": "Les Vergers Oubliés",
+  "description": "Sarenne veut comprendre pourquoi les créatures de pétales prolifèrent depuis peu, et a besoin de fruits frais pour ses études. Elle te demande d'écarter quelques-unes de ces créatures et de lui rapporter des fruits lumineux.",
+  "objectives": [
+    {
+      "type": "kill_count",
+      "monster_id": "sylphe_petales",
+      "count": 8
+    },
+    {
+      "type": "gather_count",
+      "resource_id": "fruit_lumineux",
+      "count": 5
+    }
+  ],
+  "rewards": {
+    "xp": 150,
+    "gold": 30,
+    "items": [
+      {
+        "item_id": "petale_irise",
+        "quantity": 3
+      }
+    ]
+  },
+  "repeatable": false
+}
