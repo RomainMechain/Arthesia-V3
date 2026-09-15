@@ -1,0 +1,33 @@
+"""Configuration et chemins partages du serveur Arthesia."""
+
+import os
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+SKELETONS_DIR = PROJECT_ROOT / "zone_skeletons"
+TEMPLATES_DIR = PROJECT_ROOT / "templates"
+ZONES_DIR = PROJECT_ROOT / "zones"
+SERVICE_ACCOUNT_PATH = PROJECT_ROOT / "firebase_key.json"
+CRAFT_PROMPT_FILE = PROJECT_ROOT / "generate_static_files" / "craft" / "arthesia_craft_prompt.md"
+
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
+CRAFT_MODEL = "claude-sonnet-5"
+
+KIND_TO_FOLDER = {
+    "monster": "monsters",
+    "resource": "resources",
+    "npc": "npcs",
+    "quest": "quests",
+    "shop": "shops",
+    "player_market": "player_markets",
+    "item": "items",
+    "skill": "skills",
+    "title": "titles",
+    "workshop": "workshops",
+}
+
+if not SERVICE_ACCOUNT_PATH.exists():
+    raise FileNotFoundError(
+        f"Cle de compte de service introuvable : {SERVICE_ACCOUNT_PATH}\n"
+        "Ajuste SERVICE_ACCOUNT_PATH dans config.py."
+    )
