@@ -1,0 +1,50 @@
+{
+  "id": "ombre_du_lac",
+  "name": "Ombre du Lac",
+  "description": "Une masse sombre et silencieuse qui glisse sous le miroir du lac, ne remontant que lorsqu'on la croit partie. Les pêcheurs évitent d'en parler.",
+  "level": 3,
+  "role": "elite",
+  "stats": {
+    "hp": 220,
+    "atk": 22,
+    "def": 10,
+    "agi": 16,
+    "int": 8,
+    "sag": 6
+  },
+  "moveset": [
+    {
+      "id": "coup_de_queue",
+      "damage_type": "physical",
+      "cooldown_seconds": 3,
+      "damage": 20,
+      "weight": 3,
+      "telegraph_seconds": 1,
+      "avoidable_by": "dodge"
+    },
+    {
+      "id": "onde_trouble",
+      "damage_type": "magical",
+      "cooldown_seconds": 5,
+      "damage": 16,
+      "weight": 2,
+      "telegraph_seconds": 1.5,
+      "avoidable_by": "dodge"
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "ecaille_irisee",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 6
+    },
+    {
+      "item_id": "fragment_pierre_taillee",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 1
+    }
+  ]
+}

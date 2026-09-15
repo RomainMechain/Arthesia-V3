@@ -1,0 +1,21 @@
+{
+  "id": "argile_humide",
+  "name": "Argile Humide",
+  "description": "Une argile grasse et fraîche, prélevée près des points d'eau du sentier.",
+  "level": 1,
+  "profession_required": {
+    "profession_id": "minage",
+    "min_level": 1,
+    "xp_reward": 8
+  },
+  "tool_required": null,
+  "gather_time_seconds": 3,
+  "yields": [
+    {
+      "item_id": "argile_humide",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 10
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "id": "sanctuaire_gardien",
+  "name": "Le Sanctuaire du Gardien Englouti",
+  "type": "boss",
+  "position": {
+    "x": 15,
+    "y": 10
+  },
+  "visibility": "visible",
+  "description": "Au cœur des ruines les plus reculées, un sceau brisé laisse échapper une lumière froide. Une présence ancienne s'y est réveillée, gardienne oubliée d'un savoir que la Fracture a scellé.",
+  "unlock_condition": {
+    "type": "group",
+    "mode": "all",
+    "conditions": [
+      {
+        "type": "level",
+        "min": 6
+      },
+      {
+        "type": "quest",
+        "quest_id": "quest_seal_breaker",
+        "state": "completed"
+      }
+    ]
+  },
+  "hint": null,
+  "generation_brief": {
+    "level_range": [
+      6,
+      7
+    ],
+    "tags": [
+      "boss",
+      "architectes",
+      "final"
+    ],
+    "content_intent": "Combat de boss unique, point culminant de l'étage. Doit incarner la présence ancienne et mystérieuse liée aux Architectes, avec une mise en scène marquante.",
+    "provides": [
+      {
+        "type": "boss",
+        "id_suggere": "boss_gardien_engloutie",
+        "via": "Le combat de boss lui-même, dont la défaite débloque le passage vers l'étage suivant."
+      }
+    ]
+  },
+  "entries": [
+    {
+      "id": "boss_gardien_englouti",
+      "template_type": "monster",
+      "template_id": "gardien_englouti",
+      "state_scope": "per_player",
+      "rarity": "very_rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "echo_du_gardien",
+      "template_type": "npc",
+      "template_id": "echo_gardien",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    }
+  ]
+}

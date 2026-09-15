@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Arthesia / Console</title>
+  <style>
+    :root {
+      --ink: #17221f;
+      --muted: #68736e;
+      --paper: #f3f1ea;
+      --panel: #fffdf8;
+      --line: #d9d8cd;
+      --teal: #0e7067;
+      --teal-dark: #084d49;
+      --gold: #bd7c2e;
+      --red: #b84e42;
+      --blue: #467891;
+      --cream: #f7f2e4;
+      --shadow: 0 18px 45px rgba(35, 48, 43, .09);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: radial-gradient(circle at 12% 0%, #e5eee5 0, transparent 35%), var(--paper);
+      font: 15px/1.45 Georgia, 'Times New Roman', serif;
+    }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    .shell { max-width: 1320px; margin: 0 auto; padding: 28px 20px 56px; }
+    header { display: flex; justify-content: space-between; gap: 24px; align-items: end; margin-bottom: 28px; }
+    .eyebrow { color: var(--teal); font: 700 11px/1.2 Consolas, monospace; letter-spacing: .14em; text-transform: uppercase; }
+    h1, h2, p { margin: 0; }
+    h1 { margin-top: 5px; font-size: clamp(31px, 5vw, 56px); font-weight: 500; letter-spacing: -.03em; }
+    h2 { font-size: 20px; font-weight: 600; }
+    .subtitle { color: var(--muted); max-width: 550px; margin-top: 8px; }
+    .status { display: flex; align-items: center; gap: 8px; color: var(--muted); white-space: nowrap; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--red); }
+    .dot.live { background: var(--teal); box-shadow: 0 0 0 5px #d7ebe5; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(350px, .92fr); gap: 18px; }
+    .panel { background: rgba(255,253,248,.92); border: 1px solid var(--line); box-shadow: var(--shadow); padding: 22px; }
+    .panel + .panel { margin-top: 18px; }
+    .panel-head { display: flex; justify-content: space-between; gap: 14px; align-items: baseline; margin-bottom: 17px; }
+    .panel-head small, .hint { color: var(--muted); font-size: 12px; }
+    .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    label { display: grid; gap: 6px; color: var(--muted); font-size: 12px; }
+    input, select { width: 100%; border: 1px solid var(--line); background: #fff; color: var(--ink); padding: 10px 11px; border-radius: 2px; }
+    input:focus, select:focus { outline: 2px solid #aad4ca; border-color: var(--teal); }
+    .actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 16px; }
+    button { border: 0; border-radius: 2px; padding: 10px 13px; color: white; background: var(--teal); transition: transform .15s, background .15s; }
+    button:hover { transform: translateY(-1px); background: var(--teal-dark); }
+    button.secondary { color: var(--ink); background: #e6e6da; }
+    button.gold { color: #fff; background: var(--gold); }
+    button.danger { background: var(--red); }
+    button:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+    .stat { border-left: 3px solid var(--teal); padding: 9px 10px; background: #f0f4ed; }
+    .stat b { display: block; font-size: 22px; font-weight: 500; }
+    .stat span { color: var(--muted); font: 11px Consolas, monospace; text-transform: uppercase; }
+    .bars { display: grid; gap: 10px; margin: 17px 0; }
+    .bar-label { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; }
+    .bar { height: 9px; overflow: hidden; background: #e6e6dc; }
+    .bar i { display: block; height: 100%; width: 0; background: var(--teal); transition: width .25s ease; }
+    .bar.enemy i { background: var(--red); }
+    .combat-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+    .log { min-height: 290px; max-height: 430px; overflow: auto; background: #182522; color: #d9eee2; padding: 14px; font: 12px/1.55 Consolas, monospace; white-space: pre-wrap; }
+    .log .error { color: #ff9c8d; }
+    .log .event { color: #a9d9cb; }
+    pre { margin: 0; max-height: 310px; overflow: auto; white-space: pre-wrap; word-break: break-word; color: #41504a; font: 12px/1.5 Consolas, monospace; }
+    .route-list { display: grid; gap: 8px; }
+    .route { display: grid; grid-template-columns: 58px 1fr auto; gap: 10px; align-items: center; border-bottom: 1px solid var(--line); padding: 9px 0; }
+    .method { color: var(--teal); font: 700 11px Consolas, monospace; }
+    .route code { color: var(--muted); font: 12px Consolas, monospace; }
+    .player-card { display: grid; grid-template-columns: auto 1fr auto; gap: 15px; align-items: center; background: linear-gradient(110deg, #e5eee5, #fbf5e6); border: 1px solid #cfd8c9; padding: 17px; }
+    .portrait { display: grid; place-items: center; width: 62px; height: 62px; border: 2px solid var(--gold); border-radius: 50%; color: var(--gold); background: var(--cream); font-size: 27px; }
+    .player-name { font-size: 23px; }
+    .player-meta { color: var(--muted); font: 12px Consolas, monospace; margin-top: 2px; }
+    .currency { color: var(--gold); font-size: 18px; white-space: nowrap; }
+    .xp-track { height: 6px; background: #d7ddd2; margin-top: 9px; }
+    .xp-track i { display: block; width: 0; height: 100%; background: var(--gold); transition: width .25s; }
+    .section-kicker { color: var(--muted); font: 700 10px Consolas, monospace; letter-spacing: .12em; text-transform: uppercase; }
+    .mini-stats { display: grid; grid-template-columns: repeat(6, 1fr); gap: 7px; margin-top: 14px; }
+    .mini-stat { text-align: center; padding: 8px 3px; background: #f1f3eb; }
+    .mini-stat b { display: block; font-size: 17px; font-weight: 500; }
+    .mini-stat span { color: var(--muted); font: 10px Consolas, monospace; }
+    .map { position: relative; min-height: 154px; overflow: hidden; background: linear-gradient(145deg, #dbe5d8 0%, #ecdfc7 56%, #d6e4e2 100%); border: 1px solid #c9d2c6; }
+    .map:before, .map:after { content: ''; position: absolute; border: 1px solid rgba(14,112,103,.17); border-radius: 50%; transform: rotate(-20deg); }
+    .map:before { width: 270px; height: 90px; left: 28%; top: 31%; }
+    .map:after { width: 160px; height: 50px; left: 48%; top: 55%; }
+    .map-title { position: absolute; top: 12px; left: 14px; z-index: 1; color: var(--teal-dark); font-size: 19px; }
+    .zone-pin { position: absolute; z-index: 1; display: grid; gap: 3px; justify-items: center; border: 0; padding: 0; color: var(--ink); background: transparent; font-size: 12px; }
+    .zone-pin:hover { background: transparent; color: var(--teal); transform: translateY(-2px); }
+    .zone-pin i { display: block; width: 14px; height: 14px; border: 3px solid var(--teal); border-radius: 50%; background: var(--cream); }
+    .zone-pin.active i { border-color: var(--gold); background: var(--gold); box-shadow: 0 0 0 5px rgba(189,124,46,.18); }
+    .inventory { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .item { min-height: 62px; display: flex; justify-content: space-between; gap: 7px; align-items: end; padding: 9px; border: 1px solid var(--line); background: #faf8f0; }
+    .item strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
+    .item small { color: var(--muted); font: 10px Consolas, monospace; }
+    .item b { color: var(--teal); font: 700 13px Consolas, monospace; }
+    .equipment { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+    .gear { display: flex; justify-content: space-between; padding: 8px 9px; background: #f3f1e8; font-size: 12px; }
+    .gear span { color: var(--muted); }
+    .empty { color: var(--muted); font-size: 12px; padding: 10px 0; }
+    @media (max-width: 800px) { header { display: block; } .status { margin-top: 14px; } .layout { grid-template-columns: 1fr; } }
+    @media (max-width: 560px) { .player-card { grid-template-columns: auto 1fr; } .currency { grid-column: 2; } .mini-stats { grid-template-columns: repeat(3, 1fr); } .inventory { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px) { .fields, .stats, .combat-actions { grid-template-columns: 1fr; } .shell { padding-inline: 13px; } .panel { padding: 16px; } }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div><div class="eyebrow">Arthesia / lac miroir</div><h1>Chroniques de Rivelune</h1><p class="subtitle">Un poste de jeu pour explorer, combattre et suivre la progression de ton personnage.</p></div>
+      <div class="status"><i class="dot" id="statusDot"></i><span id="statusText">Déconnecté</span></div>
+    </header>
+
+    <div class="layout">
+      <section>
+        <article class="panel">
+          <div class="panel-head"><h2>Session joueur</h2><small>GET /players · GET /players/{id}/stats</small></div>
+          <div class="fields">
+            <label>Joueur<input id="playerId" value="demo-player" autocomplete="off"></label>
+            <label>Zone<input id="zoneId" value="sentier_roseaux" autocomplete="off"></label>
+            <label>Entry monstre<input id="entryId" value="entry_rat_roseaux_01" autocomplete="off"></label>
+            <label>API base<input id="apiBase" value="http://127.0.0.1:8000" placeholder="http://127.0.0.1:8000" autocomplete="url"></label>
+          </div>
+          <div class="actions"><button id="loadPlayer">Charger le joueur</button><button class="secondary" id="createPlayer">Créer le joueur</button><button class="secondary" id="loadStats">Lire les stats</button></div>
+        </article>
+
+        <article class="panel">
+          <div class="player-card">
+            <div class="portrait">✦</div>
+            <div><div class="player-name" id="playerName">Aventurier inconnu</div><div class="player-meta">NIVEAU <b id="playerLevel">--</b> · <span id="playerZone">Rivelune</span></div><div class="xp-track"><i id="xpBar"></i></div></div>
+            <div class="currency">◈ <span id="playerGold">0</span></div>
+          </div>
+          <div class="mini-stats" id="miniStats">
+            <div class="mini-stat"><b>--</b><span>HP</span></div><div class="mini-stat"><b>--</b><span>ATK</span></div><div class="mini-stat"><b>--</b><span>DEF</span></div><div class="mini-stat"><b>--</b><span>AGI</span></div><div class="mini-stat"><b>--</b><span>INT</span></div><div class="mini-stat"><b>--</b><span>SAG</span></div>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head"><h2>Carte du floor</h2><small>sélectionne une destination</small></div>
+          <div class="map" id="map">
+            <div class="map-title">L'Étage du Lac Miroir</div>
+            <button class="zone-pin active" style="left:49%;top:65%" data-zone="rivelune"><i></i>Rivelune</button>
+            <button class="zone-pin" style="left:24%;top:45%" data-zone="sentier_roseaux"><i></i>Sentier</button>
+            <button class="zone-pin" style="left:69%;top:42%" data-zone="rive_miroir"><i></i>Rive du Miroir</button>
+            <button class="zone-pin" style="left:42%;top:20%" data-zone="camp_pecheurs"><i></i>Camp</button>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head"><h2>Actions rapides</h2><small>POST /actions/...</small></div>
+          <div class="actions">
+            <button id="gather">Récolter la ressource</button>
+            <button class="gold" id="kill">Valider un kill</button>
+            <button class="secondary" id="allocate">+ 1 point en ATK</button>
+          </div>
+          <p class="hint" style="margin-top:12px">Les actions HTTP utilisent les valeurs de joueur, zone et entry ci-dessus.</p>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head"><h2>Quêtes & commerce</h2><small>actions de progression</small></div>
+          <div class="fields">
+            <label>Identifiant de quête<input id="questId" value="premiers_pas_roseaux" autocomplete="off"></label>
+            <label>Identifiant d'objet<input id="itemId" value="fibre_roseau" autocomplete="off"></label>
+            <label>Quantité<input id="quantity" type="number" min="1" value="1"></label>
+          </div>
+          <div class="actions"><button id="startQuest">Accepter la quête</button><button class="secondary" id="turnQuest">Valider la quête</button><button class="gold" id="sellItem">Vendre l'objet</button></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head"><h2>Réponse serveur</h2><button class="secondary" id="clearResponse">Effacer</button></div>
+          <pre id="response">Aucune requête exécutée.</pre>
+        </article>
+      </section>
+
+      <section>
+        <article class="panel">
+          <div class="panel-head"><h2>Besace</h2><small id="inventoryCount">0 objet</small></div>
+          <div class="inventory" id="inventory"><div class="empty">Charge un joueur pour voir son inventaire.</div></div>
+          <div class="panel-head" style="margin:20px 0 9px"><h2>Équipement</h2><small>slots actifs</small></div>
+          <div class="equipment" id="equipment"><div class="empty">Aucun équipement chargé.</div></div>
+        </article>
+        <article class="panel">
+          <div class="panel-head"><h2>Combat WebSocket</h2><small>/ws/combat</small></div>
+          <div class="bars">
+            <div><div class="bar-label"><span id="monsterName">Monstre</span><span id="monsterHpText">-- / --</span></div><div class="bar enemy"><i id="monsterBar"></i></div></div>
+            <div><div class="bar-label"><span>Joueur · PV</span><span id="playerHpText">-- / --</span></div><div class="bar"><i id="playerBar"></i></div></div>
+            <div><div class="bar-label"><span>Joueur · mana</span><span id="playerManaText">-- / --</span></div><div class="bar"><i id="manaBar"></i></div></div>
+          </div>
+          <div class="actions"><button id="startCombat">Démarrer le combat</button><button class="secondary" id="closeCombat">Fermer la socket</button></div>
+          <div class="combat-actions" style="margin-top:9px"><button id="attack" disabled>Attaque classique</button><button class="gold" id="skill" disabled>Compétence active</button></div>
+          <p class="hint" style="margin-top:12px">La compétence envoie le premier identifiant équipé côté serveur : aucun identifiant de skill n'est imposé par cette page.</p>
+        </article>
+        <article class="panel">
+          <div class="panel-head"><h2>Journal de combat</h2><button class="secondary" id="clearLog">Effacer</button></div>
+          <div class="log" id="combatLog">En attente d'une connexion WebSocket...</div>
+        </article>
+        <article class="panel">
+          <div class="panel-head"><h2>Routes branchées</h2><small>contrat détecté dans main.py</small></div>
+          <div class="route-list">
+            <div class="route"><span class="method">GET</span><code>/health</code><button class="secondary route-button" data-route="/health">Tester</button></div>
+            <div class="route"><span class="method">GET</span><code>/players/{player_id}</code><button class="secondary route-button" data-route="player">Tester</button></div>
+            <div class="route"><span class="method">GET</span><code>/players/{player_id}/stats</code><button class="secondary route-button" data-route="stats">Tester</button></div>
+          </div>
+        </article>
+      </section>
+    </div>
+  </main>
+  <script>
+    const $ = (id) => document.getElementById(id);
+    let socket = null;
+    let activeSkill = null;
+    let currentPlayer = null;
+
+    function baseUrl() { return $('apiBase').value.trim().replace(/\/$/, '') || window.location.origin; }
+    function playerId() { return $('playerId').value.trim(); }
+    function showResponse(value) { $('response').textContent = typeof value === 'string' ? value : JSON.stringify(value, null, 2); }
+    function setStatus(text, live = false) { $('statusText').textContent = text; $('statusDot').classList.toggle('live', live); }
+    function log(message, type = '') { const line = document.createElement('div'); line.className = type; line.textContent = `[${new Date().toLocaleTimeString()}] ${message}`; $('combatLog').appendChild(line); $('combatLog').scrollTop = $('combatLog').scrollHeight; }
+    function renderPlayer(state, stats = null) {
+      currentPlayer = state;
+      $('playerName').textContent = state.player_id || 'Aventurier'; $('playerLevel').textContent = state.level ?? '--';
+      $('playerZone').textContent = state.current_zone_id || 'Rivelune'; $('playerGold').textContent = state.currency?.or ?? 0;
+      const xpGoal = Math.max((state.level || 1) * 50, 1); $('xpBar').style.width = `${Math.min(100, (state.xp || 0) / xpGoal * 100)}%`;
+      const values = stats?.stats || {}; const statKeys = ['hp', 'atk', 'def', 'agi', 'int', 'sag'];
+      $('miniStats').innerHTML = statKeys.map((key) => `<div class="mini-stat"><b>${values[key] ?? '--'}</b><span>${key}</span></div>`).join('');
+      const inventory = Object.entries(state.inventory || {}); $('inventoryCount').textContent = `${inventory.reduce((sum, [, quantity]) => sum + quantity, 0)} objet${inventory.length > 1 ? 's' : ''}`;
+      $('inventory').innerHTML = inventory.length ? inventory.map(([id, quantity]) => `<button class="item" data-item="${id}"><span><strong>${id.replaceAll('_', ' ')}</strong><small>objet</small></span><b>x${quantity}</b></button>`).join('') : '<div class="empty">La besace est vide.</div>';
+      $('equipment').innerHTML = Object.entries(state.equipment || {}).map(([slot, item]) => `<div class="gear"><span>${slot}</span><b>${item || 'vide'}</b></div>`).join('') || '<div class="empty">Aucun équipement.</div>';
+      $('inventory').querySelectorAll('[data-item]').forEach((button) => button.onclick = () => $('itemId').value = button.dataset.item);
+    }
+    async function request(path, options = {}, display = true) {
+      try {
+        const response = await fetch(baseUrl() + path, { headers: { 'Content-Type': 'application/json' }, ...options });
+        const body = await response.json().catch(() => ({}));
+        if (display) showResponse(body);
+        if (!response.ok) throw new Error(body.detail || `HTTP ${response.status}`);
+        setStatus('API joignable', true); return body;
+      } catch (error) { showResponse({ error: error.message }); setStatus('Erreur API'); throw error; }
+    }
+    async function refreshPlayer(display = false) {
+      const state = await request(`/players/${encodeURIComponent(playerId())}`, {}, display);
+      const stats = await request(`/players/${encodeURIComponent(playerId())}/stats`, {}, false);
+      renderPlayer(state, stats); return state;
+    }
+    async function runAction(path, payload) { const result = await request(path, { method: 'POST', body: JSON.stringify(payload) }); await refreshPlayer(false); showResponse(result); return result; }
+    function combatUrl() { const url = new URL(baseUrl()); url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:'; url.pathname = '/ws/combat'; return url.toString(); }
+    function send(message) { if (socket && socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify(message)); else log('Socket non connectée.', 'error'); }
+    function updateBars(data) {
+      const set = (textId, barId, current, max) => { if (current == null || max == null) return; $(textId).textContent = `${current} / ${max}`; $(barId).style.width = `${Math.max(0, Math.min(100, current / max * 100))}%`; };
+      set('monsterHpText', 'monsterBar', data.monster_hp, data.monster_max_hp); set('playerHpText', 'playerBar', data.player_hp, data.player_max_hp); set('playerManaText', 'manaBar', data.player_mana, data.player_max_mana || data.player_mana);
+    }
+    function handleCombat(data) {
+      if (data.type === 'combat_started') { $('monsterName').textContent = data.monster_name; updateBars(data); $('attack').disabled = $('skill').disabled = false; log(`Combat démarré contre ${data.monster_name}.`, 'event'); }
+      if (data.type === 'monster_attack') { updateBars(data); log(`Le monstre inflige ${data.final_damage} dégâts.`); }
+      if (data.type === 'player_basic_attack') { updateBars(data); log(`Attaque classique : ${data.final_damage} dégâts.`); }
+      if (data.type === 'player_skill_used') { updateBars(data); log(`Compétence ${data.skill_id} utilisée : ${JSON.stringify(data.results)}.`); }
+      if (data.type === 'combat_won') { log('Victoire. Le combat est terminé.', 'event'); $('attack').disabled = $('skill').disabled = true; }
+      if (data.type === 'combat_lost') { log('Défaite. Le joueur est à terre.', 'error'); $('attack').disabled = $('skill').disabled = true; }
+      if (data.type === 'error') log(data.message, 'error');
+    }
+    function connectCombat() {
+      if (socket) socket.close();
+      socket = new WebSocket(combatUrl());
+      socket.onopen = () => { setStatus('WebSocket connectée', true); log('Socket ouverte.', 'event'); send({ action: 'start_combat', player_id: playerId(), zone_id: $('zoneId').value.trim(), entry_id: $('entryId').value.trim() }); };
+      socket.onmessage = (event) => { try { handleCombat(JSON.parse(event.data)); } catch { log(event.data); } };
+      socket.onerror = () => { setStatus('Erreur WebSocket'); log('Erreur de connexion WebSocket.', 'error'); };
+      socket.onclose = () => { setStatus('Déconnecté'); $('attack').disabled = $('skill').disabled = true; log('Socket fermée.'); };
+    }
+    $('loadPlayer').onclick = () => refreshPlayer(true);
+    $('createPlayer').onclick = async () => { const state = await request('/players', { method: 'POST', body: JSON.stringify({ player_id: playerId(), current_zone_id: $('zoneId').value.trim() }) }); renderPlayer(state); };
+    $('loadStats').onclick = async () => { const stats = await request(`/players/${encodeURIComponent(playerId())}/stats`); if (currentPlayer) renderPlayer(currentPlayer, stats); };
+    $('gather').onclick = () => runAction('/actions/resource_gather', { player_id: playerId(), zone_id: $('zoneId').value.trim(), entry_id: 'entry_fibre_roseau_01' });
+    $('kill').onclick = () => runAction('/actions/monster_kill', { player_id: playerId(), zone_id: $('zoneId').value.trim(), entry_id: $('entryId').value.trim() });
+    $('allocate').onclick = () => runAction('/actions/allocate_stat_points', { player_id: playerId(), allocations: { atk: 1 } });
+    $('startQuest').onclick = () => runAction('/actions/start_quest', { player_id: playerId(), quest_id: $('questId').value.trim() });
+    $('turnQuest').onclick = () => runAction('/actions/turn_in_quest', { player_id: playerId(), quest_id: $('questId').value.trim() });
+    $('sellItem').onclick = () => runAction('/actions/sell_to_server', { player_id: playerId(), item_id: $('itemId').value.trim(), quantity: Number($('quantity').value) || 1 });
+    $('startCombat').onclick = connectCombat;
+    $('closeCombat').onclick = () => { if (socket) socket.close(); };
+    $('attack').onclick = () => send({ action: 'basic_attack' });
+    $('skill').onclick = async () => { if (!activeSkill) { try { const state = await request(`/players/${encodeURIComponent(playerId())}`); activeSkill = state.skills?.equipped_active?.[0]; } catch { return; } } if (activeSkill) send({ action: 'use_skill', skill_id: activeSkill }); else log('Aucune compétence active équipée.', 'error'); };
+    $('clearResponse').onclick = () => showResponse('Aucune requête exécutée.'); $('clearLog').onclick = () => $('combatLog').textContent = '';
+    document.querySelectorAll('.zone-pin').forEach((button) => button.onclick = () => { $('zoneId').value = button.dataset.zone; document.querySelectorAll('.zone-pin').forEach((pin) => pin.classList.toggle('active', pin === button)); $('playerZone').textContent = button.textContent.trim(); if (button.dataset.zone === 'sentier_roseaux') $('entryId').value = 'entry_rat_roseaux_01'; });
+    document.querySelectorAll('.route-button').forEach((button) => button.onclick = () => { const route = button.dataset.route; if (route === 'player') $('loadPlayer').click(); else if (route === 'stats') $('loadStats').click(); else request(route); });
+  </script>
+</body>
+</html>

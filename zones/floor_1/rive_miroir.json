@@ -1,0 +1,147 @@
+{
+  "id": "rive_miroir",
+  "name": "La Rive du Miroir",
+  "type": "water",
+  "position": {
+    "x": 70,
+    "y": 55
+  },
+  "visibility": "visible",
+  "description": "Le lac est si calme qu'il reflète le ciel comme un miroir parfait. Des pêcheurs y jettent leurs filets en silence, comme s'ils craignaient de troubler quelque chose sous la surface.",
+  "unlock_condition": {
+    "type": "level",
+    "min": 1
+  },
+  "hint": null,
+  "generation_brief": {
+    "level_range": [
+      1,
+      3
+    ],
+    "tags": [
+      "lac",
+      "peche",
+      "recolte",
+      "ambiance"
+    ],
+    "content_intent": "Zone orientée récolte et ambiance (pêche, ressources aquatiques), avec un léger contenu social. Peu de combat, mais une tension latente à instaurer.",
+    "provides": []
+  },
+  "entries": [
+    {
+      "id": "entry_fibre_roseau",
+      "template_type": "resource",
+      "template_id": "fibre_roseau",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 60,
+        "stock": 3,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "entry_poisson_argente",
+      "template_type": "resource",
+      "template_id": "poisson_argente",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 90,
+        "stock": 5,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "entry_fragment_pierre_taillee",
+      "template_type": "resource",
+      "template_id": "fragment_pierre_taillee",
+      "state_scope": "shared",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 300,
+        "stock": 1,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "entry_rat_des_roseaux",
+      "template_type": "monster",
+      "template_id": "rat_des_roseaux",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 45,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "entry_ombre_du_lac",
+      "template_type": "monster",
+      "template_id": "ombre_du_lac",
+      "state_scope": "shared",
+      "rarity": "very_rare",
+      "group_required": true,
+      "spawn": {
+        "mode": "conditional",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": {
+          "type": "level",
+          "min": 3
+        },
+        "visibility_when_locked": "hinted",
+        "hint": "Des ondulations étranges troublent parfois le miroir du lac, là où nul poisson ne saute."
+      }
+    },
+    {
+      "id": "entry_threan_pecheur",
+      "template_type": "npc",
+      "template_id": "threan_pecheur",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "entry_quete_silence_du_lac",
+      "template_type": "quest_giver",
+      "template_id": "silence_du_lac",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    }
+  ]
+}

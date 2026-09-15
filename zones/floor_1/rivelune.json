@@ -1,0 +1,157 @@
+{
+  "id": "rivelune",
+  "name": "Rivelune",
+  "type": "town",
+  "position": {
+    "x": 50,
+    "y": 60
+  },
+  "visibility": "visible",
+  "description": "Un village de pêcheurs aux toits de chaume, bâti sur pilotis à la lisière du lac. Des lanternes se balancent doucement au vent du soir, et l'eau clapote contre le bois vieilli des quais.",
+  "unlock_condition": null,
+  "hint": null,
+  "generation_brief": {
+    "level_range": [
+      1,
+      2
+    ],
+    "tags": [
+      "village",
+      "calme",
+      "point_de_depart",
+      "social"
+    ],
+    "content_intent": "Hub social et narratif : PNJ marchands, quêtes d'introduction douces, aucun combat. Doit poser le ton mélancolique et mystérieux sans danger immédiat.",
+    "provides": []
+  },
+  "entries": [
+    {
+      "id": "yolenne_entry",
+      "template_type": "npc",
+      "template_id": "yolenne_tresseuse",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_premiers_pas_entry",
+      "template_type": "quest_giver",
+      "template_id": "premiers_pas_roseaux",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "threan_entry",
+      "template_type": "npc",
+      "template_id": "threan_pecheur",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_silence_du_lac_entry",
+      "template_type": "quest_giver",
+      "template_id": "silence_du_lac",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "maren_entry",
+      "template_type": "npc",
+      "template_id": "maren_aubergiste",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_ragout_entry",
+      "template_type": "quest_giver",
+      "template_id": "ragout_du_soir",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "auberge_du_quai_entry",
+      "template_type": "shop",
+      "template_id": "auberge_du_quai",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "marche_rivelune_entry",
+      "template_type": "player_market",
+      "template_id": "marche_de_rivelune",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    }
+  ]
+}

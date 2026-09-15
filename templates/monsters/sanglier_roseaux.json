@@ -1,0 +1,50 @@
+{
+  "id": "sanglier_roseaux",
+  "name": "Sanglier des Roseaux",
+  "description": "Une bête massive qui charge à travers les tiges avec une force surprenante. Ses défenses sont recherchées par les artisans locaux.",
+  "level": 2,
+  "role": "normal",
+  "stats": {
+    "hp": 140,
+    "atk": 20,
+    "def": 10,
+    "agi": 8,
+    "int": 0,
+    "sag": 0
+  },
+  "moveset": [
+    {
+      "id": "charge",
+      "damage_type": "physical",
+      "cooldown_seconds": 3,
+      "damage": 16,
+      "weight": 2,
+      "telegraph_seconds": 1,
+      "avoidable_by": "dodge"
+    },
+    {
+      "id": "coup_de_boutoir",
+      "damage_type": "physical",
+      "cooldown_seconds": 2,
+      "damage": 12,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "defense_sanglier",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 4
+    },
+    {
+      "item_id": "fibre_roseau_brute",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 2
+    }
+  ]
+}

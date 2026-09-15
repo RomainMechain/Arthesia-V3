@@ -1,0 +1,17 @@
+{
+  "id": "poignard_defense_argile_cuite",
+  "name": "Poignard à Défense Cuite",
+  "description": "Une défense de sanglier montée sur une garde d'argile durcie à haute température, la terre grasse ayant fusionné en une gaine rigide et craquelée autour de l'arête. Rustique mais mortellement efficace.",
+  "category": "equipment",
+  "level": 2,
+  "base_value": 24,
+  "stack_size": 1,
+  "equipment": {
+    "slot": "weapon",
+    "level_required": 2,
+    "stat_bonuses": {
+      "atk": 4,
+      "agi": 1
+    }
+  }
+}

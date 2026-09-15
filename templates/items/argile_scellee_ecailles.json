@@ -1,0 +1,9 @@
+{
+  "id": "argile_scellee_ecailles",
+  "name": "Argile Scellée aux Écailles",
+  "description": "Une motte d'argile durcie à feu moyen, juste assez pour la raffermir sans la vitrifier. Les écailles fines du poisson argenté y ont fondu en surface, formant un lustre irrégulier, tandis que la peau de rat, consumée en partie durant la cuisson, a laissé un liant sombre entre les fissures. Le fragment de pierre taillée a été pressé dans la matière encore molle avant la cuisson : on devine, en creux, les contours à demi effacés de motifs qui ne semblent pas d'origine humaine.",
+  "category": "material",
+  "level": 2,
+  "base_value": 68,
+  "stack_size": 5
+}

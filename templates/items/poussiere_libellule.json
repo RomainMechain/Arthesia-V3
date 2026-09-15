@@ -1,0 +1,9 @@
+{
+  "id": "poussiere_libellule",
+  "name": "Poussière de Libellule",
+  "description": "Une poussière irisée aux propriétés mal comprises, récoltée sur les ailes de l'insecte.",
+  "category": "material",
+  "level": 3,
+  "base_value": 15,
+  "stack_size": 10
+}

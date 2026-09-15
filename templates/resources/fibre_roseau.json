@@ -1,0 +1,21 @@
+{
+  "id": "fibre_roseau",
+  "name": "Roseaux à Fibre",
+  "description": "Des tiges souples, faciles à tresser, utilisées dans nombre d'artisanats simples.",
+  "level": 1,
+  "profession_required": {
+    "profession_id": "herboristerie",
+    "min_level": 1,
+    "xp_reward": 8
+  },
+  "tool_required": null,
+  "gather_time_seconds": 2,
+  "yields": [
+    {
+      "item_id": "fibre_roseau_brute",
+      "quantity_min": 1,
+      "quantity_max": 3,
+      "weight": 10
+    }
+  ]
+}

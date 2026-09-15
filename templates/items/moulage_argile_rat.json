@@ -1,0 +1,9 @@
+{
+  "id": "moulage_argile_rat",
+  "name": "Moulage Raté",
+  "description": "Une masse d'argile durcie à la chaleur, où sont pris quelques lambeaux de peau calcinés. La cuisson a figé l'ensemble en une forme grossière, sans réelle utilité.",
+  "category": "material",
+  "level": 1,
+  "base_value": 4,
+  "stack_size": 20
+}

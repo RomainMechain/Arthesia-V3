@@ -1,0 +1,35 @@
+{
+  "id": "rat_des_roseaux",
+  "name": "Rat des Roseaux",
+  "description": "Un rongeur au pelage boueux, agile dans les tiges denses. Peu dangereux seul, mais toujours affamé.",
+  "level": 1,
+  "role": "normal",
+  "stats": {
+    "hp": 60,
+    "atk": 12,
+    "def": 4,
+    "agi": 10,
+    "int": 0,
+    "sag": 0
+  },
+  "moveset": [
+    {
+      "id": "morsure",
+      "damage_type": "physical",
+      "cooldown_seconds": 2,
+      "damage": 8,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "peau_de_rat",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 5
+    }
+  ]
+}

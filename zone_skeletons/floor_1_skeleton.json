@@ -1,0 +1,375 @@
+{
+  "id": "floor_1",
+  "name": "L'Étage du Lac Miroir",
+  "description": "Un village de pêcheurs vit au bord d'un lac aux eaux étrangement immobiles. Aux abords, la forêt cache des vestiges d'une architecture ancienne, à moitié engloutis par la végétation et par le temps. Sous cette paix apparente, quelque chose semble attendre, patient, sous la surface.",
+  "start_zone_id": "rivelune",
+  "boss_zone_id": "sanctuaire_gardien",
+  "zones": [
+    {
+      "id": "rivelune",
+      "name": "Rivelune",
+      "type": "town",
+      "position": {
+        "x": 50,
+        "y": 60
+      },
+      "visibility": "visible",
+      "description": "Un village de pêcheurs aux toits de chaume, bâti sur pilotis à la lisière du lac. Des lanternes se balancent doucement au vent du soir, et l'eau clapote contre le bois vieilli des quais.",
+      "unlock_condition": null,
+      "hint": null,
+      "generation_brief": {
+        "level_range": [
+          1,
+          2
+        ],
+        "tags": [
+          "village",
+          "calme",
+          "point_de_depart",
+          "social"
+        ],
+        "content_intent": "Hub social et narratif : PNJ marchands, quêtes d'introduction douces, aucun combat. Doit poser le ton mélancolique et mystérieux sans danger immédiat.",
+        "provides": []
+      }
+    },
+    {
+      "id": "sentier_roseaux",
+      "name": "Le Sentier des Roseaux",
+      "type": "wilderness",
+      "position": {
+        "x": 30,
+        "y": 55
+      },
+      "visibility": "visible",
+      "description": "Un chemin étroit serpente entre des roseaux plus hauts qu'un homme. Le sol est humide, et par endroits on distingue des pierres taillées à moitié enfouies, trop régulières pour être naturelles.",
+      "unlock_condition": {
+        "type": "level",
+        "min": 1
+      },
+      "hint": null,
+      "generation_brief": {
+        "level_range": [
+          1,
+          3
+        ],
+        "tags": [
+          "foret",
+          "roseaux",
+          "introduction",
+          "combat_leger"
+        ],
+        "content_intent": "Zone de combat d'introduction : monstres faibles isolés, quelques ressources de récolte simples. Ambiance encore paisible mais avec de premiers signes d'étrangeté (pierres taillées).",
+        "provides": []
+      }
+    },
+    {
+      "id": "rive_miroir",
+      "name": "La Rive du Miroir",
+      "type": "water",
+      "position": {
+        "x": 70,
+        "y": 55
+      },
+      "visibility": "visible",
+      "description": "Le lac est si calme qu'il reflète le ciel comme un miroir parfait. Des pêcheurs y jettent leurs filets en silence, comme s'ils craignaient de troubler quelque chose sous la surface.",
+      "unlock_condition": {
+        "type": "level",
+        "min": 1
+      },
+      "hint": null,
+      "generation_brief": {
+        "level_range": [
+          1,
+          3
+        ],
+        "tags": [
+          "lac",
+          "peche",
+          "recolte",
+          "ambiance"
+        ],
+        "content_intent": "Zone orientée récolte et ambiance (pêche, ressources aquatiques), avec un léger contenu social. Peu de combat, mais une tension latente à instaurer.",
+        "provides": []
+      }
+    },
+    {
+      "id": "camp_pecheurs",
+      "name": "Le Camp des Pêcheurs",
+      "type": "camp",
+      "position": {
+        "x": 45,
+        "y": 35
+      },
+      "visibility": "visible",
+      "description": "Un campement de fortune où se réunissent les pêcheurs les plus aventureux, ceux qui s'aventurent au-delà du village. Des cartes rudimentaires sont clouées à un arbre, couvertes d'annotations inquiètes.",
+      "unlock_condition": {
+        "type": "level",
+        "min": 3
+      },
+      "hint": null,
+      "generation_brief": {
+        "level_range": [
+          3,
+          4
+        ],
+        "tags": [
+          "camp",
+          "voyageurs",
+          "quete",
+          "social"
+        ],
+        "content_intent": "Zone sociale avec PNJ donnant des quêtes menant vers les ruines et l'îlot caché. Combat modéré autour du camp, ambiance de veillée inquiète.",
+        "provides": [
+          {
+            "type": "quest",
+            "id_suggere": "quest_map_fragment",
+            "via": "Un PNJ pêcheur donne une quête pour retrouver un fragment de carte gravée menant aux ruines."
+          },
+          {
+            "type": "item",
+            "id_suggere": "rune_engraved",
+            "via": "Récompense ou objet trouvable dans le camp : une pierre runique gravée, indice vers l'îlot englouti."
+          }
+        ]
+      }
+    },
+    {
+      "id": "ruines_aube",
+      "name": "Les Ruines de l'Aube",
+      "type": "ruins",
+      "position": {
+        "x": 20,
+        "y": 30
+      },
+      "visibility": "visible",
+      "description": "Des colonnes brisées émergent de la terre, gravées de symboles qu'aucun érudit du village ne sait lire. L'air y est plus froid, et le silence, plus dense.",
+      "unlock_condition": {
+        "type": "quest",
+        "quest_id": "quest_map_fragment",
+        "state": "completed"
+      },
+      "hint": "On raconte qu'un fragment de carte, retrouvé par les pêcheurs les plus téméraires, indiquerait le chemin vers ces pierres oubliées.",
+      "generation_brief": {
+        "level_range": [
+          3,
+          5
+        ],
+        "tags": [
+          "ruines",
+          "architectes",
+          "mystere",
+          "combat"
+        ],
+        "content_intent": "Zone de combat plus dense mêlée à de l'exploration : gardiens de pierre, mécanismes anciens. Doit introduire fortement le lore des Architectes et préparer le joueur au boss.",
+        "provides": [
+          {
+            "type": "quest",
+            "id_suggere": "quest_seal_breaker",
+            "via": "Une quête d'exploration des ruines mène à la découverte d'un sceau qu'il faut briser pour atteindre le Sanctuaire."
+          }
+        ]
+      }
+    },
+    {
+      "id": "ilot_ombres",
+      "name": "L'Îlot des Ombres",
+      "type": "ruins",
+      "position": {
+        "x": 35,
+        "y": 15
+      },
+      "visibility": "hidden",
+      "description": "Un îlot minuscule, invisible depuis la rive, où affleure une structure entièrement engloutie sauf en son sommet. Les runes qui l'ornent semblent luire faiblement à la tombée de la nuit.",
+      "unlock_condition": {
+        "type": "group",
+        "mode": "all",
+        "conditions": [
+          {
+            "type": "zone",
+            "zone_id": "ruines_aube",
+            "state": "unlocked"
+          },
+          {
+            "type": "item",
+            "item_id": "rune_engraved",
+            "state": "owned"
+          }
+        ]
+      },
+      "hint": null,
+      "generation_brief": {
+        "level_range": [
+          5,
+          6
+        ],
+        "tags": [
+          "secret",
+          "architectes",
+          "exploration",
+          "lore"
+        ],
+        "content_intent": "Zone secrète à faible densité de combat mais forte en lore : révélation sur les Architectes et amorce narrative pour les étages suivants. Contenu rare, presque contemplatif.",
+        "provides": []
+      }
+    },
+    {
+      "id": "sanctuaire_gardien",
+      "name": "Le Sanctuaire du Gardien Englouti",
+      "type": "boss",
+      "position": {
+        "x": 15,
+        "y": 10
+      },
+      "visibility": "visible",
+      "description": "Au cœur des ruines les plus reculées, un sceau brisé laisse échapper une lumière froide. Une présence ancienne s'y est réveillée, gardienne oubliée d'un savoir que la Fracture a scellé.",
+      "unlock_condition": {
+        "type": "group",
+        "mode": "all",
+        "conditions": [
+          {
+            "type": "level",
+            "min": 6
+          },
+          {
+            "type": "quest",
+            "quest_id": "quest_seal_breaker",
+            "state": "completed"
+          }
+        ]
+      },
+      "hint": null,
+      "generation_brief": {
+        "level_range": [
+          6,
+          7
+        ],
+        "tags": [
+          "boss",
+          "architectes",
+          "final"
+        ],
+        "content_intent": "Combat de boss unique, point culminant de l'étage. Doit incarner la présence ancienne et mystérieuse liée aux Architectes, avec une mise en scène marquante.",
+        "provides": [
+          {
+            "type": "boss",
+            "id_suggere": "boss_gardien_engloutie",
+            "via": "Le combat de boss lui-même, dont la défaite débloque le passage vers l'étage suivant."
+          }
+        ]
+      }
+    },
+    {
+      "id": "passage_etage_2",
+      "name": "La Faille Montante",
+      "type": "passage",
+      "position": {
+        "x": 8,
+        "y": 2
+      },
+      "visibility": "visible",
+      "description": "Une déchirure verticale dans la pierre, semblable à une cicatrice, s'ouvre là où le Gardien se tenait. Un souffle d'air frais en émane, venu d'un étage plus haut encore.",
+      "unlock_condition": {
+        "type": "boss",
+        "zone_id": "sanctuaire_gardien",
+        "state": "defeated"
+      },
+      "hint": null,
+      "generation_brief": {
+        "level_range": [
+          7,
+          7
+        ],
+        "tags": [
+          "passage",
+          "transition"
+        ],
+        "content_intent": "Zone de transition pure, sans contenu de gameplay significatif, juste un point de passage vers l'étage suivant.",
+        "provides": []
+      }
+    }
+  ],
+  "connections": [
+    [
+      "rivelune",
+      "sentier_roseaux"
+    ],
+    [
+      "rivelune",
+      "rive_miroir"
+    ],
+    [
+      "sentier_roseaux",
+      "camp_pecheurs"
+    ],
+    [
+      "rive_miroir",
+      "camp_pecheurs"
+    ],
+    [
+      "sentier_roseaux",
+      "ruines_aube"
+    ],
+    [
+      "ruines_aube",
+      "sanctuaire_gardien"
+    ],
+    [
+      "camp_pecheurs",
+      "ilot_ombres"
+    ],
+    [
+      "ruines_aube",
+      "ilot_ombres"
+    ],
+    [
+      "sanctuaire_gardien",
+      "passage_etage_2"
+    ]
+  ],
+  "condition_manifest": [
+    {
+      "condition": {
+        "type": "quest",
+        "quest_id": "quest_map_fragment",
+        "state": "completed"
+      },
+      "used_by": [
+        "zone:ruines_aube.unlock_condition"
+      ],
+      "resolved_by": "zone:camp_pecheurs (un PNJ du camp confie la quête du fragment de carte menant aux ruines)"
+    },
+    {
+      "condition": {
+        "type": "item",
+        "item_id": "rune_engraved",
+        "state": "owned"
+      },
+      "used_by": [
+        "zone:ilot_ombres.unlock_condition"
+      ],
+      "resolved_by": "zone:camp_pecheurs (la pierre runique gravée y est trouvable ou obtenue en récompense)"
+    },
+    {
+      "condition": {
+        "type": "quest",
+        "quest_id": "quest_seal_breaker",
+        "state": "completed"
+      },
+      "used_by": [
+        "zone:sanctuaire_gardien.unlock_condition"
+      ],
+      "resolved_by": "zone:ruines_aube (la quête d'exploration des ruines mène à la découverte et à la rupture du sceau)"
+    },
+    {
+      "condition": {
+        "type": "boss",
+        "zone_id": "sanctuaire_gardien",
+        "state": "defeated"
+      },
+      "used_by": [
+        "zone:passage_etage_2.unlock_condition"
+      ],
+      "resolved_by": "zone:sanctuaire_gardien (la défaite du Gardien Englouti ouvre la faille)"
+    }
+  ]
+}

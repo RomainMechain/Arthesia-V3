@@ -1,0 +1,29 @@
+{
+  "id": "etreinte_de_l_ombre",
+  "name": "Étreinte de l'Ombre",
+  "description": "Ceux qui ont affronté l'Ombre du Lac et survécu peuvent invoquer un instant sa poigne glacée, qui alourdit et déchire.",
+  "kind": "active",
+  "unlock_condition": {
+    "type": "kill_count",
+    "monster_id": "ombre_du_lac",
+    "count": 8
+  },
+  "damage_type": "magical",
+  "cooldown_seconds": 14,
+  "mana_cost": 30,
+  "telegraph_seconds": 0,
+  "avoidable_by": null,
+  "effects": [
+    {
+      "type": "damage",
+      "power": 160
+    },
+    {
+      "type": "debuff",
+      "stat": "agi",
+      "amount_percent": 20,
+      "duration_seconds": 6,
+      "target": "enemy"
+    }
+  ]
+}

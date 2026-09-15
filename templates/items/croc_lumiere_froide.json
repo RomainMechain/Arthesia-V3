@@ -1,0 +1,18 @@
+{
+  "id": "croc_lumiere_froide",
+  "name": "Croc de Lumière Froide",
+  "description": "Une lame courte forgée en fondant deux défenses de sanglier dans la chaleur extrême, jusqu'à ce que le Cœur d'Architecte, mis à nu, s'y déverse comme un métal vivant. Les arêtes tranchantes de l'os se sont figées autour du noyau, et des veines de lumière bleutée pulsent encore sous la surface, comme si quelque chose, à l'intérieur, refusait de s'éteindre.",
+  "category": "equipment",
+  "level": 6,
+  "base_value": 380,
+  "stack_size": 1,
+  "equipment": {
+    "slot": "weapon",
+    "level_required": 6,
+    "stat_bonuses": {
+      "atk": 14,
+      "agi": 6,
+      "int": 8
+    }
+  }
+}

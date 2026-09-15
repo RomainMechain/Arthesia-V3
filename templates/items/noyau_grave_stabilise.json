@@ -1,0 +1,9 @@
+{
+  "id": "noyau_grave_stabilise",
+  "name": "Noyau Gravé Stabilisé",
+  "description": "Le Cœur d'Architecte a été refondu à moyenne température, ses veines de lumière bleutée désormais canalisées par les motifs gravés du fragment de pierre, fusionné à sa surface. L'objet reste froid au toucher, mais sa lumière interne pulse à un rythme plus lent, presque apaisé.",
+  "category": "material",
+  "level": 6,
+  "base_value": 340,
+  "stack_size": 3
+}

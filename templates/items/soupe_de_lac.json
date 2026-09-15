@@ -1,0 +1,14 @@
+{
+  "id": "soupe_de_lac",
+  "name": "Soupe de Lac",
+  "description": "Une soupe chaude au poisson, réconfortante après une longue marche sur les pilotis.",
+  "category": "consumable",
+  "level": 1,
+  "base_value": 10,
+  "stack_size": 10,
+  "consumable": {
+    "effect_type": "heal",
+    "amount": 40,
+    "duration_seconds": 0
+  }
+}

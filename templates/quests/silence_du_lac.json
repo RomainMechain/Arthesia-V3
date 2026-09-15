@@ -1,0 +1,28 @@
+{
+  "id": "silence_du_lac",
+  "name": "Le Silence du Lac",
+  "description": "Théran te demande de lui rapporter quelques poissons frais et d'écarter les rats qui rôdent trop près de son embarcadère, avant que le calme du lac ne soit encore troublé.",
+  "objectives": [
+    {
+      "type": "gather_count",
+      "resource_id": "poisson_argente",
+      "count": 5
+    },
+    {
+      "type": "kill_count",
+      "monster_id": "rat_des_roseaux",
+      "count": 3
+    }
+  ],
+  "rewards": {
+    "xp": 120,
+    "gold": 30,
+    "items": [
+      {
+        "item_id": "fibre_roseau_brute",
+        "quantity": 2
+      }
+    ]
+  },
+  "repeatable": false
+}

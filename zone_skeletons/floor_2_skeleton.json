@@ -1,0 +1,511 @@
+{
+  "id": "floor_2",
+  "name": "Les Terres du Fer et du Givre",
+  "description": "Le deuxième étage de la Tour se scinde en deux âmes opposées : au nord, des terres marquées par d'anciennes guerres où clans et rōnin se disputent encore l'honneur ; au sud, des cols et des temples de glace où le silence semble plus ancien que la Fracture elle-même. Entre les deux, un village fortifié offre un refuge fragile aux Marqués. Certains prétendent que sous la glace du sud dort quelque chose que même les Architectes n'osaient nommer.",
+  "start_zone_id": "start_village",
+  "boss_zone_id": "boss_summit",
+  "zones": [
+    {
+      "id": "start_village",
+      "name": "Kesshi-no-Mura",
+      "type": "town",
+      "position": {
+        "x": 50,
+        "y": 50
+      },
+      "visibility": "visible",
+      "description": "Un village de bois et de pierre, cerné de palissades, posé à la frontière entre les terres de guerre du nord et les cols glacés du sud. Des lanternes de papier pendent aux avant-toits, encore allumées malgré le vent. Ici, marchands, rōnin de passage et pèlerins se croisent sans jamais vraiment se mêler.",
+      "unlock_condition": null,
+      "hint": null,
+      "generation_brief": {
+        "level_range": [
+          1,
+          3
+        ],
+        "tags": [
+          "village",
+          "refuge",
+          "frontière",
+          "social"
+        ],
+        "content_intent": "Zone sociale et de repos : PNJ marchands, forgeron, conteur qui amorce les deux fils narratifs (nord/sud), quêtes d'introduction légères. Peu ou pas de combat.",
+        "provides": []
+      }
+    },
+    {
+      "id": "ronin_camp",
+      "name": "Camp des Lames-Sans-Maître",
+      "type": "camp",
+      "position": {
+        "x": 35,
+        "y": 60
+      },
+      "visibility": "visible",
+      "description": "Un campement de fortune où des rōnin sans clan attendent une guerre qui ne reviendra peut-être jamais. Les tentes sont rapiécées, les épées bien entretenues. Certains y cherchent la rédemption, d'autres simplement à manger.",
+      "unlock_condition": {
+        "type": "level",
+        "min": 2
+      },
+      "hint": null,
+      "generation_brief": {
+        "level_range": [
+          2,
+          4
+        ],
+        "tags": [
+          "rōnin",
+          "camp",
+          "honneur",
+          "combat léger"
+        ],
+        "content_intent": "Zone d'introduction au thème nord : quelques combats faciles contre bandits, PNJ rōnin proposant une quête de dette d'honneur qui doit être complétée avant d'accéder au champ de bataille voisin.",
+        "provides": [
+          {
+            "type": "quest",
+            "id_suggere": "quest_ronin_debt",
+            "via": "Un rōnin du camp confie une dette d'honneur envers les morts du champ de bataille voisin ; la quête consiste à leur rendre un dernier hommage ou à venger un affront ancien."
+          }
+        ]
+      }
+    },
+    {
+      "id": "battlefield",
+      "name": "Le Champ des Cendres",
+      "type": "ruins",
+      "position": {
+        "x": 25,
+        "y": 70
+      },
+      "visibility": "visible",
+      "description": "Un ancien champ de bataille où la terre n'a jamais vraiment guéri : armures rouillées, bannières déchirées, ossements à demi enfouis. On dit que par nuit sans lune, on entend encore le cliquetis des lames.",
+      "unlock_condition": {
+        "type": "quest",
+        "quest_id": "quest_ronin_debt",
+        "state": "completed"
+      },
+      "hint": "Les rōnin du camp voisin parlent d'une dette impayée envers les morts de ce champ ; il faudra l'honorer avant d'y marcher sans crainte.",
+      "generation_brief": {
+        "level_range": [
+          4,
+          6
+        ],
+        "tags": [
+          "guerre",
+          "ruines",
+          "esprits",
+          "honneur"
+        ],
+        "content_intent": "Zone de combat modéré contre esprits de guerriers et pillards, ambiance funèbre. Doit contenir une quête visible menant au domaine du clan Kurogane, ainsi qu'une quête cachée et discrète, liée à des rumeurs de dragon, à intégrer subtilement dans un dialogue ou un objet de fouille rare.",
+        "provides": [
+          {
+            "type": "quest",
+            "id_suggere": "quest_battlefield_relics",
+            "via": "Un survivant ou une inscription gravée demande de récupérer des reliques de guerre éparpillées sur le champ, comme preuve pour se faire accepter au domaine du clan Kurogane."
+          },
+          {
+            "type": "quest",
+            "id_suggere": "quest_dragon_whispers",
+            "via": "Une quête très discrète, découverte en fouillant un cadavre ou une bannière précise, révélant un fragment de légende sur un dragon endormi lié à la Fracture. Ne doit pas être mise en avant, presque manquable."
+          }
+        ]
+      }
+    },
+    {
+      "id": "clan_domain",
+      "name": "Domaine du Clan Kurogane",
+      "type": "camp",
+      "position": {
+        "x": 15,
+        "y": 80
+      },
+      "visibility": "visible",
+      "description": "Une forteresse de bois noirci, drapeaux frappés d'un dragon stylisé flottant dans le vent glacé. Le clan Kurogane veille jalousement sur ses terres et son passé, méfiant envers tout étranger.",
+      "unlock_condition": {
+        "type": "quest",
+        "quest_id": "quest_battlefield_relics",
+        "state": "completed"
+      },
+      "hint": "Les esprits du champ de bataille réclament justice ; seule une quête accomplie en leur nom ouvrira les portes du clan.",
+      "generation_brief": {
+        "level_range": [
+          6,
+          8
+        ],
+        "tags": [
+          "clan",
+          "samouraï",
+          "politique",
+          "combat"
+        ],
+        "content_intent": "Zone à forte densité narrative et combat modéré-élevé : gardes du clan, quêtes de loyauté ou de rivalité, boutique d'armes. Doit fournir un objet emblématique du clan (sceau ou blason) comme récompense de confiance, sans en révéler l'usage caché.",
+        "provides": [
+          {
+            "type": "item",
+            "id_suggere": "item_kurogane_crest",
+            "via": "Un blason du clan remis au joueur ayant gagné la confiance du seigneur local, après une série de quêtes de loyauté."
+          }
+        ]
+      }
+    },
+    {
+      "id": "mountain_pass",
+      "name": "Col des Brumes-Blanches",
+      "type": "wilderness",
+      "position": {
+        "x": 65,
+        "y": 40
+      },
+      "visibility": "visible",
+      "description": "Un sentier étroit grimpant entre deux parois rocheuses couvertes de givre. Le vent y hurle en continu, charriant une neige fine qui efface les traces de pas presque aussitôt.",
+      "unlock_condition": {
+        "type": "level",
+        "min": 2
+      },
+      "hint": null,
+      "generation_brief": {
+        "level_range": [
+          2,
+          4
+        ],
+        "tags": [
+          "montagne",
+          "froid",
+          "danger environnemental"
+        ],
+        "content_intent": "Zone d'exploration avec danger environnemental léger (froid, chutes de pierres) et faune montagnarde hostile. Doit fournir un talisman ou objet de protection contre le froid, nécessaire pour accéder au temple plus haut.",
+        "provides": [
+          {
+            "type": "item",
+            "id_suggere": "item_talisman_col",
+            "via": "Un talisman gravé trouvé sur le corps d'un pèlerin gelé ou offert par un ermite du col, protégeant contre le froid extrême du temple."
+          }
+        ]
+      }
+    },
+    {
+      "id": "snow_temple",
+      "name": "Temple de la Cime-Muette",
+      "type": "ruins",
+      "position": {
+        "x": 75,
+        "y": 30
+      },
+      "visibility": "visible",
+      "description": "Un temple à moitié enseveli sous la neige, ses statues érodées par des siècles de vent. Aucun moine n'y vit plus, mais des offrandes récentes suggèrent que quelqu'un, ou quelque chose, y revient encore.",
+      "unlock_condition": {
+        "type": "item",
+        "item_id": "item_talisman_col",
+        "state": "owned"
+      },
+      "hint": "Le col ne laisse passer sans dommage que ceux qui portent un talisman gravé, trouvé quelque part sur la route glacée.",
+      "generation_brief": {
+        "level_range": [
+          4,
+          6
+        ],
+        "tags": [
+          "temple",
+          "isolement",
+          "mystère",
+          "spirituel"
+        ],
+        "content_intent": "Zone mêlant exploration contemplative et combat contre esprits gardiens. Doit fournir un sceau ancien nécessaire pour pénétrer plus profondément dans les montagnes, avec un léger indice sur une présence plus grande endormie sous la glace.",
+        "provides": [
+          {
+            "type": "item",
+            "id_suggere": "item_temple_seal",
+            "via": "Un sceau de pierre trouvé dans la salle intérieure du temple, gardé par un esprit ou un mécanisme ancien, nécessaire pour franchir le sanctuaire de glace."
+          }
+        ]
+      }
+    },
+    {
+      "id": "glacial_sanctuary",
+      "name": "Sanctuaire de la Glace-Première",
+      "type": "danger",
+      "position": {
+        "x": 85,
+        "y": 20
+      },
+      "visibility": "visible",
+      "description": "Une grotte de glace bleutée, où le froid semble avoir figé le temps lui-même. Des runes archaïques, presque effacées, courent le long des parois — un langage qui n'appartient à aucun clan ni moine connu.",
+      "unlock_condition": {
+        "type": "item",
+        "item_id": "item_temple_seal",
+        "state": "owned"
+      },
+      "hint": "Un sceau brisé repose dans les cendres du temple ; sans lui, le sanctuaire de glace restera fermé aux vivants.",
+      "generation_brief": {
+        "level_range": [
+          6,
+          8
+        ],
+        "tags": [
+          "glace",
+          "architectes",
+          "runes",
+          "danger élevé"
+        ],
+        "content_intent": "Zone dangereuse et dense en combats contre créatures de glace, avec une forte ambiance de mystère lié aux Architectes. Doit fournir une rune gelée, fragment d'un objet plus grand, sans expliquer sa véritable nature.",
+        "provides": [
+          {
+            "type": "item",
+            "id_suggere": "item_frozen_rune",
+            "via": "Une rune de glace extraite d'un piédestal central, gardée par les créatures les plus fortes du sanctuaire, dont la nature exacte reste mystérieuse."
+          }
+        ]
+      }
+    },
+    {
+      "id": "boss_summit",
+      "name": "Le Sommet du Jugement",
+      "type": "boss",
+      "position": {
+        "x": 50,
+        "y": 90
+      },
+      "visibility": "visible",
+      "description": "Un plateau balayé par les vents, à la jonction visible des deux mondes : au loin, les fumées du champ de bataille ; de l'autre côté, l'éclat froid des glaciers. C'est ici que se juge qui peut prétendre gravir la Tour plus haut.",
+      "unlock_condition": {
+        "type": "group",
+        "mode": "all",
+        "conditions": [
+          {
+            "type": "zone",
+            "zone_id": "clan_domain",
+            "state": "unlocked"
+          },
+          {
+            "type": "zone",
+            "zone_id": "glacial_sanctuary",
+            "state": "unlocked"
+          }
+        ]
+      },
+      "hint": null,
+      "generation_brief": {
+        "level_range": [
+          8,
+          10
+        ],
+        "tags": [
+          "boss",
+          "convergence",
+          "honneur",
+          "glace"
+        ],
+        "content_intent": "Combat de fin d'étage : un gardien mêlant esthétique de samouraï et de glace, symbolisant la fusion des deux chemins parcourus. Doit marquer clairement la fin de la progression principale de l'étage.",
+        "provides": []
+      }
+    },
+    {
+      "id": "tower_passage",
+      "name": "Porte des Cimes Scellées",
+      "type": "passage",
+      "position": {
+        "x": 50,
+        "y": 100
+      },
+      "visibility": "visible",
+      "description": "Une arche de pierre noire, gravée de symboles ni tout à fait japonais ni tout à fait architectes, s'ouvre lentement à mesure que le vent se calme. Au-delà, l'obscurité promet un nouvel étage.",
+      "unlock_condition": {
+        "type": "boss",
+        "zone_id": "boss_summit",
+        "state": "defeated"
+      },
+      "hint": "La porte scellée ne s'ouvrira qu'après la chute du gardien du sommet.",
+      "generation_brief": {
+        "level_range": [
+          8,
+          10
+        ],
+        "tags": [
+          "passage",
+          "transition"
+        ],
+        "content_intent": "Zone de transition simple, sans contenu de combat ni de quête, juste un point de passage vers l'étage suivant.",
+        "provides": []
+      }
+    },
+    {
+      "id": "dragon_lair",
+      "name": "L'Antre du Sommeil-de-Fer",
+      "type": "lair",
+      "position": {
+        "x": 95,
+        "y": 10
+      },
+      "visibility": "hidden",
+      "description": "Une faille dissimulée sous la glace du sanctuaire, où l'air lui-même semble plus vieux que la Tour. Des chaînes brisées, forgées dans un métal inconnu, pendent depuis la voûte. Quelque chose y dort encore — et rêve peut-être de la Fracture.",
+      "unlock_condition": {
+        "type": "group",
+        "mode": "all",
+        "conditions": [
+          {
+            "type": "item",
+            "item_id": "item_kurogane_crest",
+            "state": "owned"
+          },
+          {
+            "type": "item",
+            "item_id": "item_frozen_rune",
+            "state": "owned"
+          },
+          {
+            "type": "quest",
+            "quest_id": "quest_dragon_whispers",
+            "state": "completed"
+          }
+        ]
+      },
+      "hint": null,
+      "generation_brief": {
+        "level_range": [
+          14,
+          17
+        ],
+        "tags": [
+          "dragon",
+          "architectes",
+          "fracture",
+          "secret",
+          "sous-boss"
+        ],
+        "content_intent": "Rencontre secrète et exceptionnelle contre un sous-boss dragon ancien, directement lié aux mystères des Architectes et de la Fracture. Difficulté volontairement très supérieure au reste de l'étage : réservée aux joueurs ayant assemblé la chaîne complète d'indices. Ne doit jamais être requise pour terminer l'étage. Ambiance solennelle, quasi sacrée, contraste total avec le reste du donjon.",
+        "provides": []
+      }
+    }
+  ],
+  "connections": [
+    [
+      "start_village",
+      "ronin_camp"
+    ],
+    [
+      "start_village",
+      "mountain_pass"
+    ],
+    [
+      "ronin_camp",
+      "battlefield"
+    ],
+    [
+      "battlefield",
+      "clan_domain"
+    ],
+    [
+      "mountain_pass",
+      "snow_temple"
+    ],
+    [
+      "snow_temple",
+      "glacial_sanctuary"
+    ],
+    [
+      "clan_domain",
+      "boss_summit"
+    ],
+    [
+      "glacial_sanctuary",
+      "boss_summit"
+    ],
+    [
+      "boss_summit",
+      "tower_passage"
+    ],
+    [
+      "glacial_sanctuary",
+      "dragon_lair"
+    ]
+  ],
+  "condition_manifest": [
+    {
+      "condition": {
+        "type": "quest",
+        "quest_id": "quest_ronin_debt",
+        "state": "completed"
+      },
+      "used_by": [
+        "zone:battlefield.unlock_condition"
+      ],
+      "resolved_by": "zone:ronin_camp (un rōnin y confie la quête de dette d'honneur envers les morts du champ de bataille)"
+    },
+    {
+      "condition": {
+        "type": "item",
+        "item_id": "item_talisman_col",
+        "state": "owned"
+      },
+      "used_by": [
+        "zone:snow_temple.unlock_condition"
+      ],
+      "resolved_by": "zone:mountain_pass (le talisman de protection contre le froid y est trouvé sur le col)"
+    },
+    {
+      "condition": {
+        "type": "quest",
+        "quest_id": "quest_battlefield_relics",
+        "state": "completed"
+      },
+      "used_by": [
+        "zone:clan_domain.unlock_condition"
+      ],
+      "resolved_by": "zone:battlefield (la quête de récupération de reliques de guerre y est disponible)"
+    },
+    {
+      "condition": {
+        "type": "item",
+        "item_id": "item_temple_seal",
+        "state": "owned"
+      },
+      "used_by": [
+        "zone:glacial_sanctuary.unlock_condition"
+      ],
+      "resolved_by": "zone:snow_temple (le sceau ancien y est gardé dans la salle intérieure du temple)"
+    },
+    {
+      "condition": {
+        "type": "item",
+        "item_id": "item_kurogane_crest",
+        "state": "owned"
+      },
+      "used_by": [
+        "zone:dragon_lair.unlock_condition"
+      ],
+      "resolved_by": "zone:clan_domain (le blason du clan est remis au joueur ayant gagné la confiance du seigneur local)"
+    },
+    {
+      "condition": {
+        "type": "item",
+        "item_id": "item_frozen_rune",
+        "state": "owned"
+      },
+      "used_by": [
+        "zone:dragon_lair.unlock_condition"
+      ],
+      "resolved_by": "zone:glacial_sanctuary (la rune de glace est extraite du piédestal central du sanctuaire)"
+    },
+    {
+      "condition": {
+        "type": "quest",
+        "quest_id": "quest_dragon_whispers",
+        "state": "completed"
+      },
+      "used_by": [
+        "zone:dragon_lair.unlock_condition"
+      ],
+      "resolved_by": "zone:battlefield (une quête discrète y est découverte en fouillant un élément précis du champ de bataille, révélant la légende du dragon)"
+    },
+    {
+      "condition": {
+        "type": "boss",
+        "zone_id": "boss_summit",
+        "state": "defeated"
+      },
+      "used_by": [
+        "zone:tower_passage.unlock_condition"
+      ],
+      "resolved_by": "zone:boss_summit (le combat de fin d'étage doit être vaincu pour ouvrir le passage)"
+    }
+  ]
+}

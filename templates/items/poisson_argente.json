@@ -1,0 +1,9 @@
+{
+  "id": "poisson_argente",
+  "name": "Poisson Argenté",
+  "description": "Frais pêché, sa chair est prisée des tables comme des tanneurs pour ses écailles fines.",
+  "category": "material",
+  "level": 1,
+  "base_value": 8,
+  "stack_size": 20
+}

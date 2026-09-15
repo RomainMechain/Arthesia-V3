@@ -1,0 +1,36 @@
+{
+  "id": "sceau_du_gardien_englouti",
+  "name": "Sceau du Gardien Englouti",
+  "description": "En brisant le sceau du Gardien Englouti, tu as libéré une once de l'énergie des Architectes qui dormait en lui — une lumière froide et implacable qui répond désormais à ton appel.",
+  "kind": "active",
+  "unlock_condition": {
+    "type": "boss",
+    "zone_id": "gardien_englouti",
+    "state": "defeated"
+  },
+  "damage_type": "magical",
+  "cooldown_seconds": 22,
+  "mana_cost": 45,
+  "telegraph_seconds": 0,
+  "avoidable_by": null,
+  "effects": [
+    {
+      "type": "damage",
+      "power": 260
+    },
+    {
+      "type": "debuff",
+      "stat": "def",
+      "amount_percent": 25,
+      "duration_seconds": 10,
+      "target": "enemy"
+    },
+    {
+      "type": "buff",
+      "stat": "int",
+      "amount_percent": 15,
+      "duration_seconds": 10,
+      "target": "self"
+    }
+  ]
+}

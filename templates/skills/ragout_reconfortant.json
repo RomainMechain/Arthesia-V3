@@ -1,0 +1,22 @@
+{
+  "id": "ragout_reconfortant",
+  "name": "Ragoût Réconfortant",
+  "description": "Les poissons argentés rapportés à Maren nourrissent aussi bien les tables que les souvenirs — un peu de leur chaleur reste en toi.",
+  "kind": "active",
+  "unlock_condition": {
+    "type": "deliver_item",
+    "item_id": "poisson_argente",
+    "count": 5
+  },
+  "damage_type": "magical",
+  "cooldown_seconds": 12,
+  "mana_cost": 20,
+  "telegraph_seconds": 0,
+  "avoidable_by": null,
+  "effects": [
+    {
+      "type": "heal",
+      "power": 100
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "id": "yolenne_tresseuse",
+  "name": "Yolenne",
+  "description": "Une tresseuse de roseaux installée depuis des années à l'orée du sentier. Elle connaît chaque tige, chaque pierre, et se méfie de ce que le sol cache.",
+  "role": "Tresseuse",
+  "dialogues": [
+    "Les roseaux poussent plus vite ici qu'ailleurs. Je ne sais pas pourquoi, et je préfère ne pas savoir.",
+    "Ces pierres, sous la boue... je les ai toujours vues. Mon grand-père disait qu'elles n'étaient pas d'ici.",
+    "Prends garde aux sangliers plus loin sur le chemin. Ils chargent avant même que tu ne les voies."
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "id": "fragment_pierre_taillee",
+  "name": "Fragment de Pierre Taillée",
+  "description": "Un éclat de pierre aux arêtes trop nettes pour être l'œuvre du hasard. Un vestige, peut-être, d'une civilisation oubliée.",
+  "level": 2,
+  "profession_required": {
+    "profession_id": "archeologie",
+    "min_level": 1,
+    "xp_reward": 20
+  },
+  "tool_required": null,
+  "gather_time_seconds": 5,
+  "yields": [
+    {
+      "item_id": "fragment_pierre_taillee",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 5
+    }
+  ]
+}

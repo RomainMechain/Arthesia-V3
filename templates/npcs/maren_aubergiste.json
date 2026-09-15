@@ -1,0 +1,11 @@
+{
+  "id": "maren_aubergiste",
+  "name": "Maren",
+  "description": "L'aubergiste de Rivelune, une femme au sourire fatigué qui garde toujours une lanterne allumée pour les pêcheurs en retard. Elle parle peu de son passé, mais son regard se perd parfois vers la Tour, comme si elle y cherchait quelqu'un.",
+  "role": "Aubergiste",
+  "dialogues": [
+    "Entre, le vent du lac mord plus fort ce soir.",
+    "On dit que la Tour appelle ceux qui n'ont plus rien à perdre. Je ne sais pas ce que ça dit de moi.",
+    "Un bon ragoût, ça console de bien des silences."
+  ]
+}

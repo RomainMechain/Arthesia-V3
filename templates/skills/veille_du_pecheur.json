@@ -1,0 +1,23 @@
+{
+  "id": "veille_du_pecheur",
+  "name": "Veille du Pêcheur",
+  "description": "Après avoir rendu à Théran son calme précaire, tu as appris sa patience immobile — celle qui protège quand tout semble perdu.",
+  "kind": "passive",
+  "unlock_condition": {
+    "type": "quest",
+    "quest_id": "silence_du_lac",
+    "state": "completed"
+  },
+  "trigger": "conditional",
+  "condition": {
+    "type": "hp_below_percent",
+    "value": 30
+  },
+  "effects": [
+    {
+      "type": "shield",
+      "amount_power": 150,
+      "duration_seconds": 6
+    }
+  ]
+}

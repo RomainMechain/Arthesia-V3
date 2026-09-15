@@ -1,0 +1,66 @@
+{
+  "id": "dragon_lair",
+  "name": "L'Antre du Sommeil-de-Fer",
+  "type": "lair",
+  "position": {
+    "x": 95,
+    "y": 10
+  },
+  "visibility": "hidden",
+  "description": "Une faille dissimulée sous la glace du sanctuaire, où l'air lui-même semble plus vieux que la Tour. Des chaînes brisées, forgées dans un métal inconnu, pendent depuis la voûte. Quelque chose y dort encore — et rêve peut-être de la Fracture.",
+  "unlock_condition": {
+    "type": "group",
+    "mode": "all",
+    "conditions": [
+      {
+        "type": "item",
+        "item_id": "item_kurogane_crest",
+        "state": "owned"
+      },
+      {
+        "type": "item",
+        "item_id": "item_frozen_rune",
+        "state": "owned"
+      },
+      {
+        "type": "quest",
+        "quest_id": "quest_dragon_whispers",
+        "state": "completed"
+      }
+    ]
+  },
+  "hint": null,
+  "generation_brief": {
+    "level_range": [
+      14,
+      17
+    ],
+    "tags": [
+      "dragon",
+      "architectes",
+      "fracture",
+      "secret",
+      "sous-boss"
+    ],
+    "content_intent": "Rencontre secrète et exceptionnelle contre un sous-boss dragon ancien, directement lié aux mystères des Architectes et de la Fracture. Difficulté volontairement très supérieure au reste de l'étage : réservée aux joueurs ayant assemblé la chaîne complète d'indices. Ne doit jamais être requise pour terminer l'étage. Ambiance solennelle, quasi sacrée, contraste total avec le reste du donjon.",
+    "provides": []
+  },
+  "entries": [
+    {
+      "id": "sommeil_de_fer",
+      "template_type": "monster",
+      "template_id": "sommeil_de_fer_dragon",
+      "state_scope": "per_player",
+      "rarity": "very_rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "unique_per_player",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    }
+  ]
+}

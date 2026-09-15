@@ -1,0 +1,21 @@
+{
+  "id": "poisson_argente",
+  "name": "Poisson Argenté",
+  "description": "Un poisson au ventre luisant comme de l'étain, qui frôle la surface sans jamais la briser vraiment.",
+  "level": 1,
+  "profession_required": {
+    "profession_id": "peche",
+    "min_level": 1,
+    "xp_reward": 10
+  },
+  "tool_required": null,
+  "gather_time_seconds": 4,
+  "yields": [
+    {
+      "item_id": "poisson_argente",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 10
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "id": "charge_du_sanglier",
+  "name": "Charge du Sanglier",
+  "description": "Tu as appris à imiter la ruée brutale du Sanglier des Roseaux, fonçant tête baissée à travers les défenses adverses.",
+  "kind": "active",
+  "unlock_condition": {
+    "type": "kill_count",
+    "monster_id": "sanglier_roseaux",
+    "count": 3
+  },
+  "damage_type": "physical",
+  "cooldown_seconds": 8,
+  "mana_cost": 15,
+  "telegraph_seconds": 0,
+  "avoidable_by": null,
+  "effects": [
+    {
+      "type": "damage",
+      "power": 130
+    }
+  ]
+}

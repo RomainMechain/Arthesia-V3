@@ -1,0 +1,9 @@
+{
+  "id": "item_sceau_des_chaines_brisees",
+  "name": "Sceau des Chaînes Brisées",
+  "description": "Un fragment du métal inconnu qui retenait Sommeil-de-Fer, encore chaud d'avoir été rompu. On raconte que ceux qui le portent entendent, parfois, un très lointain grondement — comme un rêve qui refuse de se terminer.",
+  "category": "material",
+  "level": 17,
+  "base_value": 2000,
+  "stack_size": 5
+}

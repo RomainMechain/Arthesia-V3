@@ -1,0 +1,11 @@
+{
+  "id": "threan_pecheur",
+  "name": "Théran",
+  "description": "Un pêcheur au regard toujours tourné vers le large, qui jette ses filets sans jamais vraiment les remonter pleins.",
+  "role": "Pêcheur solitaire",
+  "dialogues": [
+    "Le lac ne rend jamais tout ce qu'on lui donne.",
+    "Certains jours, l'eau ne bouge pas du tout. Même pas le vent n'y touche.",
+    "J'ai vu quelque chose remuer, une fois, sous le miroir. Je n'y suis plus retourné seul depuis."
+  ]
+}

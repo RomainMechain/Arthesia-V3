@@ -1,0 +1,109 @@
+{
+  "id": "sommeil_de_fer_dragon",
+  "name": "Sommeil-de-Fer",
+  "description": "Il dort depuis plus longtemps que la Tour ne compte d'étages, enchaîné par un métal que même les Architectes n'osaient nommer. Ses écailles, ternies par le givre ancien, portent encore les runes de celui qui l'a lié ici — et qui n'est peut-être plus. On dit qu'il rêve de la Fracture comme on rêve d'un membre perdu : avec une douleur qui ne s'éteint jamais tout à fait. Ceux qui l'ont vu ouvrir un œil affirment que la faille elle-même a retenu son souffle.",
+  "level": 16,
+  "role": "boss",
+  "stats": {
+    "hp": 5200,
+    "atk": 95,
+    "def": 60,
+    "agi": 40,
+    "int": 80,
+    "sag": 70
+  },
+  "moveset": [
+    {
+      "id": "griffe_glacee",
+      "damage_type": "physical",
+      "cooldown_seconds": 3,
+      "damage": 120,
+      "weight": 4,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "souffle_de_l_oubli",
+      "damage_type": "magical",
+      "cooldown_seconds": 6,
+      "damage": 180,
+      "weight": 3,
+      "telegraph_seconds": 2,
+      "avoidable_by": "dodge"
+    },
+    {
+      "id": "queue_broyeuse",
+      "damage_type": "physical",
+      "cooldown_seconds": 5,
+      "damage": 150,
+      "weight": 2,
+      "telegraph_seconds": 1.5,
+      "avoidable_by": "block"
+    },
+    {
+      "id": "rugissement_des_chaines",
+      "damage_type": "magical",
+      "cooldown_seconds": 8,
+      "damage": 60,
+      "weight": 1,
+      "telegraph_seconds": 3,
+      "avoidable_by": "interrupt"
+    },
+    {
+      "id": "reveil_dans_les_chaines",
+      "damage_type": "magical",
+      "cooldown_seconds": 10,
+      "damage": 250,
+      "weight": 1,
+      "telegraph_seconds": 3,
+      "avoidable_by": "dodge"
+    }
+  ],
+  "phases": [
+    {
+      "hp_above_percent": 40,
+      "moveset_ids": [
+        "griffe_glacee",
+        "souffle_de_l_oubli",
+        "queue_broyeuse",
+        "rugissement_des_chaines"
+      ]
+    },
+    {
+      "hp_above_percent": 0,
+      "moveset_ids": [
+        "griffe_glacee",
+        "souffle_de_l_oubli",
+        "queue_broyeuse",
+        "rugissement_des_chaines",
+        "reveil_dans_les_chaines"
+      ]
+    }
+  ],
+  "loot_table": [
+    {
+      "item_id": "item_ecaille_sommeil_de_fer",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 6
+    },
+    {
+      "item_id": "item_croc_dragon_ancien",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 4
+    },
+    {
+      "item_id": "item_coeur_gele_ancien",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 8
+    },
+    {
+      "item_id": "item_sceau_des_chaines_brisees",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 1
+    }
+  ]
+}

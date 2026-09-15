@@ -1,0 +1,91 @@
+{
+  "id": "gardien_englouti",
+  "name": "Le Gardien Englouti",
+  "description": "Il n'a plus de nom que celui que les Architectes lui ont donné avant la Fracture, et ce nom même s'est perdu. Sa silhouette, mi-armure mi-pierre, semble taillée dans le même métal froid que le sceau brisé qui l'a réveillé. Des veines de lumière bleutée courent sous ce qui pourrait être une peau, pulsant au rythme d'un cœur qui ne devrait plus battre. Il ne parle pas. Il ne recule pas. Il garde encore, avec une fidélité aveugle, un savoir que plus personne ne peut lire — et il semble considérer chaque Marqué qui s'approche comme une profanation à corriger.",
+  "level": 7,
+  "role": "boss",
+  "stats": {
+    "hp": 1400,
+    "atk": 58,
+    "def": 34,
+    "agi": 16,
+    "int": 52,
+    "sag": 28
+  },
+  "moveset": [
+    {
+      "id": "poing_scelle",
+      "damage_type": "physical",
+      "cooldown_seconds": 3,
+      "damage": 42,
+      "weight": 4,
+      "telegraph_seconds": 1,
+      "avoidable_by": "esquive"
+    },
+    {
+      "id": "onde_runique",
+      "damage_type": "magical",
+      "cooldown_seconds": 5,
+      "damage": 55,
+      "weight": 3,
+      "telegraph_seconds": 2,
+      "avoidable_by": "deplacement"
+    },
+    {
+      "id": "eclat_de_sceau",
+      "damage_type": "magical",
+      "cooldown_seconds": 8,
+      "damage": 80,
+      "weight": 2,
+      "telegraph_seconds": 3,
+      "avoidable_by": "deplacement"
+    },
+    {
+      "id": "reveil_ancien",
+      "damage_type": "physical",
+      "cooldown_seconds": 12,
+      "damage": 110,
+      "weight": 1,
+      "telegraph_seconds": 3,
+      "avoidable_by": "esquive"
+    }
+  ],
+  "phases": [
+    {
+      "hp_above_percent": 50,
+      "moveset_ids": [
+        "poing_scelle",
+        "onde_runique"
+      ]
+    },
+    {
+      "hp_above_percent": 0,
+      "moveset_ids": [
+        "poing_scelle",
+        "onde_runique",
+        "eclat_de_sceau",
+        "reveil_ancien"
+      ]
+    }
+  ],
+  "loot_table": [
+    {
+      "item_id": "coeur_architecte",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 10
+    },
+    {
+      "item_id": "poussiere_scellee",
+      "quantity_min": 2,
+      "quantity_max": 4,
+      "weight": 6
+    },
+    {
+      "item_id": "lame_du_gardien",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 1
+    }
+  ]
+}

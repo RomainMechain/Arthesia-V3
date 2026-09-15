@@ -1,0 +1,9 @@
+{
+  "id": "forge",
+  "name": "Forge",
+  "description": "Fond et façonne les métaux et alliages.",
+  "profession_required": { "profession_id": "forgeron" },
+  "parameters": [
+    { "id": "temperature", "label": "Température", "type": "choice", "options": ["basse", "moyenne", "haute", "extreme"] }
+  ]
+}

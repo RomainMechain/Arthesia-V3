@@ -1,0 +1,20 @@
+{
+  "id": "voile_d_ecailles",
+  "name": "Voile d'Écailles",
+  "description": "Portée près de la peau, une Écaille Irisée arrachée à l'Ombre du Lac te recouvre d'un reflet froid qui détourne les coups.",
+  "kind": "passive",
+  "unlock_condition": {
+    "type": "item",
+    "item_id": "ecaille_irisee",
+    "state": "owned"
+  },
+  "trigger": "always",
+  "condition": null,
+  "effects": [
+    {
+      "type": "stat_bonus_percent",
+      "stat": "def",
+      "amount_percent": 8
+    }
+  ]
+}

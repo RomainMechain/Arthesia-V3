@@ -1,0 +1,9 @@
+{
+  "id": "fragment_pierre_taillee",
+  "name": "Fragment de Pierre Taillée",
+  "description": "Un éclat de pierre gravé de motifs à demi effacés, d'origine incertaine.",
+  "category": "material",
+  "level": 2,
+  "base_value": 25,
+  "stack_size": 10
+}

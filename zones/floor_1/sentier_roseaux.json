@@ -1,0 +1,160 @@
+{
+  "id": "sentier_roseaux",
+  "name": "Le Sentier des Roseaux",
+  "type": "wilderness",
+  "position": {
+    "x": 30,
+    "y": 55
+  },
+  "visibility": "visible",
+  "description": "Un chemin étroit serpente entre des roseaux plus hauts qu'un homme. Le sol est humide, et par endroits on distingue des pierres taillées à moitié enfouies, trop régulières pour être naturelles.",
+  "unlock_condition": {
+    "type": "level",
+    "min": 1
+  },
+  "hint": null,
+  "generation_brief": {
+    "level_range": [
+      1,
+      3
+    ],
+    "tags": [
+      "foret",
+      "roseaux",
+      "introduction",
+      "combat_leger"
+    ],
+    "content_intent": "Zone de combat d'introduction : monstres faibles isolés, quelques ressources de récolte simples. Ambiance encore paisible mais avec de premiers signes d'étrangeté (pierres taillées).",
+    "provides": []
+  },
+  "entries": [
+    {
+      "id": "entry_rat_roseaux_01",
+      "template_type": "monster",
+      "template_id": "rat_des_roseaux",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 25,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "entry_sanglier_roseaux_01",
+      "template_type": "monster",
+      "template_id": "sanglier_roseaux",
+      "state_scope": "shared",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 9,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "entry_libellule_geante_01",
+      "template_type": "monster",
+      "template_id": "libellule_geante",
+      "state_scope": "shared",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 120,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "entry_fibre_roseau_01",
+      "template_type": "resource",
+      "template_id": "fibre_roseau",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 20,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "entry_argile_humide_01",
+      "template_type": "resource",
+      "template_id": "argile_humide",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 25,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "entry_fragment_pierre_01",
+      "template_type": "resource",
+      "template_id": "fragment_pierre_taillee",
+      "state_scope": "shared",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 60,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "entry_yolenne_npc_01",
+      "template_type": "npc",
+      "template_id": "yolenne_tresseuse",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "entry_yolenne_quest_01",
+      "template_type": "quest_giver",
+      "template_id": "premiers_pas_roseaux",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    }
+  ]
+}

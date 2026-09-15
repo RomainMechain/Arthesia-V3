@@ -1,0 +1,29 @@
+{
+  "id": "dard_de_libellule",
+  "name": "Dard de Libellule",
+  "description": "La poussière irisée des Libellules Géantes, une fois maîtrisée, ronge l'armure de quiconque la respire.",
+  "kind": "active",
+  "unlock_condition": {
+    "type": "kill_count",
+    "monster_id": "libellule_geante",
+    "count": 15
+  },
+  "damage_type": "magical",
+  "cooldown_seconds": 10,
+  "mana_cost": 25,
+  "telegraph_seconds": 0,
+  "avoidable_by": null,
+  "effects": [
+    {
+      "type": "damage",
+      "power": 90
+    },
+    {
+      "type": "debuff",
+      "stat": "def",
+      "amount_percent": 15,
+      "duration_seconds": 8,
+      "target": "enemy"
+    }
+  ]
+}

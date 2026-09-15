@@ -1,0 +1,17 @@
+{
+  "id": "lame_du_gardien",
+  "name": "Lame du Gardien",
+  "description": "Une arme forgée dans le même métal que le corps du Gardien Englouti, encore tiède du combat qui l'a libérée.",
+  "category": "equipment",
+  "level": 7,
+  "base_value": 500,
+  "stack_size": 1,
+  "equipment": {
+    "slot": "weapon",
+    "level_required": 7,
+    "stat_bonuses": {
+      "atk": 24,
+      "int": 12
+    }
+  }
+}

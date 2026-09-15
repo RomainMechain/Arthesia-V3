@@ -1,0 +1,9 @@
+{
+  "id": "croute_argile_rat",
+  "name": "Croûte d'Argile Cuite",
+  "description": "Une plaque grossière née de l'argile durcie à haute température, où subsistent des lambeaux de peau calcinée. L'odeur âcre persiste, signe d'un façonnage hâtif et sans dessein clair.",
+  "category": "material",
+  "level": 1,
+  "base_value": 7,
+  "stack_size": 20
+}

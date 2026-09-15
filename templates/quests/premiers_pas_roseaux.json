@@ -1,0 +1,28 @@
+{
+  "id": "premiers_pas_roseaux",
+  "name": "Premiers Pas dans les Roseaux",
+  "description": "Yolenne te demande d'écarter les rats qui rôdent près de son atelier et de lui rapporter quelques fibres fraîches pour son tressage.",
+  "objectives": [
+    {
+      "type": "kill_count",
+      "monster_id": "rat_des_roseaux",
+      "count": 5
+    },
+    {
+      "type": "gather_count",
+      "resource_id": "fibre_roseau",
+      "count": 5
+    }
+  ],
+  "rewards": {
+    "xp": 50,
+    "gold": 20,
+    "items": [
+      {
+        "item_id": "fragment_pierre_taillee",
+        "quantity": 1
+      }
+    ]
+  },
+  "repeatable": false
+}

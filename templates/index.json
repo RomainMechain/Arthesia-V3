@@ -1,0 +1,431 @@
+[
+  {
+    "id": "rat_des_roseaux",
+    "name": "Rat des Roseaux",
+    "kind": "monster",
+    "level": 1,
+    "tags": [],
+    "description": "Un rongeur au pelage boueux, agile dans les tiges denses. Peu dangereux seul, mais toujours affamé."
+  },
+  {
+    "id": "sanglier_roseaux",
+    "name": "Sanglier des Roseaux",
+    "kind": "monster",
+    "level": 2,
+    "tags": [],
+    "description": "Une bête massive qui charge à travers les tiges avec une force surprenante. Ses défenses sont recherchées par les artisans locaux."
+  },
+  {
+    "id": "libellule_geante",
+    "name": "Libellule Géante",
+    "kind": "monster",
+    "level": 3,
+    "tags": [],
+    "description": "Un insecte irisé aux ailes crépitantes, qui plane au-dessus des roseaux avant de fondre en piqué. Une poussière étrange se détache de ses ailes."
+  },
+  {
+    "id": "fibre_roseau",
+    "name": "Roseaux à Fibre",
+    "kind": "resource",
+    "level": 1,
+    "tags": [],
+    "description": "Des tiges souples, faciles à tresser, utilisées dans nombre d'artisanats simples."
+  },
+  {
+    "id": "argile_humide",
+    "name": "Argile Humide",
+    "kind": "resource",
+    "level": 1,
+    "tags": [],
+    "description": "Une argile grasse et fraîche, prélevée près des points d'eau du sentier."
+  },
+  {
+    "id": "fragment_pierre_taillee",
+    "name": "Fragment de Pierre Taillée",
+    "kind": "resource",
+    "level": 2,
+    "tags": [],
+    "description": "Un éclat de pierre aux arêtes trop nettes pour être l'œuvre du hasard. Un vestige, peut-être, d'une civilisation oubliée."
+  },
+  {
+    "id": "peau_de_rat",
+    "name": "Peau de Rat",
+    "kind": "item",
+    "level": 1,
+    "tags": [],
+    "description": "Une peau élimée, tout juste bonne à être vendue ou tannée."
+  },
+  {
+    "id": "defense_sanglier",
+    "name": "Défense de Sanglier",
+    "kind": "item",
+    "level": 2,
+    "tags": [],
+    "description": "Une défense robuste, prisée des artisans pour ses arêtes tranchantes."
+  },
+  {
+    "id": "fibre_roseau_brute",
+    "name": "Fibre de Roseau Brute",
+    "kind": "item",
+    "level": 1,
+    "tags": [],
+    "description": "Des fibres végétales encore humides, à faire sécher avant usage."
+  },
+  {
+    "id": "argile_humide",
+    "name": "Argile Humide",
+    "kind": "item",
+    "level": 1,
+    "tags": [],
+    "description": "Une motte d'argile grasse, malléable et fraîche."
+  },
+  {
+    "id": "poussiere_libellule",
+    "name": "Poussière de Libellule",
+    "kind": "item",
+    "level": 3,
+    "tags": [],
+    "description": "Une poussière irisée aux propriétés mal comprises, récoltée sur les ailes de l'insecte."
+  },
+  {
+    "id": "fragment_pierre_taillee",
+    "name": "Fragment de Pierre Taillée",
+    "kind": "item",
+    "level": 2,
+    "tags": [],
+    "description": "Un éclat de pierre gravé de motifs à demi effacés, d'origine incertaine."
+  },
+  {
+    "id": "yolenne_tresseuse",
+    "name": "Yolenne",
+    "kind": "npc",
+    "level": null,
+    "tags": [],
+    "description": "Une tresseuse de roseaux installée depuis des années à l'orée du sentier. Elle connaît chaque tige, chaque pierre, et se méfie de ce que le sol cache."
+  },
+  {
+    "id": "premiers_pas_roseaux",
+    "name": "Premiers Pas dans les Roseaux",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Yolenne te demande d'écarter les rats qui rôdent près de son atelier et de lui rapporter quelques fibres fraîches pour son tressage."
+  },
+  {
+    "id": "poisson_argente",
+    "name": "Poisson Argenté",
+    "kind": "resource",
+    "level": 1,
+    "tags": [],
+    "description": "Un poisson au ventre luisant comme de l'étain, qui frôle la surface sans jamais la briser vraiment."
+  },
+  {
+    "id": "poisson_argente",
+    "name": "Poisson Argenté",
+    "kind": "item",
+    "level": 1,
+    "tags": [],
+    "description": "Frais pêché, sa chair est prisée des tables comme des tanneurs pour ses écailles fines."
+  },
+  {
+    "id": "ombre_du_lac",
+    "name": "Ombre du Lac",
+    "kind": "monster",
+    "level": 3,
+    "tags": [],
+    "description": "Une masse sombre et silencieuse qui glisse sous le miroir du lac, ne remontant que lorsqu'on la croit partie. Les pêcheurs évitent d'en parler."
+  },
+  {
+    "id": "ecaille_irisee",
+    "name": "Écaille Irisée",
+    "kind": "item",
+    "level": 3,
+    "tags": [],
+    "description": "Une écaille aux reflets changeants, froide au toucher même loin de l'eau."
+  },
+  {
+    "id": "threan_pecheur",
+    "name": "Théran",
+    "kind": "npc",
+    "level": null,
+    "tags": [],
+    "description": "Un pêcheur au regard toujours tourné vers le large, qui jette ses filets sans jamais vraiment les remonter pleins."
+  },
+  {
+    "id": "silence_du_lac",
+    "name": "Le Silence du Lac",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Théran te demande de lui rapporter quelques poissons frais et d'écarter les rats qui rôdent trop près de son embarcadère, avant que le calme du lac ne soit encore troublé."
+  },
+  {
+    "id": "gardien_englouti",
+    "name": "Le Gardien Englouti",
+    "kind": "monster",
+    "level": 7,
+    "tags": [],
+    "description": "Il n'a plus de nom que celui que les Architectes lui ont donné avant la Fracture, et ce nom même s'est perdu. Sa silhouette, mi-armure mi-pierre, semble taillée dans le même métal froid que le sceau brisé qui l'a réveillé. Des veines de lumière bleutée courent sous ce qui pourrait être une peau, pulsant au rythme d'un cœur qui ne devrait plus battre. Il ne parle pas. Il ne recule pas. Il garde encore, avec une fidélité aveugle, un savoir que plus personne ne peut lire — et il semble considérer chaque Marqué qui s'approche comme une profanation à corriger."
+  },
+  {
+    "id": "echo_gardien",
+    "name": "L'Écho du Gardien",
+    "kind": "npc",
+    "level": null,
+    "tags": [],
+    "description": "Une silhouette translucide, à peine plus qu'un reflet de lumière froide, qui se tient immobile devant le sceau brisé. Elle ne semble pas vivante, ni tout à fait absente."
+  },
+  {
+    "id": "coeur_architecte",
+    "name": "Cœur d'Architecte",
+    "kind": "item",
+    "level": 7,
+    "tags": [],
+    "description": "Un noyau de métal froid, encore parcouru de veines de lumière bleutée. On dit que les Architectes en scellaient un dans chaque gardien qu'ils créaient."
+  },
+  {
+    "id": "poussiere_scellee",
+    "name": "Poussière Scellée",
+    "kind": "item",
+    "level": 7,
+    "tags": [],
+    "description": "Un résidu cristallin détaché du sceau brisé, encore chargé d'une énergie qui refuse de s'éteindre."
+  },
+  {
+    "id": "lame_du_gardien",
+    "name": "Lame du Gardien",
+    "kind": "item",
+    "level": 7,
+    "tags": [],
+    "description": "Une arme forgée dans le même métal que le corps du Gardien Englouti, encore tiède du combat qui l'a libérée."
+  },
+  {
+    "id": "maren_aubergiste",
+    "name": "Maren",
+    "kind": "npc",
+    "level": null,
+    "tags": [],
+    "description": "L'aubergiste de Rivelune, une femme au sourire fatigué qui garde toujours une lanterne allumée pour les pêcheurs en retard. Elle parle peu de son passé, mais son regard se perd parfois vers la Tour, comme si elle y cherchait quelqu'un."
+  },
+  {
+    "id": "ragout_du_soir",
+    "name": "Le Ragoût du Soir",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Maren prépare un ragoût pour les pêcheurs revenus tard. Elle te demande de lui rapporter quelques poissons argentés frais avant que le feu ne s'éteigne."
+  },
+  {
+    "id": "auberge_du_quai",
+    "name": "Auberge du Quai",
+    "kind": "shop",
+    "level": null,
+    "tags": [],
+    "description": "Une petite auberge de bois flotté où l'on sert soupe chaude et remèdes simples aux voyageurs de passage."
+  },
+  {
+    "id": "marche_de_rivelune",
+    "name": "Marché Flottant de Rivelune",
+    "kind": "player_market",
+    "level": null,
+    "tags": [],
+    "description": "Un ponton où les habitants et voyageurs étalent leurs surplus : fibres tressées, poissons fumés, et quelques curiosités remontées du lac."
+  },
+  {
+    "id": "soupe_de_lac",
+    "name": "Soupe de Lac",
+    "kind": "item",
+    "level": 1,
+    "tags": [],
+    "description": "Une soupe chaude au poisson, réconfortante après une longue marche sur les pilotis."
+  },
+  {
+    "id": "poignard_defense_argile_cuite",
+    "name": "Poignard à Défense Cuite",
+    "kind": "item",
+    "level": 2,
+    "tags": [],
+    "description": "Une défense de sanglier montée sur une garde d'argile durcie à haute température, la terre grasse ayant fusionné en une gaine rigide et craquelée autour de l'arête. Rustique mais mortellement efficace.",
+    "base_value": 24
+  },
+  {
+    "id": "croc_lumiere_froide",
+    "name": "Croc de Lumière Froide",
+    "kind": "item",
+    "level": 6,
+    "tags": [],
+    "description": "Une lame courte forgée en fondant deux défenses de sanglier dans la chaleur extrême, jusqu'à ce que le Cœur d'Architecte, mis à nu, s'y déverse comme un métal vivant. Les arêtes tranchantes de l'os se sont figées autour du noyau, et des veines de lumière bleutée pulsent encore sous la surface, comme si quelque chose, à l'intérieur, refusait de s'éteindre.",
+    "base_value": 380
+  },
+  {
+    "id": "noyau_grave_stabilise",
+    "name": "Noyau Gravé Stabilisé",
+    "kind": "item",
+    "level": 6,
+    "tags": [],
+    "description": "Le Cœur d'Architecte a été refondu à moyenne température, ses veines de lumière bleutée désormais canalisées par les motifs gravés du fragment de pierre, fusionné à sa surface. L'objet reste froid au toucher, mais sa lumière interne pulse à un rythme plus lent, presque apaisé.",
+    "base_value": 340
+  },
+  {
+    "id": "argile_scellee_ecailles",
+    "name": "Argile Scellée aux Écailles",
+    "kind": "item",
+    "level": 2,
+    "tags": [],
+    "description": "Une motte d'argile durcie à feu moyen, juste assez pour la raffermir sans la vitrifier. Les écailles fines du poisson argenté y ont fondu en surface, formant un lustre irrégulier, tandis que la peau de rat, consumée en partie durant la cuisson, a laissé un liant sombre entre les fissures. Le fragment de pierre taillée a été pressé dans la matière encore molle avant la cuisson : on devine, en creux, les contours à demi effacés de motifs qui ne semblent pas d'origine humaine.",
+    "base_value": 68
+  },
+  {
+    "id": "moulage_argile_rat",
+    "name": "Moulage Raté",
+    "kind": "item",
+    "level": 1,
+    "tags": [],
+    "description": "Une masse d'argile durcie à la chaleur, où sont pris quelques lambeaux de peau calcinés. La cuisson a figé l'ensemble en une forme grossière, sans réelle utilité.",
+    "base_value": 4
+  },
+  {
+    "id": "sceau_coeur_architecte_scelle",
+    "name": "Sceau du Cœur Scellé",
+    "kind": "item",
+    "level": 9,
+    "tags": [],
+    "description": "Une amulette née d'un forgeage lent et prudent : le Cœur d'Architecte, refroidi sans jamais être porté à l'incandescence, a été enchâssé dans l'écrin du fragment de pierre taillée. Les veines de lumière bleutée persistent, ralenties mais vivantes, comme un souffle qu'on aurait pris soin de ne pas éteindre. La basse chaleur a préservé ce que le métal gardait encore de son ancien gardien.",
+    "base_value": 560
+  },
+  {
+    "id": "instinct_du_charognard",
+    "name": "Instinct du Charognard",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "À force d'affronter les Rats des Roseaux, tu as appris leur agilité nerveuse et leur flair pour l'esquive dans les tiges denses.",
+    "floor_origin": 1
+  },
+  {
+    "id": "charge_du_sanglier",
+    "name": "Charge du Sanglier",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "Tu as appris à imiter la ruée brutale du Sanglier des Roseaux, fonçant tête baissée à travers les défenses adverses.",
+    "floor_origin": 1
+  },
+  {
+    "id": "voile_d_ecailles",
+    "name": "Voile d'Écailles",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "Portée près de la peau, une Écaille Irisée arrachée à l'Ombre du Lac te recouvre d'un reflet froid qui détourne les coups.",
+    "floor_origin": 1
+  },
+  {
+    "id": "dard_de_libellule",
+    "name": "Dard de Libellule",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "La poussière irisée des Libellules Géantes, une fois maîtrisée, ronge l'armure de quiconque la respire.",
+    "floor_origin": 1
+  },
+  {
+    "id": "etreinte_de_l_ombre",
+    "name": "Étreinte de l'Ombre",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "Ceux qui ont affronté l'Ombre du Lac et survécu peuvent invoquer un instant sa poigne glacée, qui alourdit et déchire.",
+    "floor_origin": 1
+  },
+  {
+    "id": "armure_des_architectes",
+    "name": "Armure des Architectes",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "À force de manier les Fragments de Pierre Taillée, tu en as saisi la géométrie ancienne — une rigidité qui semble protéger ceux qui la comprennent.",
+    "floor_origin": 1
+  },
+  {
+    "id": "ragout_reconfortant",
+    "name": "Ragoût Réconfortant",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "Les poissons argentés rapportés à Maren nourrissent aussi bien les tables que les souvenirs — un peu de leur chaleur reste en toi.",
+    "floor_origin": 1
+  },
+  {
+    "id": "tressage_instinctif",
+    "name": "Tressage Instinctif",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "Des heures passées à récolter des Roseaux à Fibre pour Yolenne ont endurci tes mains et ta constitution.",
+    "floor_origin": 1
+  },
+  {
+    "id": "veille_du_pecheur",
+    "name": "Veille du Pêcheur",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "Après avoir rendu à Théran son calme précaire, tu as appris sa patience immobile — celle qui protège quand tout semble perdu.",
+    "floor_origin": 1
+  },
+  {
+    "id": "sceau_du_gardien_englouti",
+    "name": "Sceau du Gardien Englouti",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "En brisant le sceau du Gardien Englouti, tu as libéré une once de l'énergie des Architectes qui dormait en lui — une lumière froide et implacable qui répond désormais à ton appel.",
+    "floor_origin": 1
+  },
+  {
+    "id": "sommeil_de_fer_dragon",
+    "name": "Sommeil-de-Fer",
+    "kind": "monster",
+    "level": 16,
+    "tags": [],
+    "description": "Il dort depuis plus longtemps que la Tour ne compte d'étages, enchaîné par un métal que même les Architectes n'osaient nommer. Ses écailles, ternies par le givre ancien, portent encore les runes de celui qui l'a lié ici — et qui n'est peut-être plus. On dit qu'il rêve de la Fracture comme on rêve d'un membre perdu : avec une douleur qui ne s'éteint jamais tout à fait. Ceux qui l'ont vu ouvrir un œil affirment que la faille elle-même a retenu son souffle.",
+    "base_value": null
+  },
+  {
+    "id": "item_ecaille_sommeil_de_fer",
+    "name": "Écaille de Sommeil-de-Fer",
+    "kind": "item",
+    "level": 16,
+    "tags": [],
+    "description": "Une écaille arrachée au dragon endormi, encore froide comme la faille qui l'abrite. Elle semble absorber la lumière plutôt que la refléter.",
+    "base_value": 900
+  },
+  {
+    "id": "item_croc_dragon_ancien",
+    "name": "Croc du Dragon Ancien",
+    "kind": "item",
+    "level": 17,
+    "tags": [],
+    "description": "Un croc plus long qu'une lame de garde, encore parcouru d'un froid qui semble remonter jusqu'à la Fracture elle-même.",
+    "base_value": 1200
+  },
+  {
+    "id": "item_coeur_gele_ancien",
+    "name": "Cœur Gelé Ancien",
+    "kind": "item",
+    "level": 16,
+    "tags": [],
+    "description": "Un noyau de glace qui ne fond jamais, au centre duquel palpite encore une lueur bleutée — le même éclat que l'on retrouve dans les gardiens des Architectes.",
+    "base_value": 750
+  },
+  {
+    "id": "item_sceau_des_chaines_brisees",
+    "name": "Sceau des Chaînes Brisées",
+    "kind": "item",
+    "level": 17,
+    "tags": [],
+    "description": "Un fragment du métal inconnu qui retenait Sommeil-de-Fer, encore chaud d'avoir été rompu. On raconte que ceux qui le portent entendent, parfois, un très lointain grondement — comme un rêve qui refuse de se terminer.",
+    "base_value": 2000
+  }
+]

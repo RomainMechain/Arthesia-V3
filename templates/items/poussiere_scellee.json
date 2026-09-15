@@ -1,0 +1,9 @@
+{
+  "id": "poussiere_scellee",
+  "name": "Poussière Scellée",
+  "description": "Un résidu cristallin détaché du sceau brisé, encore chargé d'une énergie qui refuse de s'éteindre.",
+  "category": "material",
+  "level": 7,
+  "base_value": 60,
+  "stack_size": 20
+}

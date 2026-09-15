@@ -1,0 +1,9 @@
+{
+  "id": "coeur_architecte",
+  "name": "Cœur d'Architecte",
+  "description": "Un noyau de métal froid, encore parcouru de veines de lumière bleutée. On dit que les Architectes en scellaient un dans chaque gardien qu'ils créaient.",
+  "category": "material",
+  "level": 7,
+  "base_value": 250,
+  "stack_size": 5
+}

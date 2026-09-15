@@ -1,0 +1,9 @@
+{
+  "id": "peau_de_rat",
+  "name": "Peau de Rat",
+  "description": "Une peau élimée, tout juste bonne à être vendue ou tannée.",
+  "category": "material",
+  "level": 1,
+  "base_value": 3,
+  "stack_size": 20
+}

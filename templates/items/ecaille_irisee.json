@@ -1,0 +1,9 @@
+{
+  "id": "ecaille_irisee",
+  "name": "Écaille Irisée",
+  "description": "Une écaille aux reflets changeants, froide au toucher même loin de l'eau.",
+  "category": "material",
+  "level": 3,
+  "base_value": 30,
+  "stack_size": 10
+}

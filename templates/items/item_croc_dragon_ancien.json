@@ -1,0 +1,17 @@
+{
+  "id": "item_croc_dragon_ancien",
+  "name": "Croc du Dragon Ancien",
+  "description": "Un croc plus long qu'une lame de garde, encore parcouru d'un froid qui semble remonter jusqu'à la Fracture elle-même.",
+  "category": "equipment",
+  "level": 17,
+  "base_value": 1200,
+  "stack_size": 1,
+  "equipment": {
+    "slot": "weapon",
+    "level_required": 16,
+    "stat_bonuses": {
+      "atk": 45,
+      "int": 20
+    }
+  }
+}

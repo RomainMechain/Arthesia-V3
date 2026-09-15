@@ -1,0 +1,9 @@
+{
+  "id": "fibre_roseau_brute",
+  "name": "Fibre de Roseau Brute",
+  "description": "Des fibres végétales encore humides, à faire sécher avant usage.",
+  "category": "material",
+  "level": 1,
+  "base_value": 2,
+  "stack_size": 30
+}

@@ -1,0 +1,9 @@
+{
+  "id": "item_coeur_gele_ancien",
+  "name": "Cœur Gelé Ancien",
+  "description": "Un noyau de glace qui ne fond jamais, au centre duquel palpite encore une lueur bleutée — le même éclat que l'on retrouve dans les gardiens des Architectes.",
+  "category": "material",
+  "level": 16,
+  "base_value": 750,
+  "stack_size": 20
+}

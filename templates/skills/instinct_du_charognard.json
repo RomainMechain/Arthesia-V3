@@ -1,0 +1,20 @@
+{
+  "id": "instinct_du_charognard",
+  "name": "Instinct du Charognard",
+  "description": "À force d'affronter les Rats des Roseaux, tu as appris leur agilité nerveuse et leur flair pour l'esquive dans les tiges denses.",
+  "kind": "passive",
+  "unlock_condition": {
+    "type": "kill_count",
+    "monster_id": "rat_des_roseaux",
+    "count": 10
+  },
+  "trigger": "always",
+  "condition": null,
+  "effects": [
+    {
+      "type": "stat_bonus",
+      "stat": "agi",
+      "amount": 2
+    }
+  ]
+}

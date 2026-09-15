@@ -1,0 +1,26 @@
+{
+  "id": "auberge_du_quai",
+  "name": "Auberge du Quai",
+  "description": "Une petite auberge de bois flotté où l'on sert soupe chaude et remèdes simples aux voyageurs de passage.",
+  "currency": "or",
+  "sell_offers": [
+    {
+      "item_id": "soupe_de_lac",
+      "price": 10,
+      "stock": null,
+      "restock_seconds": null
+    },
+    {
+      "item_id": "poisson_argente",
+      "price": 8,
+      "stock": null,
+      "restock_seconds": null
+    },
+    {
+      "item_id": "fibre_roseau_brute",
+      "price": 5,
+      "stock": null,
+      "restock_seconds": null
+    }
+  ]
+}

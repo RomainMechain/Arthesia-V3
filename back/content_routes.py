@@ -1,0 +1,140 @@
+from pathlib import Path
+import json
+
+from fastapi import APIRouter, HTTPException
+
+
+BASE_DIR = Path(__file__).resolve().parent
+ZONES_DIR = BASE_DIR / "zones"
+TEMPLATES_DIR = BASE_DIR / "templates"
+
+KIND_TO_FOLDER = {
+    "monster": "monsters",
+    "resource": "resources",
+    "npc": "npcs",
+    "quest": "quests",
+    "shop": "shops",
+    "player_market": "player_markets",
+    "item": "items",
+    "skill": "skills",
+    "title": "titles",
+    "workshop": "workshops",
+}
+
+router = APIRouter(prefix="/content", tags=["content"])
+
+
+def read_json(path: Path) -> dict | list:
+    if not path.exists():
+        raise HTTPException(404, f"Fichier introuvable : {path.name}")
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise HTTPException(500, f"JSON invalide : {path.name}") from exc
+
+
+def load_zone(zone_id: str) -> dict:
+    for floor_dir in sorted(ZONES_DIR.glob("floor_*")):
+        path = floor_dir / f"{zone_id}.json"
+        if path.exists():
+            return read_json(path)
+    raise HTTPException(404, f"Zone introuvable : {zone_id}")
+
+
+def load_floor(floor_id: str) -> dict:
+    return read_json(BASE_DIR / f"{floor_id}_skeleton.json")
+
+
+@router.get("/floors")
+def list_floors() -> list[dict]:
+    result = []
+    for path in sorted(BASE_DIR.glob("floor_*_skeleton.json")):
+        floor = read_json(path)
+        result.append({
+            "id": floor.get("id", path.stem.removesuffix("_skeleton")),
+            "name": floor.get("name"),
+            "description": floor.get("description"),
+            "start_zone_id": floor.get("start_zone_id"),
+            "boss_zone_id": floor.get("boss_zone_id"),
+            "zone_count": len(floor.get("zones", [])),
+        })
+    return result
+
+
+@router.get("/floors/{floor_id}")
+def get_floor(floor_id: str) -> dict:
+    floor = load_floor(floor_id)
+    return {
+        "id": floor.get("id", floor_id),
+        "name": floor.get("name"),
+        "description": floor.get("description"),
+        "start_zone_id": floor.get("start_zone_id"),
+        "boss_zone_id": floor.get("boss_zone_id"),
+        "zones": floor.get("zones", []),
+        "connections": floor.get("connections", []),
+    }
+
+
+@router.get("/zones")
+def list_zones(floor_id: str | None = None) -> list[dict]:
+    floor_paths = [BASE_DIR / f"{floor_id}_skeleton.json"] if floor_id else sorted(BASE_DIR.glob("floor_*_skeleton.json"))
+    result = []
+    for path in floor_paths:
+        floor = read_json(path)
+        for zone in floor.get("zones", []):
+            result.append({
+                "id": zone["id"],
+                "name": zone.get("name"),
+                "type": zone.get("type"),
+                "position": zone.get("position"),
+                "visibility": zone.get("visibility"),
+                "unlock_condition": zone.get("unlock_condition"),
+                "floor_id": floor.get("id", path.stem.removesuffix("_skeleton")),
+            })
+    return result
+
+
+@router.get("/zones/{zone_id}")
+def get_zone(zone_id: str) -> dict:
+    zone = load_zone(zone_id)
+    return {
+        "id": zone["id"],
+        "name": zone.get("name"),
+        "type": zone.get("type"),
+        "position": zone.get("position"),
+        "description": zone.get("description"),
+        "unlock_condition": zone.get("unlock_condition"),
+        "hint": zone.get("hint"),
+        "entries": zone.get("entries", []),
+    }
+
+
+@router.get("/zones/{zone_id}/entries")
+def list_zone_entries(zone_id: str) -> list[dict]:
+    return load_zone(zone_id).get("entries", [])
+
+
+@router.get("/templates/{kind}/{template_id}")
+def get_template(kind: str, template_id: str) -> dict:
+    folder = KIND_TO_FOLDER.get(kind)
+    if folder is None:
+        raise HTTPException(400, f"Type de template inconnu : {kind}")
+    return read_json(TEMPLATES_DIR / folder / f"{template_id}.json")
+
+
+@router.get("/templates/{kind}")
+def list_templates(kind: str) -> list[dict]:
+    folder = KIND_TO_FOLDER.get(kind)
+    if folder is None:
+        raise HTTPException(400, f"Type de template inconnu : {kind}")
+    result = []
+    for path in sorted((TEMPLATES_DIR / folder).glob("*.json")):
+        template = read_json(path)
+        result.append({
+            "id": template.get("id", path.stem),
+            "name": template.get("name"),
+            "kind": kind,
+            "level": template.get("level"),
+            "description": template.get("description"),
+        })
+    return result

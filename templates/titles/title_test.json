@@ -1,0 +1,32 @@
+{
+	"id": "title_test",
+	"name": "Sentinelle des Roseaux",
+	"description": "Ton passage à Rivelune a forgé des réflexes précis: tu lis les mouvements du marais avant qu'ils ne se produisent.",
+	"unlock_condition": {
+		"type": "group",
+		"mode": "all",
+		"conditions": [
+			{
+				"type": "kill_count",
+				"monster_id": "rat_des_roseaux",
+				"count": 20
+			},
+			{
+				"type": "gather_count",
+				"resource_id": "fibre_roseau",
+				"count": 25
+			},
+			{
+				"type": "level",
+				"min": 4
+			}
+		]
+	},
+	"effects": [
+		{
+			"type": "stat_bonus_percent",
+			"stat": "agi",
+			"amount_percent": 8
+		}
+	]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "echo_gardien",
+  "name": "L'Écho du Gardien",
+  "description": "Une silhouette translucide, à peine plus qu'un reflet de lumière froide, qui se tient immobile devant le sceau brisé. Elle ne semble pas vivante, ni tout à fait absente.",
+  "role": "Présence spectrale",
+  "dialogues": [
+    "Le sceau... il n'aurait jamais dû céder.",
+    "Ce qu'il garde n'était pas fait pour être compris. Seulement pour être tenu à l'écart.",
+    "Si tu avances, il te prendra pour ce que nous étions tous, avant : une menace à corriger.",
+    "Nous n'avons pas de nom pour ce qu'il protège. Nous n'en avons plus le droit."
+  ]
+}

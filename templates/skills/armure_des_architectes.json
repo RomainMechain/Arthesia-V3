@@ -1,0 +1,20 @@
+{
+  "id": "armure_des_architectes",
+  "name": "Armure des Architectes",
+  "description": "À force de manier les Fragments de Pierre Taillée, tu en as saisi la géométrie ancienne — une rigidité qui semble protéger ceux qui la comprennent.",
+  "kind": "passive",
+  "unlock_condition": {
+    "type": "gather_count",
+    "resource_id": "fragment_pierre_taillee",
+    "count": 25
+  },
+  "trigger": "always",
+  "condition": null,
+  "effects": [
+    {
+      "type": "stat_bonus_percent",
+      "stat": "def",
+      "amount_percent": 12
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "id": "argile_humide",
+  "name": "Argile Humide",
+  "description": "Une motte d'argile grasse, malléable et fraîche.",
+  "category": "material",
+  "level": 1,
+  "base_value": 3,
+  "stack_size": 20
+}

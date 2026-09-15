@@ -1,0 +1,18 @@
+{
+  "id": "ragout_du_soir",
+  "name": "Le Ragoût du Soir",
+  "description": "Maren prépare un ragoût pour les pêcheurs revenus tard. Elle te demande de lui rapporter quelques poissons argentés frais avant que le feu ne s'éteigne.",
+  "objectives": [
+    {
+      "type": "deliver_item",
+      "item_id": "poisson_argente",
+      "count": 5
+    }
+  ],
+  "rewards": {
+    "xp": 80,
+    "gold": 30,
+    "items": []
+  },
+  "repeatable": true
+}

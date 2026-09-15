@@ -1,0 +1,19 @@
+{
+  "id": "sceau_coeur_architecte_scelle",
+  "name": "Sceau du Cœur Scellé",
+  "description": "Une amulette née d'un forgeage lent et prudent : le Cœur d'Architecte, refroidi sans jamais être porté à l'incandescence, a été enchâssé dans l'écrin du fragment de pierre taillée. Les veines de lumière bleutée persistent, ralenties mais vivantes, comme un souffle qu'on aurait pris soin de ne pas éteindre. La basse chaleur a préservé ce que le métal gardait encore de son ancien gardien.",
+  "category": "equipment",
+  "level": 9,
+  "base_value": 560,
+  "stack_size": 1,
+  "equipment": {
+    "slot": "amulet",
+    "level_required": 9,
+    "stat_bonuses": {
+      "hp": 20,
+      "def": 10,
+      "int": 8,
+      "sag": 9
+    }
+  }
+}

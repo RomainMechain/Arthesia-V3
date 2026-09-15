@@ -1,0 +1,9 @@
+{
+  "id": "defense_sanglier",
+  "name": "Défense de Sanglier",
+  "description": "Une défense robuste, prisée des artisans pour ses arêtes tranchantes.",
+  "category": "material",
+  "level": 2,
+  "base_value": 12,
+  "stack_size": 10
+}

@@ -1,0 +1,20 @@
+{
+  "id": "tressage_instinctif",
+  "name": "Tressage Instinctif",
+  "description": "Des heures passées à récolter des Roseaux à Fibre pour Yolenne ont endurci tes mains et ta constitution.",
+  "kind": "passive",
+  "unlock_condition": {
+    "type": "gather_count",
+    "resource_id": "fibre_roseau",
+    "count": 12
+  },
+  "trigger": "always",
+  "condition": null,
+  "effects": [
+    {
+      "type": "stat_bonus",
+      "stat": "hp",
+      "amount": 15
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "item_ecaille_sommeil_de_fer",
+  "name": "Écaille de Sommeil-de-Fer",
+  "description": "Une écaille arrachée au dragon endormi, encore froide comme la faille qui l'abrite. Elle semble absorber la lumière plutôt que la refléter.",
+  "category": "equipment",
+  "level": 16,
+  "base_value": 900,
+  "stack_size": 1,
+  "equipment": {
+    "slot": "chest",
+    "level_required": 15,
+    "stat_bonuses": {
+      "def": 35,
+      "sag": 10
+    }
+  }
+}
