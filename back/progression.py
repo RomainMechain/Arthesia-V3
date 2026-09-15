@@ -1,4 +1,14 @@
-"""Progression des joueurs : deblocages et recompenses de combat."""
+"""Progression des joueurs : déblocages et récompenses de combat.
+
+Ce module regroupe les opérations qui font progresser durablement un joueur :
+
+* vérifier les conditions et enregistrer les nouveaux déblocages ;
+* appliquer les récompenses d'une victoire contre un monstre ;
+* mettre à jour les compteurs utilisés par les quêtes et conditions.
+
+Le contenu statique est lu depuis les fichiers locaux. L'état évolutif du joueur
+et des rencontres partagées est lu et écrit dans Firestore.
+"""
 
 import json
 from datetime import datetime, timedelta, timezone
@@ -18,17 +28,36 @@ except ImportError:
 
 
 def check_and_apply_unlocks(player_id: str) -> list[str]:
+    """Évalue toutes les conditions de déblocage connues pour un joueur.
+
+    Les zones sont lues depuis les squelettes d'étage, puis les compétences et
+    titres sont parcourus dans leurs dossiers de templates. Une condition est
+    évaluée avec l'état courant du joueur ; chaque nouvel élément est ajouté à
+    la fois dans sa liste détaillée et dans ``unlocks``, utilisée comme index
+    rapide par le reste du serveur.
+
+    La fonction est volontairement idempotente : un élément déjà débloqué est
+    ignoré et un joueur sans nouveau déblocage ne provoque aucune écriture.
+    Elle retourne des identifiants préfixés, par exemple ``zone:rivelune`` ou
+    ``skill:dard_de_libellule``, afin d'informer directement le client.
+    """
     player = get_player(player_id)
     newly_unlocked = []
 
+    # Les conditions de zones vivent dans les squelettes, indépendamment des
+    # fichiers de contenu détaillé générés pour chaque zone.
     for skeleton in load_all_floor_skeletons():
         for zone in skeleton.get("zones", []):
             if zone["id"] in player["unlocks"]["zones"]:
                 continue
+            # evaluate_condition prend en charge les conditions simples et les
+            # groupes récursifs (niveau, quête, item, boss, etc.).
             if evaluate_condition(zone.get("unlock_condition"), player):
                 player["unlocks"]["zones"].append(zone["id"])
                 newly_unlocked.append(f"zone:{zone['id']}")
 
+    # Les compétences et titres suivent la même règle de déblocage, mais leur
+    # source est un dossier de templates plutôt qu'un squelette d'étage.
     for folder, unlock_key, player_key in (
         ("skills", "skills", "skills"),
         ("titles", "titles", "titles"),
@@ -41,16 +70,34 @@ def check_and_apply_unlocks(player_id: str) -> list[str]:
             if template["id"] in player[player_key]["unlocked"]:
                 continue
             if evaluate_condition(template.get("unlock_condition"), player):
+                # On conserve deux représentations : la liste spécialisée du
+                # joueur et l'index générique des déblocages.
                 player[player_key]["unlocked"].append(template["id"])
                 player["unlocks"][unlock_key].append(template["id"])
                 newly_unlocked.append(f"{unlock_key[:-1]}:{template['id']}")
 
+    # Une seule écriture est faite après avoir évalué toutes les catégories.
     if newly_unlocked:
         save_player(player_id, player)
     return newly_unlocked
 
 
 def apply_monster_kill_rewards(player_id: str, zone_id: str, entry_id: str) -> dict:
+    """Valide une victoire et applique toutes ses conséquences persistantes.
+
+    Le traitement suit cet ordre :
+
+    1. charger la zone, l'entry et le template du monstre ;
+    2. réserver ou épuiser l'entry si son état est partagé ;
+    3. tirer le loot et ajouter l'XP au joueur ;
+    4. mettre à jour les compteurs de kills et les quêtes actives ;
+    5. sauvegarder le joueur puis recalculer ses déblocages.
+
+    Pour un monstre normal, l'entry passe en respawn. Pour un boss, elle passe
+    en état ``defeated`` et ne redevient pas disponible automatiquement.
+    """
+    # La zone et l'entry proviennent du contenu statique local. Cela permet de
+    # vérifier que le client n'a pas envoyé un identifiant inventé.
     zone_static = load_static_zone_content(zone_id)
     entry = find_entry(zone_static, entry_id)
     if entry["template_type"] != "monster":
@@ -58,17 +105,24 @@ def apply_monster_kill_rewards(player_id: str, zone_id: str, entry_id: str) -> d
     monster = load_template("monster", entry["template_id"])
 
     if entry["state_scope"] == "shared":
+        # Les monstres partagés doivent être réservés avant les récompenses :
+        # deux appels concurrents ne doivent pas pouvoir payer deux fois le même
+        # spawn déjà vaincu.
         zone_state = get_zone_dynamic_state(zone_id)
         entry_state = zone_state["entries"].get(entry_id, {"status": "available"})
         if entry_state.get("status") == "depleted":
+            # Le respawn est vérifié à la demande, en comparant l'horodatage
+            # Firestore à l'heure UTC actuelle.
             available_again_at = entry_state.get("available_again_at")
             if available_again_at and datetime.now(timezone.utc) >= available_again_at:
                 entry_state = {"status": "available"}
         if entry_state.get("status") != "available":
             raise HTTPException(409, "Monstre indisponible (déjà tué/vaincu, respawn en cours ou permanent)")
         if monster.get("role") == "boss":
+            # Un boss vaincu reste définitivement indisponible dans cet état.
             entry_state = {"status": "defeated"}
         else:
+            # Les monstres ordinaires sont épuisés pendant leur cooldown.
             cooldown = entry["spawn"].get("cooldown_seconds", 60)
             entry_state = {
                 "status": "depleted",
@@ -77,25 +131,34 @@ def apply_monster_kill_rewards(player_id: str, zone_id: str, entry_id: str) -> d
         zone_state["entries"][entry_id] = entry_state
         save_zone_dynamic_state(zone_id, zone_state)
 
+    # Une fois la rencontre validée, on charge le joueur et on applique les
+    # récompenses sur son état courant.
     player = get_player(player_id)
     loot = roll_loot_table(monster.get("loot_table", []))
     if loot:
+        # roll_loot_table renvoie au plus un item et une quantité pour ce kill.
         item_id, quantity = loot
         player["inventory"][item_id] = player["inventory"].get(item_id, 0) + quantity
 
     xp_gained = compute_kill_xp(monster["level"], monster.get("role", "normal"))
     player["xp"] += xp_gained
+    # La montée de niveau peut augmenter les points de statistiques disponibles.
     levels_gained = apply_player_level_ups(player)
     player["lifetime_counters"]["kills"][entry["template_id"]] = player["lifetime_counters"]["kills"].get(entry["template_id"], 0) + 1
 
     for quest_id, progress in player["quests"].items():
         if progress.get("state") != "active":
             continue
+        # Seules les quêtes actives avancent ; les autres restent inchangées.
         quest_def = load_template("quest", quest_id)
         for index, objective in enumerate(quest_def["objectives"]):
             if objective["type"] == "kill_count" and objective["monster_id"] == entry["template_id"]:
+                # L'index de l'objectif vient du template et correspond à la
+                # position conservée dans objectives_progress.
                 progress["objectives_progress"][index]["current_count"] += 1
 
+    # Le joueur est sauvegardé avant le recalcul des déblocages afin que leurs
+    # conditions lisent bien les nouveaux XP, compteurs et items.
     save_player(player_id, player)
     newly_unlocked = check_and_apply_unlocks(player_id)
     return {

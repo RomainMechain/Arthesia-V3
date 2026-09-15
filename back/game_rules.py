@@ -1,4 +1,13 @@
-"""Regles de progression, statistiques et conditions du jeu."""
+"""Règles communes de progression, statistiques et conditions du jeu.
+
+Ce module contient uniquement des calculs et des lectures de templates. Il ne
+sauvegarde pas directement le joueur : les routes et services appelants restent
+responsables de persister les changements dans Firestore.
+
+Les fonctions sont utilisées par plusieurs domaines du serveur, notamment les
+actions REST, les déblocages et le combat WebSocket. Les constantes ci-dessous
+forment donc le point central des formules de base du gameplay.
+"""
 
 import random
 from datetime import datetime, timezone
@@ -12,40 +21,80 @@ except ImportError:
     from content_store import load_static_zone_content, load_template
     from player_store import get_zone_dynamic_state
 
+# Statistiques de départ d'un joueur niveau 1.
 BASE_STATS = {"hp": 80, "atk": 8, "def": 5, "agi": 5, "int": 6, "sag": 5}
+
+# Valeur d'un point de statistique dépensé. Le nombre de points disponibles est
+# géré par l'état joueur ; ce mapping ne fait que convertir les points en bonus.
 POINT_VALUE = {"hp": 25, "atk": 2, "def": 2, "agi": 1, "int": 2, "sag": 1}
 
 
 def roll_loot_table(loot_table: list[dict]) -> tuple[str, int] | None:
+    """Tire au plus une récompense dans une table de loot pondérée.
+
+    ``weight`` détermine la probabilité relative de chaque entrée. Une fois
+    l'entrée choisie, la quantité est tirée uniformément entre
+    ``quantity_min`` et ``quantity_max``. Une table vide ne donne aucune
+    récompense et retourne ``None``.
+    """
     if not loot_table:
         return None
+
+    # Le poids total sert à définir un intervalle continu dans lequel chaque
+    # entrée occupe une portion proportionnelle à son poids.
     total_weight = sum(entry["weight"] for entry in loot_table)
     roll = random.uniform(0, total_weight)
     cumulative = 0
     for entry in loot_table:
         cumulative += entry["weight"]
         if roll <= cumulative:
+            # Le tirage de quantité intervient seulement après le choix de
+            # l'item, afin que le poids ne soit pas influencé par la quantité.
             quantity = random.randint(entry["quantity_min"], entry["quantity_max"])
             return entry["item_id"], quantity
+
+    # Ce cas ne devrait pas arriver avec des poids positifs, mais garder un
+    # retour explicite rend la fonction sûre si une table mal formée est reçue.
     return None
 
 
 def compute_kill_xp(monster_level: int, role: str) -> int:
+    """Calcule l'XP accordée par un monstre selon son niveau et son rôle.
+
+    Les boss utilisent le multiplicateur le plus élevé, les élites un niveau
+    intermédiaire et tout rôle inconnu retombe sur le comportement normal.
+    """
     multiplier = {"normal": 10, "elite": 30, "boss": 100}.get(role, 10)
     return monster_level * multiplier
 
 
 def xp_to_next_level(level: int) -> int:
+    """Retourne le seuil d'XP nécessaire pour le niveau courant.
+
+    La formule commune aux joueurs et professions est ``50 × niveau``. Le
+    ``max`` protège le calcul contre un niveau nul ou négatif mal formé.
+    """
     return 50 * max(level, 1)
 
 
 def apply_profession_level_ups(profession: dict) -> None:
+    """Consomme l'XP en attente d'une profession et applique ses niveaux.
+
+    Une boucle est nécessaire car une grosse récompense peut faire franchir
+    plusieurs seuils en une seule action. L'XP restante est conservée après
+    chaque montée de niveau.
+    """
     while profession["xp"] >= xp_to_next_level(profession["level"]):
         profession["xp"] -= xp_to_next_level(profession["level"])
         profession["level"] += 1
 
 
 def apply_player_level_ups(player: dict) -> int:
+    """Applique les niveaux gagnés par le joueur et retourne leur nombre.
+
+    Chaque niveau ajoute six points de statistiques disponibles. L'XP
+    excédentaire reste dans ``player['xp']`` pour le seuil suivant.
+    """
     levels_gained = 0
     while player["xp"] >= xp_to_next_level(player["level"]):
         player["xp"] -= xp_to_next_level(player["level"])
@@ -56,6 +105,12 @@ def apply_player_level_ups(player: dict) -> int:
 
 
 def is_boss_defeated(zone_id: str) -> bool:
+    """Indique si un boss de la zone possède l'état ``defeated``.
+
+    Le contenu du boss est statique, mais son état de défaite est partagé dans
+    Firestore. Une zone ou un contenu introuvable est traité comme non vaincu,
+    ce qui évite de débloquer une condition sur une donnée invalide.
+    """
     try:
         zone_static = load_static_zone_content(zone_id)
     except HTTPException:
@@ -64,6 +119,8 @@ def is_boss_defeated(zone_id: str) -> bool:
     for entry in zone_static.get("entries", []):
         if entry["template_type"] != "monster":
             continue
+        # Plusieurs monstres peuvent être présents dans une zone : seul un
+        # template marqué role="boss" peut satisfaire cette condition.
         monster = load_template("monster", entry["template_id"])
         if monster.get("role") == "boss":
             entry_state = zone_state["entries"].get(entry["id"], {})
@@ -73,6 +130,16 @@ def is_boss_defeated(zone_id: str) -> bool:
 
 
 def evaluate_condition(condition: dict | None, player: dict) -> bool:
+    """Évalue récursivement une condition de déblocage pour un joueur.
+
+    Les conditions feuilles consultent directement l'état joueur : niveau,
+    quête, inventaire, zone débloquée ou compteurs de progression. Une
+    condition ``group`` combine ses enfants avec ``all`` ou ``any`` et réutilise
+    cette même fonction pour les niveaux imbriqués.
+
+    Une condition absente est considérée comme satisfaite ; un type inconnu est
+    refusé par défaut pour éviter un déblocage involontaire.
+    """
     if condition is None:
         return True
     condition_type = condition["type"]
@@ -94,12 +161,20 @@ def evaluate_condition(condition: dict | None, player: dict) -> bool:
     if condition_type == "deliver_item":
         return player["lifetime_counters"]["deliveries"].get(condition["item_id"], 0) >= condition["count"]
     if condition_type == "group":
+        # L'appel récursif permet de composer des groupes de groupes sans
+        # multiplier les branches spécifiques dans cette fonction.
         results = [evaluate_condition(item, player) for item in condition["conditions"]]
         return all(results) if condition["mode"] == "all" else any(results)
     return False
 
 
 def _accumulate_stat_effects(effects: list[dict], stats: dict, percent_bonuses: dict) -> None:
+    """Ajoute les effets permanents d'un template aux statistiques accumulées.
+
+    Les bonus fixes sont appliqués immédiatement. Les bonus en pourcentage sont
+    mis de côté pour être appliqués après tous les bonus fixes, afin que leur
+    base de calcul soit complète.
+    """
     for effect in effects:
         if effect["type"] == "stat_bonus":
             stats[effect["stat"]] = stats.get(effect["stat"], 0) + effect["amount"]
@@ -108,13 +183,32 @@ def _accumulate_stat_effects(effects: list[dict], stats: dict, percent_bonuses: 
 
 
 def compute_final_stats(player: dict) -> dict:
+    """Calcule les statistiques finales persistantes d'un joueur.
+
+    L'ordre du calcul est volontaire :
+
+    1. statistiques de base ;
+    2. points dépensés ;
+    3. bonus fixes de l'équipement ;
+    4. bonus fixes et pourcentages des passifs permanents ;
+    5. bonus fixes et pourcentages du titre équipé ;
+    6. application finale des pourcentages.
+
+    Les passifs conditionnels ne sont pas intégrés ici : ils dépendent du
+    contexte du combat et doivent être traités par le moteur temps réel.
+    """
+    # On copie les valeurs de base pour ne jamais modifier le dictionnaire
+    # global BASE_STATS partagé entre les joueurs.
     stats = dict(BASE_STATS)
     for stat, points in player["stat_points"]["spent"].items():
+        # Les points dépensés sont convertis selon POINT_VALUE.
         stats[stat] += points * POINT_VALUE[stat]
 
     for item_id in player["equipment"].values():
         if not item_id:
             continue
+        # Un slot vide ne déclenche aucune lecture de fichier. Les bonus sont
+        # lus depuis la définition complète de l'item équipé.
         item = load_template("item", item_id)
         for stat, amount in item.get("equipment", {}).get("stat_bonuses", {}).items():
             stats[stat] = stats.get(stat, 0) + amount
@@ -123,12 +217,16 @@ def compute_final_stats(player: dict) -> dict:
     for skill_id in player["skills"]["equipped_passive"]:
         skill = load_template("skill", skill_id)
         if skill.get("trigger") == "always":
+            # Seuls les passifs permanents participent aux stats hors combat.
             _accumulate_stat_effects(skill.get("effects", []), stats, percent_bonuses)
 
     if player["titles"]["equipped"]:
+        # Le titre est traité comme une source supplémentaire d'effets, après
+        # l'équipement et les passifs.
         title = load_template("title", player["titles"]["equipped"])
         _accumulate_stat_effects(title.get("effects", []), stats, percent_bonuses)
 
     for stat, percent in percent_bonuses.items():
+        # Les pourcentages s'appliquent en dernier sur le total fixe complet.
         stats[stat] = round(stats.get(stat, 0) * (1 + percent / 100), 1)
     return stats

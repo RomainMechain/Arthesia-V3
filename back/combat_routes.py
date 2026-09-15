@@ -1,4 +1,20 @@
-"""WebSocket et regles de combat temps reel."""
+"""WebSocket et règles du combat temps réel.
+
+Le combat est volontairement maintenu en mémoire dans ``active_combats`` :
+les ticks fréquents ne doivent pas écrire dans Firestore. Firestore n'est
+sollicité que pour lire l'état du joueur et pour enregistrer la récompense
+finale via ``apply_monster_kill_rewards``.
+
+Le protocole WebSocket repose sur trois messages clients :
+
+* ``start_combat`` initialise une session ;
+* ``basic_attack`` applique une attaque avec cooldown ;
+* ``use_skill`` consomme du mana et applique les effets pris en charge.
+
+Les messages serveur sont des événements JSON tels que ``combat_started``,
+``monster_attack``, ``player_basic_attack``, ``player_skill_used``,
+``combat_won`` et ``combat_lost``.
+"""
 
 import asyncio
 import random
@@ -18,6 +34,9 @@ except ImportError:
     from progression import apply_monster_kill_rewards
     from player_store import get_player
 
+# Le tick est partagé par la régénération de mana et les attaques automatiques
+# du monstre. Les constantes ci-dessous centralisent les formules provisoires
+# du modèle de combat.
 router = APIRouter()
 TICK_INTERVAL_SECONDS = 0.5
 K_DEF = 20
@@ -32,22 +51,49 @@ active_combats: dict[str, dict] = {}
 
 
 def compute_basic_attack_cooldown(agi: float) -> float:
+    """Convertit l'agilité en délai entre deux attaques basiques.
+
+    Plus l'agilité augmente, plus le délai diminue, sans tomber à zéro :
+    ``BASE_ATTACK_COOLDOWN`` reste le délai de référence.
+    """
     return BASE_ATTACK_COOLDOWN / (1 + agi * K_AGI)
 
 
 def compute_max_mana(int_stat: float) -> float:
+    """Calcule le mana maximal à partir de l'intelligence du joueur."""
     return BASE_MANA + int_stat * K_INT
 
 
 def compute_mana_regen(sag_stat: float) -> float:
+    """Calcule la régénération de mana par seconde à partir de la sagesse."""
     return BASE_MANA_REGEN + sag_stat * K_SAG
 
 
 def compute_mitigation(defense: float) -> float:
+    """Retourne la part des dégâts absorbée par la défense.
+
+    La formule asymptotique ``def / (def + K_DEF)`` évite qu'une défense
+    élevée rende les dégâts totalement nuls.
+    """
     return defense / (defense + K_DEF)
 
 
 async def combat_tick_loop(websocket: WebSocket, combat_id: str):
+    """Exécute la boucle autonome d'une session de combat.
+
+    À chaque tick, la fonction :
+
+    1. récupère la session encore active ;
+    2. régénère le mana du joueur ;
+    3. réduit les cooldowns des compétences du monstre ;
+    4. choisit aléatoirement une compétence prête, pondérée par ``weight`` ;
+    5. applique les dégâts et diffuse l'événement au client ;
+    6. termine le combat si les points de vie du joueur atteignent zéro.
+
+    La tâche s'arrête quand la session est supprimée après une victoire, une
+    défaite ou une déconnexion. Les exceptions sont journalisées ici afin de
+    ne pas laisser une tâche asyncio silencieuse.
+    """
     try:
         while combat_id in active_combats:
             await asyncio.sleep(TICK_INTERVAL_SECONDS)
@@ -55,6 +101,8 @@ async def combat_tick_loop(websocket: WebSocket, combat_id: str):
             if session is None:
                 break
 
+            # Les statistiques sont relues pour tenir compte d'un éventuel
+            # changement d'équipement entre deux ticks.
             player = get_player(session["player_id"])
             player_stats = compute_final_stats(player)
             regen = compute_mana_regen(player_stats.get("sag", 0)) * TICK_INTERVAL_SECONDS
@@ -65,6 +113,9 @@ async def combat_tick_loop(websocket: WebSocket, combat_id: str):
             monster = load_template("monster", session["monster_template_id"])
             moveset = monster.get("moveset", [])
             cooldowns = session["monster_cooldowns"]
+
+            # Chaque compétence possède son propre cooldown. La valeur stockée
+            # représente le nombre de secondes restantes avant disponibilité.
             for skill in moveset:
                 sid = skill["id"]
                 cooldowns[sid] = max(0.0, cooldowns.get(sid, 0.0) - TICK_INTERVAL_SECONDS)
@@ -72,6 +123,9 @@ async def combat_tick_loop(websocket: WebSocket, combat_id: str):
             ready_skills = [skill for skill in moveset if cooldowns.get(skill["id"], 0.0) <= 0]
             if not ready_skills:
                 continue
+
+            # Le poids permet au template du monstre de contrôler la fréquence
+            # relative de ses attaques sans coder cette préférence ici.
             chosen = random.choices(ready_skills, weights=[skill["weight"] for skill in ready_skills], k=1)[0]
             cooldowns[chosen["id"]] = chosen["cooldown_seconds"]
             final_damage = round(chosen["damage"] * (1 - compute_mitigation(player_stats.get("def", 0))), 1)
@@ -88,6 +142,7 @@ async def combat_tick_loop(websocket: WebSocket, combat_id: str):
             })
             if session["player_current_hp"] <= 0:
                 await websocket.send_json({"type": "combat_lost"})
+                # Retirer la session empêche la boucle de repartir au tick suivant.
                 del active_combats[combat_id]
                 break
     except Exception as exc:
@@ -96,6 +151,12 @@ async def combat_tick_loop(websocket: WebSocket, combat_id: str):
 
 @router.websocket("/ws/combat")
 async def combat_websocket(websocket: WebSocket):
+    """Gère les commandes et événements d'une session WebSocket de combat.
+
+    Une connexion ne peut contrôler qu'un combat courant identifié par
+    ``combat_id``. La boucle de tick tourne en parallèle de cette fonction,
+    tandis que les messages entrants traitent les actions du joueur.
+    """
     await websocket.accept()
     combat_id = None
     tick_task = None
@@ -103,6 +164,8 @@ async def combat_websocket(websocket: WebSocket):
         while True:
             message = await websocket.receive_json()
             if message.get("action") == "start_combat":
+                # Le client fournit une zone et une entry ; on vérifie que cette
+                # entry correspond bien à un monstre avant de créer la session.
                 player_id = message["player_id"]
                 zone_id = message["zone_id"]
                 entry_id = message["entry_id"]
@@ -116,6 +179,9 @@ async def combat_websocket(websocket: WebSocket):
                 player_hp = player_stats["hp"]
                 player_max_mana = compute_max_mana(player_stats.get("int", 0))
                 combat_id = str(uuid.uuid4())
+
+                # Tout l'état volatile du combat reste en mémoire. Les valeurs
+                # initiales sont envoyées au client dans l'événement suivant.
                 active_combats[combat_id] = {
                     "player_id": player_id, "zone_id": zone_id, "entry_id": entry_id,
                     "monster_template_id": entry["template_id"],
@@ -133,6 +199,8 @@ async def combat_websocket(websocket: WebSocket):
                 tick_task = asyncio.create_task(combat_tick_loop(websocket, combat_id))
 
             elif message.get("action") == "basic_attack":
+                # L'attaque basique est limitée par un timestamp monotonic :
+                # celui-ci n'est pas affecté par les changements d'heure système.
                 session = active_combats.get(combat_id)
                 if session is None:
                     await websocket.send_json({"type": "error", "message": "Aucun combat en cours"})
@@ -154,6 +222,8 @@ async def combat_websocket(websocket: WebSocket):
                     "monster_max_hp": session["monster_max_hp"], "next_ready_in": round(cooldown, 2),
                 })
                 if session["monster_current_hp"] <= 0:
+                    # La session est supprimée avant la récompense pour empêcher
+                    # qu'une seconde commande ne gagne deux fois le même combat.
                     del active_combats[combat_id]
                     try:
                         await websocket.send_json({"type": "combat_won", **apply_monster_kill_rewards(session["player_id"], session["zone_id"], session["entry_id"])})
@@ -161,6 +231,8 @@ async def combat_websocket(websocket: WebSocket):
                         await websocket.send_json({"type": "combat_won_no_reward", "reason": exc.detail})
 
             elif message.get("action") == "use_skill":
+                # Une compétence doit être équipée, disponible et abordable en
+                # mana avant que ses effets ne modifient la session.
                 skill_id = message["skill_id"]
                 session = active_combats.get(combat_id)
                 if session is None:
@@ -187,16 +259,22 @@ async def combat_websocket(websocket: WebSocket):
                 for effect in skill.get("effects", []):
                     effect_type = effect["type"]
                     if effect_type == "damage":
+                        # Les dégâts magiques utilisent l'intelligence ; les
+                        # dégâts physiques utilisent l'attaque.
                         stat = "int" if skill.get("damage_type") == "magical" else "atk"
                         raw = effect["power"] * player_stats.get(stat, 0)
                         final = round(raw * (1 - compute_mitigation(monster["stats"].get("def", 0))), 1)
                         session["monster_current_hp"] = max(0.0, session["monster_current_hp"] - final)
                         results.append({"effect": "damage", "final_damage": final})
                     elif effect_type == "heal":
+                        # Les soins ne peuvent pas dépasser les PV maximums de
+                        # la session, même si l'effet est très puissant.
                         raw = round(effect["power"] * player_stats.get("int", 0), 1)
                         session["player_current_hp"] = min(session["player_max_hp"], session["player_current_hp"] + raw)
                         results.append({"effect": "heal", "amount": raw})
                     else:
+                        # Les effets sont renvoyés au client pour rester visibles,
+                        # mais leur mécanique complète n'est pas encore implémentée.
                         results.append({"effect": effect_type, "note": "pas encore implémenté mécaniquement"})
                 await websocket.send_json({
                     "type": "player_skill_used", "skill_id": skill_id, "results": results,
@@ -212,6 +290,7 @@ async def combat_websocket(websocket: WebSocket):
             else:
                 await websocket.send_json({"type": "error", "message": "Action pas encore gérée à cette étape"})
     except WebSocketDisconnect:
+        # Une fermeture réseau doit libérer la tâche et la session en mémoire.
         if tick_task:
             tick_task.cancel()
         if combat_id and combat_id in active_combats:
