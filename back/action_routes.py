@@ -24,7 +24,10 @@ try:
         save_craft_cache, save_new_craft_item,
     )
     from .database import db
-    from .game_rules import apply_player_level_ups, apply_profession_level_ups, respawn_cooldown_seconds, roll_loot_table
+    from .game_rules import (
+        apply_player_level_ups, apply_profession_level_ups, deplete_entry_state, get_profession,
+        public_entry_state, resolve_entry_state, roll_loot_table, xp_to_next_level,
+    )
     from .models import *
     from .player_store import get_player, get_zone_dynamic_state, save_player, save_zone_dynamic_state
     from .progression import check_and_apply_unlocks
@@ -35,7 +38,10 @@ except ImportError:
         save_craft_cache, save_new_craft_item,
     )
     from database import db
-    from game_rules import apply_player_level_ups, apply_profession_level_ups, respawn_cooldown_seconds, roll_loot_table
+    from game_rules import (
+        apply_player_level_ups, apply_profession_level_ups, deplete_entry_state, get_profession,
+        public_entry_state, resolve_entry_state, roll_loot_table, xp_to_next_level,
+    )
     from models import *
     from player_store import get_player, get_zone_dynamic_state, save_player, save_zone_dynamic_state
     from progression import check_and_apply_unlocks
@@ -69,44 +75,40 @@ def report_resource_gather(req: ResourceGatherRequest):
         raise HTTPException(400, "Cette entry n'est pas une ressource")
     resource = load_template("resource", entry["template_id"])
 
-    player = get_player(req.player_id)
+    result = _resource_gather_tx(db.transaction(), req, entry, resource)
+    # Les déblocages dépendent du nouvel inventaire ou de la nouvelle
+    # progression : ils sont recalculés après le commit.
+    result["newly_unlocked"] = check_and_apply_unlocks(req.player_id)
+    return result
+
+
+@firestore.transactional
+def _resource_gather_tx(transaction, req: ResourceGatherRequest, entry: dict, resource: dict) -> dict:
+    # Le stock partagé et le joueur sont lus puis écrits dans la même
+    # transaction : deux récoltes simultanées ne consomment pas la même charge.
+    shared = entry["state_scope"] == "shared"
+    zone_state = get_zone_dynamic_state(req.zone_id, transaction) if shared else None
+    player = get_player(req.player_id, transaction)
+
     prof_req = resource.get("profession_required")
     if prof_req:
-        # Une profession absente est considérée comme niveau 0. Cette valeur
-        # permet de refuser proprement une récolte réservée aux débutants avancés.
-        player_prof_check = player["professions"].get(prof_req["profession_id"], {"level": 0, "xp": 0})
-        if player_prof_check["level"] < prof_req["min_level"]:
+        if get_profession(player, prof_req["profession_id"])["level"] < prof_req["min_level"]:
             raise HTTPException(403, f"Niveau {prof_req['min_level']} en {prof_req['profession_id']} requis")
 
-    if entry["state_scope"] == "shared":
-        # Un état "shared" est commun à tous les joueurs. On le réserve avant
-        # de distribuer le rendement pour éviter une récolte multiple du stock.
-        zone_state = get_zone_dynamic_state(req.zone_id)
-        entry_state = zone_state["entries"].get(req.entry_id, {"status": "available"})
-        max_stock = entry["spawn"].get("stock")
-        if entry_state.get("status") == "depleted":
-            # Le respawn est évalué à la demande : aucune tâche planifiée n'est
-            # nécessaire pour rendre la ressource disponible à nouveau.
-            available_again_at = entry_state.get("available_again_at")
-            if available_again_at and datetime.now(timezone.utc) >= available_again_at:
-                entry_state = {"status": "available"}
-                if max_stock:
-                    entry_state["current_stock"] = max_stock
+    entry_state = None
+    if shared:
+        entry_state = resolve_entry_state(entry, zone_state["entries"].get(req.entry_id))
         if entry_state.get("status") != "available":
             raise HTTPException(409, "Ressource indisponible (épuisée, respawn en cours)")
-        cooldown = respawn_cooldown_seconds(entry)
-        if max_stock:
-            # Avec un stock supérieur à 1, l'entry reste disponible jusqu'à ce
-            # que la dernière charge soit consommée.
-            current_stock = entry_state.get("current_stock", max_stock) - 1
-            if current_stock <= 0:
-                entry_state = {"status": "depleted", "available_again_at": datetime.now(timezone.utc) + timedelta(seconds=cooldown)}
-            else:
-                entry_state = {"status": "available", "current_stock": current_stock}
+        if entry["spawn"].get("stock"):
+            # Avec un stock, l'entry reste disponible jusqu'à ce que la
+            # dernière charge soit consommée.
+            current_stock = entry_state["current_stock"] - 1
+            entry_state = deplete_entry_state(entry) if current_stock <= 0 else {"status": "available", "current_stock": current_stock}
         else:
-            entry_state = {"status": "depleted", "available_again_at": datetime.now(timezone.utc) + timedelta(seconds=cooldown)}
+            entry_state = deplete_entry_state(entry)
         zone_state["entries"][req.entry_id] = entry_state
-        save_zone_dynamic_state(req.zone_id, zone_state)
+        save_zone_dynamic_state(req.zone_id, zone_state, transaction)
 
     # Les yields utilisent la même table pondérée que les loots de monstres.
     yields = roll_loot_table(resource.get("yields", []))
@@ -114,14 +116,22 @@ def report_resource_gather(req: ResourceGatherRequest):
         item_id, qty = yields
         player["inventory"][item_id] = player["inventory"].get(item_id, 0) + qty
 
-    profession_xp_gained = 0
+    profession = None
     if prof_req:
         # L'XP de récolte concerne la profession, pas le niveau général du joueur.
         profession_id = prof_req["profession_id"]
-        player_prof = player["professions"].setdefault(profession_id, {"level": 0, "xp": 0})
-        profession_xp_gained = prof_req.get("xp_reward", 0)
-        player_prof["xp"] += profession_xp_gained
+        player_prof = player["professions"].setdefault(profession_id, get_profession(player, profession_id))
+        level_before = player_prof["level"]
+        player_prof["xp"] += prof_req.get("xp_reward", 0)
         apply_profession_level_ups(player_prof)
+        profession = {
+            "id": profession_id,
+            "xp_gained": prof_req.get("xp_reward", 0),
+            "level": player_prof["level"],
+            "levels_gained": player_prof["level"] - level_before,
+            "xp": player_prof["xp"],
+            "xp_to_next_level": xp_to_next_level(player_prof["level"]),
+        }
 
     player["lifetime_counters"]["gathers"][entry["template_id"]] = player["lifetime_counters"]["gathers"].get(entry["template_id"], 0) + 1
     for quest_id, progress in player["quests"].items():
@@ -134,11 +144,31 @@ def report_resource_gather(req: ResourceGatherRequest):
             if obj["type"] == "gather_count" and obj["resource_id"] == entry["template_id"]:
                 progress["objectives_progress"][i]["current_count"] += 1
 
-    # Toutes les mutations sont persistées ensemble avant de recalculer les
-    # déblocages dépendant du nouvel inventaire ou de la nouvelle progression.
-    save_player(req.player_id, player)
-    newly_unlocked = check_and_apply_unlocks(req.player_id)
-    return {"yields": yields, "profession_xp_gained": profession_xp_gained, "player_professions": player["professions"], "player_inventory": player["inventory"], "newly_unlocked": newly_unlocked}
+    save_player(req.player_id, player, transaction)
+    return {
+        "yields": yields,
+        "profession": profession,
+        "entry_state": public_entry_state(entry, entry_state) if shared else None,
+        "player_inventory": player["inventory"],
+    }
+
+
+@router.get("/zones/{zone_id}/state")
+def get_zone_state(zone_id: str):
+    """Retourne la disponibilité des entries partagées d'une zone.
+
+    Pour chaque entry partagée : statut, stock restant et secondes avant
+    réapparition. Les entries jamais touchées sont disponibles.
+    """
+    zone_static = load_static_zone_content(zone_id)
+    zone_state = get_zone_dynamic_state(zone_id)
+    entries = {}
+    for entry in zone_static.get("entries", []):
+        if entry.get("state_scope") != "shared":
+            continue
+        state = resolve_entry_state(entry, zone_state["entries"].get(entry["id"]))
+        entries[entry["id"]] = public_entry_state(entry, state)
+    return {"zone_id": zone_id, "entries": entries}
 
 
 @router.post("/actions/start_quest")

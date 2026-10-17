@@ -10,7 +10,7 @@ forment donc le point central des formules de base du gameplay.
 """
 
 import random
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from fastapi import HTTPException
 
@@ -60,6 +60,54 @@ def roll_loot_table(loot_table: list[dict]) -> tuple[str, int] | None:
 
 # Délai de réapparition par défaut d'une entry partagée épuisée.
 DEFAULT_RESPAWN_SECONDS = 60
+
+# Niveau d'un métier jamais pratiqué. Les ressources demandent au minimum le
+# niveau 1 : un niveau de départ à 0 empêcherait toute première récolte.
+STARTING_PROFESSION_LEVEL = 1
+
+
+def get_profession(player: dict, profession_id: str) -> dict:
+    """Retourne l'état d'un métier du joueur, sans le créer s'il est absent."""
+    return player["professions"].get(profession_id, {"level": STARTING_PROFESSION_LEVEL, "xp": 0})
+
+
+def resolve_entry_state(entry: dict, raw_state: dict | None) -> dict:
+    """Retourne l'état courant d'une entry partagée, réapparition appliquée.
+
+    La réapparition est évaluée à la demande : une entry épuisée dont le délai
+    est écoulé redevient disponible, avec son stock complet si elle en a un.
+    """
+    state = dict(raw_state or {"status": "available"})
+    if state.get("status") == "depleted":
+        available_again_at = state.get("available_again_at")
+        if available_again_at and datetime.now(timezone.utc) >= available_again_at:
+            state = {"status": "available"}
+    max_stock = entry.get("spawn", {}).get("stock")
+    if state.get("status") == "available" and max_stock and "current_stock" not in state:
+        state["current_stock"] = max_stock
+    return state
+
+
+def public_entry_state(entry: dict, state: dict) -> dict:
+    """Version envoyée au client : statut, stock et secondes avant réapparition."""
+    result = {"status": state.get("status", "available")}
+    max_stock = entry.get("spawn", {}).get("stock")
+    if max_stock:
+        result["max_stock"] = max_stock
+        result["current_stock"] = state.get("current_stock", 0) if result["status"] == "available" else 0
+    available_again_at = state.get("available_again_at")
+    if available_again_at:
+        remaining = (available_again_at - datetime.now(timezone.utc)).total_seconds()
+        result["seconds_until_available"] = max(0, round(remaining, 1))
+    return result
+
+
+def deplete_entry_state(entry: dict) -> dict:
+    """État d'une entry partagée qui vient d'être épuisée."""
+    return {
+        "status": "depleted",
+        "available_again_at": datetime.now(timezone.utc) + timedelta(seconds=respawn_cooldown_seconds(entry)),
+    }
 
 
 def respawn_cooldown_seconds(entry: dict) -> float:

@@ -47,5 +47,9 @@ def get_player_stats(player_id: str):
         "stats": compute_final_stats(player),
         "xp_to_next_level": xp_to_next_level(player["level"]),
         "point_value": POINT_VALUE,
+        "profession_xp_to_next_level": {
+            profession_id: xp_to_next_level(profession["level"])
+            for profession_id, profession in player["professions"].items()
+        },
         "note": "Passifs conditionnels (temps réel combat) non inclus — voir catégorie D, hors périmètre.",
     }
