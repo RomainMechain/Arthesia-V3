@@ -1,0 +1,21 @@
+{
+  "id": "cuisine",
+  "name": "Cuisine",
+  "description": "Prépare plats et rations à partir de ce que la Tour offre.",
+  "profession_required": {
+    "profession_id": "cuisinier"
+  },
+  "parameters": [
+    {
+      "id": "cuisson",
+      "label": "Cuisson",
+      "type": "choice",
+      "options": [
+        "cru-mariné",
+        "grillé",
+        "mijoté",
+        "flambé"
+      ]
+    }
+  ]
+}

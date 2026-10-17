@@ -1,0 +1,9 @@
+{
+  "id": "peau_huilee_rune_vacillante",
+  "name": "Peau Huilée à Rune Vacillante",
+  "description": "La peau de rat a été imbibée de l'huile trouble de roseau et d'écaille avant qu'une rune hésitante n'y soit gravée. Le tracé peine à prendre, scintillant faiblement puis s'éteignant, comme si la matière elle-même refusait d'accueillir la force qu'on voulait y lier.",
+  "category": "material",
+  "level": 1,
+  "base_value": 17,
+  "stack_size": 10
+}

@@ -3,6 +3,7 @@
 import hashlib
 import json
 import re
+import unicodedata
 
 import anthropic
 from fastapi import HTTPException
@@ -62,24 +63,46 @@ def generate_craft_item_via_ai(workshop: dict, parameters: dict, inputs_full: li
         f"inputs:\n{json.dumps(inputs_full, ensure_ascii=False, indent=2)}\n\n"
         "Réponds uniquement avec le JSON demandé, sans aucun texte avant ou après."
     )
-    response = client.messages.create(
-        model=CRAFT_MODEL,
-        max_tokens=2000,
-        system=load_craft_system_prompt(),
-        messages=[{"role": "user", "content": user_message}],
-    )
+    try:
+        # La réflexion du modèle compte dans max_tokens : une limite trop basse
+        # coupe le JSON avant la fin.
+        response = client.messages.create(
+            model=CRAFT_MODEL,
+            max_tokens=16000,
+            system=load_craft_system_prompt(),
+            messages=[{"role": "user", "content": user_message}],
+        )
+    except anthropic.APIError as exc:
+        raise HTTPException(503, "La création d'un objet inédit est indisponible pour l'instant — réessaie plus tard.") from exc
+    if response.stop_reason in ("max_tokens", "refusal"):
+        raise HTTPException(502, "Réponse IA incomplète pour le craft — réessaie.")
     raw_text = "".join(block.text for block in response.content if block.type == "text")
     cleaned = re.sub(r"^```(?:json)?\s*", "", raw_text.strip())
     cleaned = re.sub(r"\s*```$", "", cleaned)
     try:
-        return json.loads(cleaned)["item"]
-    except (json.JSONDecodeError, KeyError) as exc:
+        item = json.loads(cleaned)["item"]
+    except (json.JSONDecodeError, KeyError, TypeError) as exc:
         raise HTTPException(502, "Réponse IA invalide pour le craft — réessaie.") from exc
+    if not isinstance(item, dict) or not item.get("name") or not item.get("category"):
+        raise HTTPException(502, "Réponse IA invalide pour le craft — réessaie.")
+    return item
 
 
-def save_new_craft_item(item: dict) -> None:
-    path = TEMPLATES_DIR / "items" / f"{item['id']}.json"
-    if path.exists():
-        raise HTTPException(500, f"Collision d'id sur l'item généré ('{item['id']}') — réessaie.")
+def save_new_craft_item(item: dict) -> str:
+    """Enregistre l'item généré comme template et retourne son id définitif.
+
+    L'id proposé par l'IA sert aussi de nom de fichier : il est réduit à
+    ``[a-z0-9_]`` et suffixé si un item porte déjà ce nom.
+    """
+    raw_id = unicodedata.normalize("NFKD", str(item.get("id") or item["name"])).encode("ascii", "ignore").decode()
+    base_id = re.sub(r"[^a-z0-9_]+", "_", raw_id.lower()).strip("_") or "objet_artisanal"
+    item_id = base_id
+    suffix = 2
+    while (TEMPLATES_DIR / "items" / f"{item_id}.json").exists():
+        item_id = f"{base_id}_{suffix}"
+        suffix += 1
+    item["id"] = item_id
+    path = TEMPLATES_DIR / "items" / f"{item_id}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(item, ensure_ascii=False, indent=2), encoding="utf-8")
+    return item_id

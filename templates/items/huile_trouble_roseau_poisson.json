@@ -1,0 +1,9 @@
+{
+  "id": "huile_trouble_roseau_poisson",
+  "name": "Huile Trouble de Roseau et d'Écaille",
+  "description": "Une distillation lente et hasardeuse de fibres de roseau et de chair de poisson argenté, donnant un liquide huileux et légèrement opaque, à l'odeur tenace. Son usage reste incertain, mais il pourrait servir de base grossière pour le tannage ou le graissage.",
+  "category": "material",
+  "level": 1,
+  "base_value": 13,
+  "stack_size": 10
+}

@@ -1,0 +1,21 @@
+{
+  "id": "enchantement",
+  "name": "Enchantement",
+  "description": "Grave et éveille les runes pour lier une force aux objets.",
+  "profession_required": {
+    "profession_id": "enchanteur"
+  },
+  "parameters": [
+    {
+      "id": "intensite_rune",
+      "label": "Intensité de la rune",
+      "type": "choice",
+      "options": [
+        "faible",
+        "stable",
+        "instable",
+        "profonde"
+      ]
+    }
+  ]
+}

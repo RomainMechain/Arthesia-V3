@@ -324,12 +324,18 @@ def turn_in_quest(req: TurnInQuestRequest):
     return {"quest_completed": req.quest_id, "rewards_given": rewards, "levels_gained": levels_gained, "player_level": player["level"], "player_xp_total": player["xp"], "player_stat_points": player["stat_points"], "player_currency": player["currency"], "newly_unlocked": newly_unlocked}
 
 
+# Nombre maximal d'ingrédients différents dans un craft.
+MAX_CRAFT_INPUTS = 4
+
+
 @router.post("/actions/craft")
 def craft(req: CraftRequest):
     """Fabrique un item après validation de l'atelier, des paramètres et de l'inventaire.
 
-    Une recette connue est servie depuis Firestore ; une recette inédite appelle
-    Claude, sauvegarde le nouvel item et enregistre le résultat dans le cache.
+    Une recette connue est servie depuis le cache Firestore ; une recette
+    inédite appelle Claude, sauvegarde le nouvel item et enregistre le résultat
+    dans le cache. Les ingrédients ne sont consommés qu'une fois le résultat
+    connu, dans une transaction.
     """
     # L'atelier fournit à la fois la profession requise et les paramètres
     # autorisés pour cette recette.
@@ -342,22 +348,35 @@ def craft(req: CraftRequest):
             raise HTTPException(400, f"Paramètre manquant : '{key}'")
         if req.parameters[key] not in declared[key]:
             raise HTTPException(400, f"Valeur invalide pour '{key}' : options {declared[key]}")
+    unknown = set(req.parameters) - set(declared)
+    if unknown:
+        raise HTTPException(400, f"Paramètre(s) inconnu(s) : {sorted(unknown)}")
+
+    item_ids = [inp.item_id for inp in req.inputs]
+    if not req.inputs or len(req.inputs) > MAX_CRAFT_INPUTS:
+        raise HTTPException(400, f"Choisis entre 1 et {MAX_CRAFT_INPUTS} ingrédients")
+    if len(set(item_ids)) != len(item_ids):
+        raise HTTPException(400, "Un même ingrédient ne peut apparaître qu'une fois (augmente sa quantité)")
+    if any(inp.quantity < 1 for inp in req.inputs):
+        raise HTTPException(400, "Quantité invalide")
+
+    # Vérifications avant tout appel IA : on ne paie pas une génération pour un
+    # craft que le joueur ne pourrait de toute façon pas réaliser.
     player = get_player(req.player_id)
     profession_id = workshop["profession_required"]["profession_id"]
-    player_prof = player["professions"].setdefault(profession_id, {"level": 0, "xp": 0})
+    profession_level = get_profession(player, profession_id)["level"]
     inputs_full = []
     for inp in req.inputs:
-        # Le serveur vérifie l'inventaire et le niveau de profession avant tout
-        # appel IA ou toute consommation d'items.
         if player["inventory"].get(inp.item_id, 0) < inp.quantity:
             raise HTTPException(400, f"Pas assez de '{inp.item_id}' en inventaire")
         item = load_template("item", inp.item_id)
-        if item.get("level", 0) > player_prof["level"]:
-            raise HTTPException(403, f"'{inp.item_id}' (niveau {item['level']}) dépasse ton niveau en {profession_id} ({player_prof['level']})")
+        if item.get("level", 1) > profession_level:
+            raise HTTPException(403, f"'{item.get('name', inp.item_id)}' (niveau {item.get('level', 1)}) dépasse ton niveau en {profession_id} ({profession_level})")
         inputs_full.append({**item, "quantity": inp.quantity})
-    inputs_for_key = [{"item_id": i.item_id, "quantity": i.quantity} for i in req.inputs]
+
     # La clé canonique garantit que l'ordre des inputs/paramètres ne crée pas
     # artificiellement plusieurs recettes équivalentes.
+    inputs_for_key = [{"item_id": i.item_id, "quantity": i.quantity} for i in req.inputs]
     recipe_key = build_recipe_key(req.workshop_id, inputs_for_key, req.parameters)
     from_cache = True
     output_item_id = get_cached_craft(recipe_key)
@@ -366,24 +385,47 @@ def craft(req: CraftRequest):
         # sauvegardé avant de consommer les ingrédients du joueur.
         from_cache = False
         new_item = generate_craft_item_via_ai(workshop, req.parameters, inputs_full)
-        save_new_craft_item(new_item)
-        output_item_id = new_item["id"]
+        output_item_id = save_new_craft_item(new_item)
         save_craft_cache(recipe_key, output_item_id)
-    # La recette est maintenant résolue : les ingrédients sont consommés et
-    # l'item produit est ajouté à l'inventaire.
+
+    output_item = load_template("item", output_item_id)
+    result = _craft_consume_tx(db.transaction(), req, profession_id, output_item)
+    result.update({"output_item_id": output_item_id, "output_item": output_item, "from_cache": from_cache})
+    result["newly_unlocked"] = check_and_apply_unlocks(req.player_id)
+    return result
+
+
+@firestore.transactional
+def _craft_consume_tx(transaction, req: CraftRequest, profession_id: str, output_item: dict) -> dict:
+    # L'inventaire est revérifié ici : il a pu changer pendant l'appel IA.
+    player = get_player(req.player_id, transaction)
+    for inp in req.inputs:
+        if player["inventory"].get(inp.item_id, 0) < inp.quantity:
+            raise HTTPException(409, f"'{inp.item_id}' n'est plus en quantité suffisante dans ton inventaire")
     for inp in req.inputs:
         player["inventory"][inp.item_id] -= inp.quantity
         if player["inventory"][inp.item_id] <= 0:
             del player["inventory"][inp.item_id]
-    player["inventory"][output_item_id] = player["inventory"].get(output_item_id, 0) + 1
+    player["inventory"][output_item["id"]] = player["inventory"].get(output_item["id"], 0) + 1
+
     # L'XP de craft est calculée à partir du niveau de l'item produit.
-    output_item = load_template("item", output_item_id)
+    player_prof = player["professions"].setdefault(profession_id, get_profession(player, profession_id))
+    level_before = player_prof["level"]
     craft_xp_gained = output_item.get("level", 1) * 10
     player_prof["xp"] += craft_xp_gained
     apply_profession_level_ups(player_prof)
-    save_player(req.player_id, player)
-    newly_unlocked = check_and_apply_unlocks(req.player_id)
-    return {"output_item_id": output_item_id, "from_cache": from_cache, "craft_xp_gained": craft_xp_gained, "player_professions": player["professions"], "player_inventory": player["inventory"], "newly_unlocked": newly_unlocked}
+    save_player(req.player_id, player, transaction)
+    return {
+        "profession": {
+            "id": profession_id,
+            "xp_gained": craft_xp_gained,
+            "level": player_prof["level"],
+            "levels_gained": player_prof["level"] - level_before,
+            "xp": player_prof["xp"],
+            "xp_to_next_level": xp_to_next_level(player_prof["level"]),
+        },
+        "player_inventory": player["inventory"],
+    }
 
 
 @router.post("/actions/allocate_stat_points")

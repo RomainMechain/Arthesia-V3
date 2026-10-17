@@ -1,0 +1,20 @@
+{
+  "id": "alchimie",
+  "name": "Alchimie",
+  "description": "Distille, macère et transforme plantes, essences et matières rares en préparations.",
+  "profession_required": {
+    "profession_id": "alchimiste"
+  },
+  "parameters": [
+    {
+      "id": "methode",
+      "label": "Méthode",
+      "type": "choice",
+      "options": [
+        "macération froide",
+        "ébullition rapide",
+        "distillation lente"
+      ]
+    }
+  ]
+}

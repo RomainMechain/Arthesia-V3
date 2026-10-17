@@ -1,0 +1,20 @@
+{
+  "id": "sculpture",
+  "name": "Sculpture",
+  "description": "Taille et façonne la pierre, l'os et les matériaux durs.",
+  "profession_required": {
+    "profession_id": "sculpteur"
+  },
+  "parameters": [
+    {
+      "id": "finition",
+      "label": "Finition",
+      "type": "choice",
+      "options": [
+        "brute",
+        "polie",
+        "gravée"
+      ]
+    }
+  ]
+}

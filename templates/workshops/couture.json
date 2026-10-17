@@ -1,0 +1,20 @@
+{
+  "id": "couture",
+  "name": "Couture",
+  "description": "Tisse, coud et assemble fibres, peaux et étoffes.",
+  "profession_required": {
+    "profession_id": "couturier"
+  },
+  "parameters": [
+    {
+      "id": "technique",
+      "label": "Technique",
+      "type": "choice",
+      "options": [
+        "point serré",
+        "tissage lâche",
+        "matelassage"
+      ]
+    }
+  ]
+}
