@@ -24,6 +24,11 @@ class TurnInQuestRequest(BaseModel):
     quest_id: str
 
 
+class AbandonQuestRequest(BaseModel):
+    player_id: str
+    quest_id: str
+
+
 class CraftInput(BaseModel):
     item_id: str
     quantity: int

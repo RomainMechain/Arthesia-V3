@@ -25,6 +25,17 @@ def find_entry(zone_static: dict, entry_id: str) -> dict:
     raise HTTPException(404, f"Entry introuvable dans la zone : {entry_id}")
 
 
+def find_quest_givers(quest_id: str) -> list[dict]:
+    """Liste les zones dont une entry ``quest_giver`` propose cette quête."""
+    givers = []
+    for path in sorted(ZONES_DIR.glob("floor_*/*.json")):
+        zone = json.loads(path.read_text(encoding="utf-8"))
+        for entry in zone.get("entries", []):
+            if entry.get("template_type") == "quest_giver" and entry.get("template_id") == quest_id:
+                givers.append({"zone_id": zone["id"], "zone_name": zone.get("name", zone["id"]), "entry": entry})
+    return givers
+
+
 def load_template(kind: str, template_id: str) -> dict:
     folder = KIND_TO_FOLDER.get(kind)
     if folder is None:

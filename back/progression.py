@@ -20,13 +20,13 @@ try:
     from .config import TEMPLATES_DIR
     from .content_store import find_entry, load_all_floor_skeletons, load_static_zone_content, load_template
     from .database import db
-    from .game_rules import apply_player_level_ups, compute_kill_xp, respawn_cooldown_seconds, roll_loot_table, evaluate_condition
+    from .game_rules import advance_quest_objectives, apply_player_level_ups, compute_kill_xp, respawn_cooldown_seconds, roll_loot_table, evaluate_condition
     from .player_store import get_player, get_zone_dynamic_state, save_player, save_zone_dynamic_state
 except ImportError:
     from config import TEMPLATES_DIR
     from content_store import find_entry, load_all_floor_skeletons, load_static_zone_content, load_template
     from database import db
-    from game_rules import apply_player_level_ups, compute_kill_xp, respawn_cooldown_seconds, roll_loot_table, evaluate_condition
+    from game_rules import advance_quest_objectives, apply_player_level_ups, compute_kill_xp, respawn_cooldown_seconds, roll_loot_table, evaluate_condition
     from player_store import get_player, get_zone_dynamic_state, save_player, save_zone_dynamic_state
 
 
@@ -170,16 +170,8 @@ def _apply_monster_kill_rewards_tx(transaction, player_id: str, zone_id: str, en
     levels_gained = apply_player_level_ups(player)
     player["lifetime_counters"]["kills"][entry["template_id"]] = player["lifetime_counters"]["kills"].get(entry["template_id"], 0) + 1
 
-    for quest_id, progress in player["quests"].items():
-        if progress.get("state") != "active":
-            continue
-        # Seules les quêtes actives avancent ; les autres restent inchangées.
-        quest_def = load_template("quest", quest_id)
-        for index, objective in enumerate(quest_def["objectives"]):
-            if objective["type"] == "kill_count" and objective["monster_id"] == entry["template_id"]:
-                # L'index de l'objectif vient du template et correspond à la
-                # position conservée dans objectives_progress.
-                progress["objectives_progress"][index]["current_count"] += 1
+    # Seules les quêtes actives avancent ; les autres restent inchangées.
+    quest_progress = advance_quest_objectives(player, "kill_count", "monster_id", entry["template_id"])
 
     # Le joueur est sauvegardé avant le recalcul des déblocages (fait après le
     # commit) afin que leurs conditions lisent bien les nouveaux XP, compteurs
@@ -193,4 +185,5 @@ def _apply_monster_kill_rewards_tx(transaction, player_id: str, zone_id: str, en
         "player_xp_total": player["xp"],
         "player_stat_points": player["stat_points"],
         "player_inventory": player["inventory"],
+        "quest_progress": quest_progress,
     }

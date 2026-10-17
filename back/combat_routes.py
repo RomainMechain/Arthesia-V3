@@ -26,12 +26,12 @@ from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect
 
 try:
     from .content_store import find_entry, load_static_zone_content, load_template
-    from .game_rules import compute_final_stats
+    from .game_rules import compute_final_stats, is_entry_unlocked
     from .progression import apply_monster_kill_rewards
     from .player_store import get_player
 except ImportError:
     from content_store import find_entry, load_static_zone_content, load_template
-    from game_rules import compute_final_stats
+    from game_rules import compute_final_stats, is_entry_unlocked
     from progression import apply_monster_kill_rewards
     from player_store import get_player
 
@@ -200,6 +200,9 @@ async def combat_websocket(websocket: WebSocket):
                 # Le joueur est lu une seule fois : ses stats et ses compétences
                 # équipées restent figées pour toute la durée du combat.
                 player = get_player(player_id)
+                if not is_entry_unlocked(entry, player):
+                    await websocket.send_json({"type": "error", "message": "Ce monstre n'est pas encore accessible"})
+                    continue
                 player_stats = compute_final_stats(player)
                 player_hp = player_stats["hp"]
                 player_max_mana = compute_max_mana(player_stats.get("int", 0))

@@ -230,6 +230,73 @@ def evaluate_condition(condition: dict | None, player: dict) -> bool:
     return False
 
 
+def is_entry_unlocked(entry: dict, player: dict) -> bool:
+    """Indique si une entry de zone est accessible au joueur.
+
+    Seul le mode de spawn ``conditional`` porte une condition ; les autres
+    modes sont toujours accessibles.
+    """
+    spawn = entry.get("spawn", {})
+    if spawn.get("mode") != "conditional":
+        return True
+    return evaluate_condition(spawn.get("condition"), player)
+
+
+def require_entry_unlocked(entry: dict, player: dict) -> None:
+    """Refuse l'accès à une entry dont la condition d'apparition n'est pas remplie."""
+    if not is_entry_unlocked(entry, player):
+        raise HTTPException(403, "Pas encore accessible : une condition n'est pas remplie")
+
+
+def quest_progress_view(quest_def: dict, progress: dict, player: dict) -> dict:
+    """Progression lisible d'une quête : objectifs (actuel / requis) et ``ready``.
+
+    Les objectifs ``kill_count`` et ``gather_count`` utilisent les compteurs de
+    la quête ; ``deliver_item`` compte les objets présents dans l'inventaire.
+    ``ready`` vaut vrai quand la quête active peut être rendue.
+    """
+    counters = progress.get("objectives_progress", [])
+    objectives = []
+    for index, objective in enumerate(quest_def.get("objectives", [])):
+        required = objective.get("count", 1)
+        if objective["type"] == "deliver_item":
+            current = player["inventory"].get(objective["item_id"], 0)
+        else:
+            current = counters[index]["current_count"] if index < len(counters) else 0
+        objectives.append({"current": min(current, required), "count": required, "done": current >= required})
+    ready = progress.get("state") == "active" and all(objective["done"] for objective in objectives)
+    return {"state": progress.get("state"), "objectives": objectives, "ready": ready}
+
+
+def advance_quest_objectives(player: dict, objective_type: str, target_key: str, target_id: str) -> list[dict]:
+    """Fait avancer les objectifs ``kill_count``/``gather_count`` des quêtes actives.
+
+    Retourne, pour chaque objectif qui a avancé, la quête, l'objectif et la
+    nouvelle valeur, ainsi que ``quest_ready`` si la quête peut être rendue.
+    """
+    updates = []
+    for quest_id, progress in player["quests"].items():
+        if progress.get("state") != "active":
+            continue
+        quest_def = load_template("quest", quest_id)
+        for index, objective in enumerate(quest_def["objectives"]):
+            if objective["type"] != objective_type or objective[target_key] != target_id:
+                continue
+            counter = progress["objectives_progress"][index]
+            if counter["current_count"] >= objective["count"]:
+                continue
+            counter["current_count"] += 1
+            updates.append({
+                "quest_id": quest_id,
+                "quest_name": quest_def.get("name", quest_id),
+                "objective_index": index,
+                "current": counter["current_count"],
+                "count": objective["count"],
+                "quest_ready": quest_progress_view(quest_def, progress, player)["ready"],
+            })
+    return updates
+
+
 def _accumulate_stat_effects(effects: list[dict], stats: dict, percent_bonuses: dict) -> None:
     """Ajoute les effets permanents d'un template aux statistiques accumulées.
 

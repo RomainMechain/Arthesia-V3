@@ -18,29 +18,31 @@ from fastapi import APIRouter, HTTPException
 from firebase_admin import firestore
 
 try:
-    from .content_store import find_entry, load_static_zone_content, load_template
+    from .content_store import find_entry, find_quest_givers, load_static_zone_content, load_template
     from .craft_service import (
         build_recipe_key, generate_craft_item_via_ai, get_cached_craft,
         save_craft_cache, save_new_craft_item,
     )
     from .database import db
     from .game_rules import (
-        apply_player_level_ups, apply_profession_level_ups, deplete_entry_state, get_profession,
-        public_entry_state, resolve_entry_state, roll_loot_table, xp_to_next_level,
+        advance_quest_objectives, apply_player_level_ups, apply_profession_level_ups, deplete_entry_state,
+        get_profession, is_entry_unlocked, public_entry_state, quest_progress_view, require_entry_unlocked,
+        resolve_entry_state, roll_loot_table, xp_to_next_level,
     )
     from .models import *
     from .player_store import get_player, get_zone_dynamic_state, save_player, save_zone_dynamic_state
     from .progression import check_and_apply_unlocks
 except ImportError:
-    from content_store import find_entry, load_static_zone_content, load_template
+    from content_store import find_entry, find_quest_givers, load_static_zone_content, load_template
     from craft_service import (
         build_recipe_key, generate_craft_item_via_ai, get_cached_craft,
         save_craft_cache, save_new_craft_item,
     )
     from database import db
     from game_rules import (
-        apply_player_level_ups, apply_profession_level_ups, deplete_entry_state, get_profession,
-        public_entry_state, resolve_entry_state, roll_loot_table, xp_to_next_level,
+        advance_quest_objectives, apply_player_level_ups, apply_profession_level_ups, deplete_entry_state,
+        get_profession, is_entry_unlocked, public_entry_state, quest_progress_view, require_entry_unlocked,
+        resolve_entry_state, roll_loot_table, xp_to_next_level,
     )
     from models import *
     from player_store import get_player, get_zone_dynamic_state, save_player, save_zone_dynamic_state
@@ -90,6 +92,7 @@ def _resource_gather_tx(transaction, req: ResourceGatherRequest, entry: dict, re
     zone_state = get_zone_dynamic_state(req.zone_id, transaction) if shared else None
     player = get_player(req.player_id, transaction)
 
+    require_entry_unlocked(entry, player)
     prof_req = resource.get("profession_required")
     if prof_req:
         if get_profession(player, prof_req["profession_id"])["level"] < prof_req["min_level"]:
@@ -134,18 +137,11 @@ def _resource_gather_tx(transaction, req: ResourceGatherRequest, entry: dict, re
         }
 
     player["lifetime_counters"]["gathers"][entry["template_id"]] = player["lifetime_counters"]["gathers"].get(entry["template_id"], 0) + 1
-    for quest_id, progress in player["quests"].items():
-        if progress.get("state") != "active":
-            continue
-        # Chaque quête active est parcourue pour mettre à jour ses objectifs de
-        # type gather_count portant sur cette ressource.
-        quest_def = load_template("quest", quest_id)
-        for i, obj in enumerate(quest_def["objectives"]):
-            if obj["type"] == "gather_count" and obj["resource_id"] == entry["template_id"]:
-                progress["objectives_progress"][i]["current_count"] += 1
+    quest_progress = advance_quest_objectives(player, "gather_count", "resource_id", entry["template_id"])
 
     save_player(req.player_id, player, transaction)
     return {
+        "quest_progress": quest_progress,
         "yields": yields,
         "profession": profession,
         "entry_state": public_entry_state(entry, entry_state) if shared else None,
@@ -154,30 +150,55 @@ def _resource_gather_tx(transaction, req: ResourceGatherRequest, entry: dict, re
 
 
 @router.get("/zones/{zone_id}/state")
-def get_zone_state(zone_id: str):
-    """Retourne la disponibilité des entries partagées d'une zone.
+def get_zone_state(zone_id: str, player_id: str | None = None):
+    """Retourne la disponibilité des entries d'une zone.
 
     Pour chaque entry partagée : statut, stock restant et secondes avant
     réapparition. Les entries jamais touchées sont disponibles.
+
+    Avec ``player_id``, les entries dont la condition d'apparition n'est pas
+    remplie pour ce joueur portent ``locked: true``, et leur ``hint`` si leur
+    ``visibility_when_locked`` vaut ``"hinted"`` (sinon elles sont à cacher).
     """
     zone_static = load_static_zone_content(zone_id)
     zone_state = get_zone_dynamic_state(zone_id)
+    player = get_player(player_id) if player_id else None
     entries = {}
     for entry in zone_static.get("entries", []):
-        if entry.get("state_scope") != "shared":
-            continue
-        state = resolve_entry_state(entry, zone_state["entries"].get(entry["id"]))
-        entries[entry["id"]] = public_entry_state(entry, state)
+        result = {}
+        if entry.get("state_scope") == "shared":
+            state = resolve_entry_state(entry, zone_state["entries"].get(entry["id"]))
+            result = public_entry_state(entry, state)
+        if player is not None and not is_entry_unlocked(entry, player):
+            spawn = entry.get("spawn", {})
+            hinted = spawn.get("visibility_when_locked") == "hinted"
+            result["locked"] = True
+            result["hint"] = spawn.get("hint") if hinted else None
+            result["hidden"] = not hinted
+        if result:
+            entries[entry["id"]] = result
     return {"zone_id": zone_id, "entries": entries}
 
 
 @router.post("/actions/start_quest")
 def start_quest(req: StartQuestRequest):
-    """Démarre une quête ou réinitialise une quête terminée et répétable."""
+    """Démarre une quête ou relance une quête terminée et répétable."""
     # Charger la définition permet de vérifier l'existence de la quête et de
     # connaître le nombre exact d'objectifs à suivre.
     quest_def = load_template("quest", req.quest_id)
-    player = get_player(req.player_id)
+    givers = find_quest_givers(req.quest_id)
+    if not givers:
+        raise HTTPException(404, "Aucun personnage ne propose cette quête")
+    return _start_quest_tx(db.transaction(), req, quest_def, givers)
+
+
+@firestore.transactional
+def _start_quest_tx(transaction, req: StartQuestRequest, quest_def: dict, givers: list[dict]) -> dict:
+    player = get_player(req.player_id, transaction)
+    # La quête doit être proposée par au moins une entry accessible au joueur
+    # (une quête de suite n'apparaît qu'une fois la précédente terminée).
+    if not any(is_entry_unlocked(giver["entry"], player) for giver in givers):
+        raise HTTPException(403, "Cette quête n'est pas encore disponible")
     existing = player["quests"].get(req.quest_id)
     if existing:
         # Une quête active ne peut pas être démarrée deux fois. Une quête
@@ -188,9 +209,78 @@ def start_quest(req: StartQuestRequest):
             raise HTTPException(409, "Quête déjà terminée (non répétable)")
     # La progression est indexée comme les objectifs du template afin de garder
     # le même ordre lors de la validation de la remise de quête.
-    player["quests"][req.quest_id] = {"state": "active", "objectives_progress": [{"objective_index": i, "current_count": 0} for i in range(len(quest_def["objectives"]))]}
-    save_player(req.player_id, player)
-    return player["quests"][req.quest_id]
+    player["quests"][req.quest_id] = {
+        "state": "active",
+        "objectives_progress": [{"objective_index": i, "current_count": 0} for i in range(len(quest_def["objectives"]))],
+    }
+    save_player(req.player_id, player, transaction)
+    return {"quest_id": req.quest_id, **quest_progress_view(quest_def, player["quests"][req.quest_id], player)}
+
+
+@router.post("/actions/abandon_quest")
+def abandon_quest(req: AbandonQuestRequest):
+    """Abandonne une quête active : sa progression est perdue."""
+    return _abandon_quest_tx(db.transaction(), req)
+
+
+@firestore.transactional
+def _abandon_quest_tx(transaction, req: AbandonQuestRequest) -> dict:
+    player = get_player(req.player_id, transaction)
+    progress = player["quests"].get(req.quest_id)
+    if not progress or progress.get("state") != "active":
+        raise HTTPException(409, "Quête non active pour ce joueur")
+    del player["quests"][req.quest_id]
+    save_player(req.player_id, player, transaction)
+    return {"abandoned": req.quest_id}
+
+
+@router.post("/actions/turn_in_quest")
+def turn_in_quest(req: TurnInQuestRequest):
+    """Valide les objectifs d'une quête, consomme les livraisons et distribue les récompenses."""
+    quest_def = load_template("quest", req.quest_id)
+    result = _turn_in_quest_tx(db.transaction(), req, quest_def)
+    result["newly_unlocked"] = check_and_apply_unlocks(req.player_id)
+    return result
+
+
+@firestore.transactional
+def _turn_in_quest_tx(transaction, req: TurnInQuestRequest, quest_def: dict) -> dict:
+    # La remise relit le template et l'état joueur pour vérifier la progression
+    # réelle, plutôt que de faire confiance aux données envoyées par le client.
+    player = get_player(req.player_id, transaction)
+    progress = player["quests"].get(req.quest_id)
+    if not progress or progress.get("state") != "active":
+        raise HTTPException(409, "Quête non active pour ce joueur")
+    view = quest_progress_view(quest_def, progress, player)
+    for index, objective in enumerate(view["objectives"]):
+        if not objective["done"]:
+            raise HTTPException(400, f"Objectif {index + 1} non rempli ({objective['current']}/{objective['count']})")
+    for obj in quest_def["objectives"]:
+        if obj["type"] == "deliver_item":
+            # Les items livrés sont retirés uniquement après que tous les
+            # objectifs ont été validés, évitant une consommation partielle.
+            player["inventory"][obj["item_id"]] -= obj["count"]
+            if player["inventory"][obj["item_id"]] <= 0:
+                del player["inventory"][obj["item_id"]]
+            player["lifetime_counters"]["deliveries"][obj["item_id"]] = player["lifetime_counters"]["deliveries"].get(obj["item_id"], 0) + obj["count"]
+    # Les récompenses sont appliquées au même état joueur que les consommations.
+    rewards = quest_def.get("rewards", {})
+    player["xp"] += rewards.get("xp", 0)
+    levels_gained = apply_player_level_ups(player)
+    player["currency"]["or"] = player["currency"].get("or", 0) + rewards.get("gold", 0)
+    for item in rewards.get("items", []):
+        player["inventory"][item["item_id"]] = player["inventory"].get(item["item_id"], 0) + item["quantity"]
+    progress["state"] = "completed"
+    save_player(req.player_id, player, transaction)
+    return {
+        "quest_completed": req.quest_id,
+        "rewards_given": rewards,
+        "levels_gained": levels_gained,
+        "player_level": player["level"],
+        "player_xp_total": player["xp"],
+        "player_stat_points": player["stat_points"],
+        "player_currency": player["currency"],
+    }
 
 
 # -----------------------------------------------------------------------------
