@@ -1,0 +1,92 @@
+{
+  "id": "gardien_du_noyau_instable",
+  "name": "Le Gardien du Noyau Instable",
+  "description": "Une silhouette de métal et de lumière figée, née d'un dérèglement que les Architectes n'ont jamais eu le temps de corriger. Elle tourne lentement autour d'un noyau qui palpite comme un cœur trop grand pour son écrin, et chaque pas qu'elle fait fait trembler les ancres de lumière retenant l'île entière. On ne sait pas si elle protège le noyau ou si elle en est devenue le prisonnier — mais elle ne laissera personne l'approcher sans combattre jusqu'à l'effondrement.",
+  "level": 8,
+  "role": "boss",
+  "stats": {
+    "hp": 5600,
+    "atk": 60,
+    "def": 38,
+    "agi": 15,
+    "int": 45,
+    "sag": 20
+  },
+  "moveset": [
+    {
+      "id": "frappe_ancree",
+      "damage_type": "physical",
+      "cooldown_seconds": 3,
+      "damage": 45,
+      "weight": 5,
+      "telegraph_seconds": 1,
+      "avoidable_by": "dodge"
+    },
+    {
+      "id": "pulsation_instable",
+      "damage_type": "magical",
+      "cooldown_seconds": 5,
+      "damage": 60,
+      "weight": 3,
+      "telegraph_seconds": 2,
+      "avoidable_by": "move_away"
+    },
+    {
+      "id": "eclat_de_lumiere_froide",
+      "damage_type": "magical",
+      "cooldown_seconds": 4,
+      "damage": 40,
+      "weight": 2,
+      "telegraph_seconds": 1.5,
+      "avoidable_by": null
+    },
+    {
+      "id": "rupture_du_noyau",
+      "damage_type": "physical",
+      "cooldown_seconds": 8,
+      "damage": 90,
+      "weight": 4,
+      "telegraph_seconds": 3,
+      "avoidable_by": "dodge"
+    }
+  ],
+  "phases": [
+    {
+      "hp_above_percent": 50,
+      "moveset_ids": [
+        "frappe_ancree",
+        "pulsation_instable",
+        "eclat_de_lumiere_froide"
+      ]
+    },
+    {
+      "hp_above_percent": 0,
+      "moveset_ids": [
+        "frappe_ancree",
+        "pulsation_instable",
+        "eclat_de_lumiere_froide",
+        "rupture_du_noyau"
+      ]
+    }
+  ],
+  "loot_table": [
+    {
+      "item_id": "fragment_noyau_instable",
+      "quantity_min": 3,
+      "quantity_max": 6,
+      "weight": 10
+    },
+    {
+      "item_id": "anneau_du_gardien_deregle",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 2
+    },
+    {
+      "item_id": "eclat_de_lumiere_figee",
+      "quantity_min": 1,
+      "quantity_max": 3,
+      "weight": 6
+    }
+  ]
+}

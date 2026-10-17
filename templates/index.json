@@ -616,5 +616,41 @@
     "tags": [],
     "description": "Tu as vaincu ce que deviennent les pétales lorsqu'ils s'assemblent trop longtemps, et découvert la graine que Sarenne cherchait depuis des années. Quelque chose de cette floraison ancienne s'est enraciné en toi : un fragment de la force qui fait naître les géants de pétales.",
     "floor_origin": 3
+  },
+  {
+    "id": "gardien_du_noyau_instable",
+    "name": "Le Gardien du Noyau Instable",
+    "kind": "monster",
+    "level": 8,
+    "tags": [],
+    "description": "Une silhouette de métal et de lumière figée, née d'un dérèglement que les Architectes n'ont jamais eu le temps de corriger. Elle tourne lentement autour d'un noyau qui palpite comme un cœur trop grand pour son écrin, et chaque pas qu'elle fait fait trembler les ancres de lumière retenant l'île entière. On ne sait pas si elle protège le noyau ou si elle en est devenue le prisonnier — mais elle ne laissera personne l'approcher sans combattre jusqu'à l'effondrement.",
+    "base_value": null
+  },
+  {
+    "id": "fragment_noyau_instable",
+    "name": "Fragment du Noyau Instable",
+    "kind": "item",
+    "level": 8,
+    "tags": [],
+    "description": "Un éclat cristallin encore chaud, pulsant d'une lumière qui refuse de s'éteindre, comme si le noyau brisé continuait de rêver.",
+    "base_value": 40
+  },
+  {
+    "id": "anneau_du_gardien_deregle",
+    "name": "Anneau du Gardien Déréglé",
+    "kind": "item",
+    "level": 8,
+    "tags": [],
+    "description": "Un anneau de métal froid, gravé de runes architectes à demi effacées. Le porter, c'est sentir une vibration constante, comme un écho du noyau qui ne s'éteint jamais tout à fait.",
+    "base_value": 240
+  },
+  {
+    "id": "eclat_de_lumiere_figee",
+    "name": "Éclat de Lumière Figée",
+    "kind": "item",
+    "level": 8,
+    "tags": [],
+    "description": "Un fragment lumineux capturé dans un instant suspendu. Brisé entre les mains, il libère une chaleur apaisante qui referme les blessures les plus vives.",
+    "base_value": 120
   }
 ]

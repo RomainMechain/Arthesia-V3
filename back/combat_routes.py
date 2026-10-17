@@ -280,6 +280,7 @@ async def combat_websocket(websocket: WebSocket):
                     "type": "player_skill_used", "skill_id": skill_id, "results": results,
                     "monster_hp": session["monster_current_hp"], "player_hp": session["player_current_hp"],
                     "player_mana": session["player_current_mana"],
+                    "next_ready_in": round(skill["cooldown_seconds"], 2),
                 })
                 if session["monster_current_hp"] <= 0:
                     del active_combats[combat_id]

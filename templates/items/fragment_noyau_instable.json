@@ -1,0 +1,9 @@
+{
+  "id": "fragment_noyau_instable",
+  "name": "Fragment du Noyau Instable",
+  "description": "Un éclat cristallin encore chaud, pulsant d'une lumière qui refuse de s'éteindre, comme si le noyau brisé continuait de rêver.",
+  "category": "material",
+  "level": 8,
+  "base_value": 40,
+  "stack_size": 20
+}

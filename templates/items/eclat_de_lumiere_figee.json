@@ -1,0 +1,14 @@
+{
+  "id": "eclat_de_lumiere_figee",
+  "name": "Éclat de Lumière Figée",
+  "description": "Un fragment lumineux capturé dans un instant suspendu. Brisé entre les mains, il libère une chaleur apaisante qui referme les blessures les plus vives.",
+  "category": "consumable",
+  "level": 8,
+  "base_value": 120,
+  "stack_size": 10,
+  "consumable": {
+    "effect_type": "heal",
+    "amount": 180,
+    "duration_seconds": 0
+  }
+}

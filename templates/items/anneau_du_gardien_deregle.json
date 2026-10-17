@@ -1,0 +1,17 @@
+{
+  "id": "anneau_du_gardien_deregle",
+  "name": "Anneau du Gardien Déréglé",
+  "description": "Un anneau de métal froid, gravé de runes architectes à demi effacées. Le porter, c'est sentir une vibration constante, comme un écho du noyau qui ne s'éteint jamais tout à fait.",
+  "category": "equipment",
+  "level": 8,
+  "base_value": 240,
+  "stack_size": 1,
+  "equipment": {
+    "slot": "ring",
+    "level_required": 8,
+    "stat_bonuses": {
+      "atk": 6,
+      "agi": 3
+    }
+  }
+}

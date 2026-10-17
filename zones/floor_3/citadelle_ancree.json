@@ -1,0 +1,49 @@
+{
+  "id": "citadelle_ancree",
+  "name": "La Citadelle Ancrée",
+  "type": "boss",
+  "position": {
+    "x": 78,
+    "y": 50
+  },
+  "visibility": "visible",
+  "description": "La plus grande des îles, retenue par des ancres de lumière tendues à se rompre. En son centre, une entité née des dérèglements de la technologie architecte veille sur un noyau instable, dernier vestige d'un mécanisme oublié.",
+  "unlock_condition": {
+    "type": "zone",
+    "zone_id": "sanctuaire_eclats",
+    "state": "unlocked"
+  },
+  "hint": null,
+  "generation_brief": {
+    "level_range": [
+      7,
+      9
+    ],
+    "tags": [
+      "boss",
+      "climax",
+      "technologie architecte",
+      "danger"
+    ],
+    "content_intent": "Combat de boss final de l'étage : une entité liée au noyau qui maintient les îles en suspension. Mise en scène spectaculaire, seul contenu de combat majeur, pas de récolte ni de PNJ.",
+    "provides": []
+  },
+  "entries": [
+    {
+      "id": "boss_gardien_noyau",
+      "template_type": "monster",
+      "template_id": "gardien_du_noyau_instable",
+      "state_scope": "shared",
+      "rarity": "very_rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 86400,
+        "stock": 1,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    }
+  ]
+}
