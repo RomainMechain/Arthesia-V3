@@ -58,6 +58,20 @@ def roll_loot_table(loot_table: list[dict]) -> tuple[str, int] | None:
     return None
 
 
+# Délai de réapparition par défaut d'une entry partagée épuisée.
+DEFAULT_RESPAWN_SECONDS = 60
+
+
+def respawn_cooldown_seconds(entry: dict) -> float:
+    """Retourne le délai de réapparition d'une entry de zone.
+
+    Les modes de spawn autres que ``respawn_timer`` (``conditional`` par
+    exemple) écrivent ``cooldown_seconds: null`` : la clé existe, donc
+    ``dict.get`` avec une valeur par défaut renverrait ``None``.
+    """
+    return entry.get("spawn", {}).get("cooldown_seconds") or DEFAULT_RESPAWN_SECONDS
+
+
 def compute_kill_xp(monster_level: int, role: str) -> int:
     """Calcule l'XP accordée par un monstre selon son niveau et son rôle.
 

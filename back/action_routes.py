@@ -24,7 +24,7 @@ try:
         save_craft_cache, save_new_craft_item,
     )
     from .database import db
-    from .game_rules import apply_player_level_ups, apply_profession_level_ups, roll_loot_table
+    from .game_rules import apply_player_level_ups, apply_profession_level_ups, respawn_cooldown_seconds, roll_loot_table
     from .models import *
     from .player_store import get_player, get_zone_dynamic_state, save_player, save_zone_dynamic_state
     from .progression import check_and_apply_unlocks
@@ -35,7 +35,7 @@ except ImportError:
         save_craft_cache, save_new_craft_item,
     )
     from database import db
-    from game_rules import apply_player_level_ups, apply_profession_level_ups, roll_loot_table
+    from game_rules import apply_player_level_ups, apply_profession_level_ups, respawn_cooldown_seconds, roll_loot_table
     from models import *
     from player_store import get_player, get_zone_dynamic_state, save_player, save_zone_dynamic_state
     from progression import check_and_apply_unlocks
@@ -94,7 +94,7 @@ def report_resource_gather(req: ResourceGatherRequest):
                     entry_state["current_stock"] = max_stock
         if entry_state.get("status") != "available":
             raise HTTPException(409, "Ressource indisponible (épuisée, respawn en cours)")
-        cooldown = entry["spawn"].get("cooldown_seconds", 60)
+        cooldown = respawn_cooldown_seconds(entry)
         if max_stock:
             # Avec un stock supérieur à 1, l'entry reste disponible jusqu'à ce
             # que la dernière charge soit consommée.
@@ -302,7 +302,12 @@ def _allocate_stat_points_tx(transaction, req: AllocateStatPointsRequest) -> dic
 @router.post("/actions/equip_item")
 def equip_item(req: EquipItemRequest):
     """Équipe un item et remet l'équipement remplacé dans l'inventaire."""
-    player = get_player(req.player_id)
+    return _equip_item_tx(db.transaction(), req)
+
+
+@firestore.transactional
+def _equip_item_tx(transaction, req: EquipItemRequest) -> dict:
+    player = get_player(req.player_id, transaction)
     # L'équipement doit appartenir au joueur : le serveur ne doit jamais créer
     # un item à partir d'un simple identifiant envoyé par le client.
     if player["inventory"].get(req.item_id, 0) < 1:
@@ -328,7 +333,7 @@ def equip_item(req: EquipItemRequest):
     if previous_item_id:
         player["inventory"][previous_item_id] = player["inventory"].get(previous_item_id, 0) + 1
     player["equipment"][slot] = req.item_id
-    save_player(req.player_id, player)
+    save_player(req.player_id, player, transaction)
     return {"slot": slot, "equipped": req.item_id, "previous": previous_item_id, "equipment": player["equipment"]}
 
 
@@ -339,7 +344,12 @@ def unequip_item(req: UnequipItemRequest):
     # requête d'un slot valide mais vide.
     if req.slot not in VALID_SLOTS:
         raise HTTPException(400, f"Slot invalide : {req.slot}")
-    player = get_player(req.player_id)
+    return _unequip_item_tx(db.transaction(), req)
+
+
+@firestore.transactional
+def _unequip_item_tx(transaction, req: UnequipItemRequest) -> dict:
+    player = get_player(req.player_id, transaction)
     current_item_id = player["equipment"].get(req.slot)
     if not current_item_id:
         raise HTTPException(400, f"Rien d'équipé dans le slot '{req.slot}'")
@@ -347,7 +357,7 @@ def unequip_item(req: UnequipItemRequest):
     # dans l'inventaire et le slot est remis à None.
     player["inventory"][current_item_id] = player["inventory"].get(current_item_id, 0) + 1
     player["equipment"][req.slot] = None
-    save_player(req.player_id, player)
+    save_player(req.player_id, player, transaction)
     return {"slot": req.slot, "unequipped": current_item_id, "equipment": player["equipment"]}
 
 
@@ -355,7 +365,12 @@ def unequip_item(req: UnequipItemRequest):
 def equip_skill(req: EquipSkillRequest):
     """Équipe une compétence débloquée dans un slot actif ou passif disponible."""
     skill = load_template("skill", req.skill_id)
-    player = get_player(req.player_id)
+    return _equip_skill_tx(db.transaction(), req, skill)
+
+
+@firestore.transactional
+def _equip_skill_tx(transaction, req: EquipSkillRequest, skill: dict) -> dict:
+    player = get_player(req.player_id, transaction)
     # Le déblocage est vérifié dans l'état joueur, tandis que la nature active ou
     # passive est lue depuis le template de compétence.
     if req.skill_id not in player["skills"]["unlocked"]:
@@ -370,20 +385,25 @@ def equip_skill(req: EquipSkillRequest):
     if len(player["skills"][slot_list_key]) >= max_slots:
         raise HTTPException(400, f"Plus de slot {kind} disponible ({max_slots} max)")
     player["skills"][slot_list_key].append(req.skill_id)
-    save_player(req.player_id, player)
+    save_player(req.player_id, player, transaction)
     return {"equipped": req.skill_id, "kind": kind, "skills": player["skills"]}
 
 
 @router.post("/actions/unequip_skill")
 def unequip_skill(req: UnequipSkillRequest):
     """Retire une compétence de la liste des compétences équipées."""
-    player = get_player(req.player_id)
+    return _unequip_skill_tx(db.transaction(), req)
+
+
+@firestore.transactional
+def _unequip_skill_tx(transaction, req: UnequipSkillRequest) -> dict:
+    player = get_player(req.player_id, transaction)
     # Les compétences actives et passives sont parcourues car le client ne
     # fournit pas le type de slot, seulement l'identifiant de la compétence.
     for slot_list_key in ("equipped_active", "equipped_passive"):
         if req.skill_id in player["skills"][slot_list_key]:
             player["skills"][slot_list_key].remove(req.skill_id)
-            save_player(req.player_id, player)
+            save_player(req.player_id, player, transaction)
             return {"unequipped": req.skill_id, "skills": player["skills"]}
     raise HTTPException(400, f"'{req.skill_id}' n'est équipée dans aucun slot")
 

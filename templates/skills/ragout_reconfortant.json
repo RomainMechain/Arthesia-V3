@@ -16,7 +16,7 @@
   "effects": [
     {
       "type": "heal",
-      "power": 100
+      "power": 1.0
     }
   ]
 }

@@ -16,7 +16,7 @@
   "effects": [
     {
       "type": "damage",
-      "power": 90
+      "power": 0.9
     },
     {
       "type": "debuff",

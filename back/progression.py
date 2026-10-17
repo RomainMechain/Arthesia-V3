@@ -20,13 +20,13 @@ try:
     from .config import TEMPLATES_DIR
     from .content_store import find_entry, load_all_floor_skeletons, load_static_zone_content, load_template
     from .database import db
-    from .game_rules import apply_player_level_ups, compute_kill_xp, roll_loot_table, evaluate_condition
+    from .game_rules import apply_player_level_ups, compute_kill_xp, respawn_cooldown_seconds, roll_loot_table, evaluate_condition
     from .player_store import get_player, get_zone_dynamic_state, save_player, save_zone_dynamic_state
 except ImportError:
     from config import TEMPLATES_DIR
     from content_store import find_entry, load_all_floor_skeletons, load_static_zone_content, load_template
     from database import db
-    from game_rules import apply_player_level_ups, compute_kill_xp, roll_loot_table, evaluate_condition
+    from game_rules import apply_player_level_ups, compute_kill_xp, respawn_cooldown_seconds, roll_loot_table, evaluate_condition
     from player_store import get_player, get_zone_dynamic_state, save_player, save_zone_dynamic_state
 
 
@@ -148,7 +148,7 @@ def _apply_monster_kill_rewards_tx(transaction, player_id: str, zone_id: str, en
             entry_state = {"status": "defeated"}
         else:
             # Les monstres ordinaires sont épuisés pendant leur cooldown.
-            cooldown = entry["spawn"].get("cooldown_seconds", 60)
+            cooldown = respawn_cooldown_seconds(entry)
             entry_state = {
                 "status": "depleted",
                 "available_again_at": datetime.now(timezone.utc) + timedelta(seconds=cooldown),

@@ -16,7 +16,7 @@
   "effects": [
     {
       "type": "shield",
-      "amount_power": 150,
+      "amount_power": 1.5,
       "duration_seconds": 6
     }
   ]

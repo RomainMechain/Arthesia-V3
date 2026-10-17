@@ -16,7 +16,7 @@
   "effects": [
     {
       "type": "damage",
-      "power": 130
+      "power": 1.3
     }
   ]
 }
