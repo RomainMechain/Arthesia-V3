@@ -153,7 +153,6 @@
           <div class="panel-head"><h2>Actions rapides</h2><small>POST /actions/...</small></div>
           <div class="actions">
             <button id="gather">Récolter la ressource</button>
-            <button class="gold" id="kill">Valider un kill</button>
             <button class="secondary" id="allocate">+ 1 point en ATK</button>
           </div>
           <p class="hint" style="margin-top:12px">Les actions HTTP utilisent les valeurs de joueur, zone et entry ci-dessus.</p>
@@ -273,7 +272,6 @@
     $('createPlayer').onclick = async () => { const state = await request('/players', { method: 'POST', body: JSON.stringify({ player_id: playerId(), current_zone_id: $('zoneId').value.trim() }) }); renderPlayer(state); };
     $('loadStats').onclick = async () => { const stats = await request(`/players/${encodeURIComponent(playerId())}/stats`); if (currentPlayer) renderPlayer(currentPlayer, stats); };
     $('gather').onclick = () => runAction('/actions/resource_gather', { player_id: playerId(), zone_id: $('zoneId').value.trim(), entry_id: 'entry_fibre_roseau_01' });
-    $('kill').onclick = () => runAction('/actions/monster_kill', { player_id: playerId(), zone_id: $('zoneId').value.trim(), entry_id: $('entryId').value.trim() });
     $('allocate').onclick = () => runAction('/actions/allocate_stat_points', { player_id: playerId(), allocations: { atk: 1 } });
     $('startQuest').onclick = () => runAction('/actions/start_quest', { player_id: playerId(), quest_id: $('questId').value.trim() });
     $('turnQuest').onclick = () => runAction('/actions/turn_in_quest', { player_id: playerId(), quest_id: $('questId').value.trim() });

@@ -3,12 +3,6 @@
 from pydantic import BaseModel, Field
 
 
-class MonsterKillRequest(BaseModel):
-    player_id: str
-    zone_id: str
-    entry_id: str
-
-
 class ResourceGatherRequest(BaseModel):
     player_id: str
     zone_id: str

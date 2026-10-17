@@ -40,19 +40,40 @@ def build_new_player_state(player_id: str, current_zone_id: str | None = None) -
     return state
 
 
-def get_player(player_id: str) -> dict:
-    doc = db.collection("players").document(player_id).get()
+# Les lectures et écritures acceptent une transaction Firestore optionnelle.
+# Sans transaction, elles agissent immédiatement ; avec une transaction, les
+# lectures sont verrouillées et les écritures ne partent qu'au commit. Toute
+# action qui lit puis réécrit un état partagé entre requêtes concurrentes
+# (argent, inventaire, annonces, spawns partagés) doit passer par une
+# transaction, sinon deux requêtes simultanées peuvent dupliquer des gains.
+
+def player_ref(player_id: str):
+    return db.collection("players").document(player_id)
+
+
+def zone_state_ref(zone_id: str):
+    return db.collection("zones").document(zone_id)
+
+
+def get_player(player_id: str, transaction=None) -> dict:
+    doc = player_ref(player_id).get(transaction=transaction)
     return doc.to_dict() if doc.exists else default_player_state(player_id)
 
 
-def save_player(player_id: str, player: dict) -> None:
-    db.collection("players").document(player_id).set(player)
+def save_player(player_id: str, player: dict, transaction=None) -> None:
+    if transaction is None:
+        player_ref(player_id).set(player)
+    else:
+        transaction.set(player_ref(player_id), player)
 
 
-def get_zone_dynamic_state(zone_id: str) -> dict:
-    doc = db.collection("zones").document(zone_id).get()
+def get_zone_dynamic_state(zone_id: str, transaction=None) -> dict:
+    doc = zone_state_ref(zone_id).get(transaction=transaction)
     return doc.to_dict() if doc.exists else {"zone_id": zone_id, "entries": {}}
 
 
-def save_zone_dynamic_state(zone_id: str, state: dict) -> None:
-    db.collection("zones").document(zone_id).set(state)
+def save_zone_dynamic_state(zone_id: str, state: dict, transaction=None) -> None:
+    if transaction is None:
+        zone_state_ref(zone_id).set(state)
+    else:
+        transaction.set(zone_state_ref(zone_id), state)

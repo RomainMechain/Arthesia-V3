@@ -15,6 +15,7 @@ from datetime import datetime, timedelta, timezone
 import uuid
 
 from fastapi import APIRouter, HTTPException
+from firebase_admin import firestore
 
 try:
     from .content_store import find_entry, load_static_zone_content, load_template
@@ -26,7 +27,7 @@ try:
     from .game_rules import apply_player_level_ups, apply_profession_level_ups, roll_loot_table
     from .models import *
     from .player_store import get_player, get_zone_dynamic_state, save_player, save_zone_dynamic_state
-    from .progression import apply_monster_kill_rewards, check_and_apply_unlocks
+    from .progression import check_and_apply_unlocks
 except ImportError:
     from content_store import find_entry, load_static_zone_content, load_template
     from craft_service import (
@@ -37,7 +38,7 @@ except ImportError:
     from game_rules import apply_player_level_ups, apply_profession_level_ups, roll_loot_table
     from models import *
     from player_store import get_player, get_zone_dynamic_state, save_player, save_zone_dynamic_state
-    from progression import apply_monster_kill_rewards, check_and_apply_unlocks
+    from progression import check_and_apply_unlocks
 
 
 router = APIRouter()
@@ -51,16 +52,11 @@ MAX_PASSIVE_SKILL_SLOTS = 4
 
 
 # -----------------------------------------------------------------------------
-# Progression : combat, récolte et quêtes
+# Progression : récolte et quêtes
+#
+# Les victoires en combat ne passent pas par une route REST : seul le
+# WebSocket de combat (combat_routes.py) peut accorder les récompenses d'un kill.
 # -----------------------------------------------------------------------------
-
-@router.post("/actions/monster_kill")
-def report_monster_kill(req: MonsterKillRequest):
-    """Applique les récompenses d'un monstre vaincu et ses déblocages associés."""
-    # La logique complète est centralisée dans progression.py afin d'être
-    # réutilisable par la route REST et par le WebSocket de combat.
-    return apply_monster_kill_rewards(req.player_id, req.zone_id, req.entry_id)
-
 
 @router.post("/actions/resource_gather")
 def report_resource_gather(req: ResourceGatherRequest):
@@ -581,7 +577,19 @@ def market_list_item(req: ListItemForSaleRequest):
     market = load_template("player_market", entry["template_id"])
     if req.quantity < 1 or req.price < 0:
         raise HTTPException(400, "Quantité ou prix invalide")
-    player = get_player(req.player_id)
+    listing_id = f"listing_{uuid.uuid4().hex[:12]}"
+    # L'identifiant aléatoire garantit une clé Firestore distincte pour chaque
+    # annonce, même si deux joueurs vendent le même item au même prix.
+    listing = {"listing_id": listing_id, "market_id": entry["template_id"], "seller_player_id": req.player_id, "item_id": req.item_id, "quantity": req.quantity, "price": req.price, "currency": market.get("currency", "or"), "listed_at": datetime.now(timezone.utc)}
+    _market_list_item_tx(db.transaction(), req, listing)
+    return listing
+
+
+@firestore.transactional
+def _market_list_item_tx(transaction, req: ListItemForSaleRequest, listing: dict) -> None:
+    # Le retrait de l'inventaire et la création de l'annonce sont atomiques :
+    # deux dépôts simultanés ne peuvent pas lister le même exemplaire.
+    player = get_player(req.player_id, transaction)
     if player["inventory"].get(req.item_id, 0) < req.quantity:
         raise HTTPException(400, f"Pas assez de '{req.item_id}' en inventaire")
     # Les items sont placés en dépôt immédiatement : ils ne peuvent donc pas
@@ -589,13 +597,8 @@ def market_list_item(req: ListItemForSaleRequest):
     player["inventory"][req.item_id] -= req.quantity
     if player["inventory"][req.item_id] <= 0:
         del player["inventory"][req.item_id]
-    save_player(req.player_id, player)
-    listing_id = f"listing_{uuid.uuid4().hex[:12]}"
-    # L'identifiant aléatoire garantit une clé Firestore distincte pour chaque
-    # annonce, même si deux joueurs vendent le même item au même prix.
-    listing = {"listing_id": listing_id, "market_id": entry["template_id"], "seller_player_id": req.player_id, "item_id": req.item_id, "quantity": req.quantity, "price": req.price, "currency": market.get("currency", "or"), "listed_at": datetime.now(timezone.utc)}
-    db.collection("market_listings").document(listing_id).set(listing)
-    return listing
+    save_player(req.player_id, player, transaction)
+    transaction.set(db.collection("market_listings").document(listing["listing_id"]), listing)
 
 
 @router.get("/market/{market_id}/listings")
@@ -610,47 +613,58 @@ def market_browse(market_id: str):
 @router.post("/actions/market_buy")
 def market_buy(req: BuyListingRequest):
     """Achète une annonce, crédite le vendeur et supprime l'annonce."""
-    # La lecture de l'annonce précède toutes les mutations afin de refuser une
-    # annonce déjà achetée ou annulée.
+    return _market_buy_tx(db.transaction(), req)
+
+
+@firestore.transactional
+def _market_buy_tx(transaction, req: BuyListingRequest) -> dict:
+    # L'annonce, l'acheteur et le vendeur sont lus dans la transaction : si deux
+    # achats visent la même annonce, le second est rejoué et la voit supprimée.
     listing_ref = db.collection("market_listings").document(req.listing_id)
-    listing_doc = listing_ref.get()
+    listing_doc = listing_ref.get(transaction=transaction)
     if not listing_doc.exists:
         raise HTTPException(404, "Annonce introuvable (déjà vendue ou annulée)")
     listing = listing_doc.to_dict()
     if listing["seller_player_id"] == req.player_id:
         raise HTTPException(400, "Impossible d'acheter sa propre annonce")
-    buyer = get_player(req.player_id)
+    buyer = get_player(req.player_id, transaction)
+    seller = get_player(listing["seller_player_id"], transaction)
     currency = listing["currency"]
     if buyer["currency"].get(currency, 0) < listing["price"]:
         raise HTTPException(400, f"Pas assez de {currency}")
-    # L'acheteur paie et reçoit les items ; le vendeur est crédité séparément
-    # avant que l'annonce ne soit supprimée.
+    # L'acheteur paie et reçoit les items, le vendeur est crédité et l'annonce
+    # disparaît : les trois écritures sont validées ensemble au commit.
     buyer["currency"][currency] -= listing["price"]
     buyer["inventory"][listing["item_id"]] = buyer["inventory"].get(listing["item_id"], 0) + listing["quantity"]
-    save_player(req.player_id, buyer)
-    seller = get_player(listing["seller_player_id"])
+    save_player(req.player_id, buyer, transaction)
     seller["currency"][currency] = seller["currency"].get(currency, 0) + listing["price"]
-    save_player(listing["seller_player_id"], seller)
-    listing_ref.delete()
+    save_player(listing["seller_player_id"], seller, transaction)
+    transaction.delete(listing_ref)
     return {"bought": listing["item_id"], "quantity": listing["quantity"], "price_paid": listing["price"], "player_currency": buyer["currency"], "player_inventory": buyer["inventory"]}
 
 
 @router.post("/actions/market_cancel_listing")
 def market_cancel_listing(req: CancelListingRequest):
     """Annule une annonce appartenant au joueur et restitue les items déposés."""
+    return _market_cancel_listing_tx(db.transaction(), req)
+
+
+@firestore.transactional
+def _market_cancel_listing_tx(transaction, req: CancelListingRequest) -> dict:
     # L'identité du vendeur est comparée côté serveur : un client ne peut pas
     # annuler l'annonce d'un autre joueur en connaissant seulement son ID.
+    # La transaction empêche aussi qu'une annulation et un achat simultanés
+    # rendent l'item au vendeur tout en le livrant à l'acheteur.
     listing_ref = db.collection("market_listings").document(req.listing_id)
-    listing_doc = listing_ref.get()
+    listing_doc = listing_ref.get(transaction=transaction)
     if not listing_doc.exists:
         raise HTTPException(404, "Annonce introuvable")
     listing = listing_doc.to_dict()
     if listing["seller_player_id"] != req.player_id:
         raise HTTPException(403, "Seul le vendeur peut annuler cette annonce")
-    seller = get_player(req.player_id)
-    # La restitution précède la suppression de l'annonce pour que l'item ne soit
-    # pas perdu si le document existe encore.
+    seller = get_player(req.player_id, transaction)
+    # La restitution et la suppression de l'annonce sont validées ensemble.
     seller["inventory"][listing["item_id"]] = seller["inventory"].get(listing["item_id"], 0) + listing["quantity"]
-    save_player(req.player_id, seller)
-    listing_ref.delete()
+    save_player(req.player_id, seller, transaction)
+    transaction.delete(listing_ref)
     return {"cancelled": req.listing_id, "item_returned": listing["item_id"], "quantity": listing["quantity"]}

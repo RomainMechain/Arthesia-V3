@@ -14,15 +14,18 @@ import json
 from datetime import datetime, timedelta, timezone
 
 from fastapi import HTTPException
+from firebase_admin import firestore
 
 try:
     from .config import TEMPLATES_DIR
     from .content_store import find_entry, load_all_floor_skeletons, load_static_zone_content, load_template
+    from .database import db
     from .game_rules import apply_player_level_ups, compute_kill_xp, roll_loot_table, evaluate_condition
     from .player_store import get_player, get_zone_dynamic_state, save_player, save_zone_dynamic_state
 except ImportError:
     from config import TEMPLATES_DIR
     from content_store import find_entry, load_all_floor_skeletons, load_static_zone_content, load_template
+    from database import db
     from game_rules import apply_player_level_ups, compute_kill_xp, roll_loot_table, evaluate_condition
     from player_store import get_player, get_zone_dynamic_state, save_player, save_zone_dynamic_state
 
@@ -40,8 +43,16 @@ def check_and_apply_unlocks(player_id: str) -> list[str]:
     ignoré et un joueur sans nouveau déblocage ne provoque aucune écriture.
     Elle retourne des identifiants préfixés, par exemple ``zone:rivelune`` ou
     ``skill:dard_de_libellule``, afin d'informer directement le client.
+
+    La lecture et l'écriture du joueur se font dans une transaction : une autre
+    action concurrente ne peut pas être écrasée par cette sauvegarde.
     """
-    player = get_player(player_id)
+    return _check_and_apply_unlocks_tx(db.transaction(), player_id)
+
+
+@firestore.transactional
+def _check_and_apply_unlocks_tx(transaction, player_id: str) -> list[str]:
+    player = get_player(player_id, transaction)
     newly_unlocked = []
 
     # Les conditions de zones vivent dans les squelettes, indépendamment des
@@ -78,7 +89,7 @@ def check_and_apply_unlocks(player_id: str) -> list[str]:
 
     # Une seule écriture est faite après avoir évalué toutes les catégories.
     if newly_unlocked:
-        save_player(player_id, player)
+        save_player(player_id, player, transaction)
     return newly_unlocked
 
 
@@ -104,11 +115,25 @@ def apply_monster_kill_rewards(player_id: str, zone_id: str, entry_id: str) -> d
         raise HTTPException(400, "Cette entry n'est pas un monstre")
     monster = load_template("monster", entry["template_id"])
 
-    if entry["state_scope"] == "shared":
+    # La réservation du spawn et les récompenses sont écrites dans la même
+    # transaction : si deux victoires arrivent en même temps, Firestore rejoue
+    # la seconde, qui voit alors le spawn déjà épuisé.
+    result = _apply_monster_kill_rewards_tx(db.transaction(), player_id, zone_id, entry_id, entry, monster)
+    result["newly_unlocked"] = check_and_apply_unlocks(player_id)
+    return result
+
+
+@firestore.transactional
+def _apply_monster_kill_rewards_tx(transaction, player_id: str, zone_id: str, entry_id: str, entry: dict, monster: dict) -> dict:
+    # Firestore impose de faire toutes les lectures avant la première écriture.
+    shared = entry["state_scope"] == "shared"
+    zone_state = get_zone_dynamic_state(zone_id, transaction) if shared else None
+    player = get_player(player_id, transaction)
+
+    if shared:
         # Les monstres partagés doivent être réservés avant les récompenses :
         # deux appels concurrents ne doivent pas pouvoir payer deux fois le même
         # spawn déjà vaincu.
-        zone_state = get_zone_dynamic_state(zone_id)
         entry_state = zone_state["entries"].get(entry_id, {"status": "available"})
         if entry_state.get("status") == "depleted":
             # Le respawn est vérifié à la demande, en comparant l'horodatage
@@ -129,11 +154,10 @@ def apply_monster_kill_rewards(player_id: str, zone_id: str, entry_id: str) -> d
                 "available_again_at": datetime.now(timezone.utc) + timedelta(seconds=cooldown),
             }
         zone_state["entries"][entry_id] = entry_state
-        save_zone_dynamic_state(zone_id, zone_state)
+        save_zone_dynamic_state(zone_id, zone_state, transaction)
 
-    # Une fois la rencontre validée, on charge le joueur et on applique les
-    # récompenses sur son état courant.
-    player = get_player(player_id)
+    # Une fois la rencontre validée, on applique les récompenses sur l'état
+    # courant du joueur, lu plus haut dans la transaction.
     loot = roll_loot_table(monster.get("loot_table", []))
     if loot:
         # roll_loot_table renvoie au plus un item et une quantité pour ce kill.
@@ -157,10 +181,10 @@ def apply_monster_kill_rewards(player_id: str, zone_id: str, entry_id: str) -> d
                 # position conservée dans objectives_progress.
                 progress["objectives_progress"][index]["current_count"] += 1
 
-    # Le joueur est sauvegardé avant le recalcul des déblocages afin que leurs
-    # conditions lisent bien les nouveaux XP, compteurs et items.
-    save_player(player_id, player)
-    newly_unlocked = check_and_apply_unlocks(player_id)
+    # Le joueur est sauvegardé avant le recalcul des déblocages (fait après le
+    # commit) afin que leurs conditions lisent bien les nouveaux XP, compteurs
+    # et items.
+    save_player(player_id, player, transaction)
     return {
         "loot": loot,
         "xp_gagne": xp_gained,
@@ -169,5 +193,4 @@ def apply_monster_kill_rewards(player_id: str, zone_id: str, entry_id: str) -> d
         "player_xp_total": player["xp"],
         "player_stat_points": player["stat_points"],
         "player_inventory": player["inventory"],
-        "newly_unlocked": newly_unlocked,
     }
