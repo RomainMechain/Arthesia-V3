@@ -276,7 +276,14 @@ def allocate_stat_points(req: AllocateStatPointsRequest):
         raise HTTPException(400, f"Stat(s) inconnue(s) : {invalid_stats}")
     if any(v < 0 for v in req.allocations.values()):
         raise HTTPException(400, "Les valeurs doivent être positives")
-    player = get_player(req.player_id)
+    return _allocate_stat_points_tx(db.transaction(), req)
+
+
+@firestore.transactional
+def _allocate_stat_points_tx(transaction, req: AllocateStatPointsRequest) -> dict:
+    # Deux validations simultanées ne doivent pas dépenser deux fois le même
+    # pool de points.
+    player = get_player(req.player_id, transaction)
     total_requested = sum(req.allocations.values())
     # Le total demandé est comparé au pool disponible, puis réparti stat par stat.
     if total_requested > player["stat_points"]["available"]:
@@ -284,7 +291,7 @@ def allocate_stat_points(req: AllocateStatPointsRequest):
     for stat, amount in req.allocations.items():
         player["stat_points"]["spent"][stat] += amount
     player["stat_points"]["available"] -= total_requested
-    save_player(req.player_id, player)
+    save_player(req.player_id, player, transaction)
     return {"stat_points": player["stat_points"]}
 
 

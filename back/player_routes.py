@@ -4,12 +4,12 @@ from fastapi import APIRouter, HTTPException
 
 try:
     from .database import db
-    from .game_rules import compute_final_stats
+    from .game_rules import POINT_VALUE, compute_final_stats, xp_to_next_level
     from .models import CreatePlayerRequest
     from .player_store import build_new_player_state
 except ImportError:
     from database import db
-    from game_rules import compute_final_stats
+    from game_rules import POINT_VALUE, compute_final_stats, xp_to_next_level
     from models import CreatePlayerRequest
     from player_store import build_new_player_state
 
@@ -41,7 +41,11 @@ def get_player_stats(player_id: str):
     if not doc.exists:
         raise HTTPException(404, f"Joueur '{player_id}' introuvable")
     player = doc.to_dict()
+    # Le client affiche la barre d'XP et l'effet d'un point de stat sans
+    # dupliquer les formules du serveur.
     return {
         "stats": compute_final_stats(player),
+        "xp_to_next_level": xp_to_next_level(player["level"]),
+        "point_value": POINT_VALUE,
         "note": "Passifs conditionnels (temps réel combat) non inclus — voir catégorie D, hors périmètre.",
     }
