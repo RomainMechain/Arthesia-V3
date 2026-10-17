@@ -75,20 +75,6 @@ class UnequipTitleRequest(BaseModel):
     player_id: str
 
 
-class BuyFromShopRequest(BaseModel):
-    player_id: str
-    zone_id: str
-    entry_id: str
-    item_id: str
-    quantity: int = 1
-
-
-class SellToServerRequest(BaseModel):
-    player_id: str
-    item_id: str
-    quantity: int = 1
-
-
 class ShopBuyRequest(BaseModel):
     player_id: str
     zone_id: str

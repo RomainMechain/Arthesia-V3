@@ -563,97 +563,55 @@ def unequip_title(req: UnequipTitleRequest):
     return {"unequipped": previous_title_id, "titles": player["titles"]}
 
 
-@router.post("/actions/buy_from_shop")
-def buy_from_shop(req: BuyFromShopRequest):
-    """Achète une offre de boutique en tenant compte du stock partagé éventuel."""
-    # L'entry indique quelle boutique est présente dans la zone. La liste des
-    # offres et la monnaie acceptée viennent ensuite du template de boutique.
-    zone_static = load_static_zone_content(req.zone_id)
-    entry = find_entry(zone_static, req.entry_id)
-    if entry["template_type"] != "shop":
-        raise HTTPException(400, "Cette entry n'est pas un shop")
-    shop = load_template("shop", entry["template_id"])
-    offer = next((o for o in shop["sell_offers"] if o["item_id"] == req.item_id), None)
-    if not offer:
-        raise HTTPException(404, f"'{req.item_id}' n'est pas en vente ici")
-    total_price = offer["price"] * req.quantity
-    player = get_player(req.player_id)
-    currency = shop.get("currency", "or")
-    if player["currency"].get(currency, 0) < total_price:
-        raise HTTPException(400, f"Pas assez de {currency} ({total_price} requis)")
-    if entry["state_scope"] == "shared" and offer.get("stock") is not None:
-        # Le stock limité est conservé par entry et par item dans l'état de zone.
-        # Une boutique sans stock limité reste achetable sans cette branche.
-        zone_state = get_zone_dynamic_state(req.zone_id)
-        entry_state = zone_state["entries"].get(req.entry_id, {"offers": {}})
-        offer_state = entry_state.get("offers", {}).get(req.item_id, {"status": "available", "current_stock": offer["stock"]})
-        if offer_state.get("status") == "depleted":
-            # Le réapprovisionnement est calculé au moment de l'achat, comme pour
-            # les ressources, à partir de la date stockée dans Firestore.
-            available_again_at = offer_state.get("available_again_at")
-            if available_again_at and datetime.now(timezone.utc) >= available_again_at:
-                offer_state = {"status": "available", "current_stock": offer["stock"]}
-        if offer_state.get("status") != "available" or offer_state.get("current_stock", 0) < req.quantity:
-            raise HTTPException(409, f"Stock insuffisant pour '{req.item_id}' (réapprovisionnement en cours)")
-        offer_state["current_stock"] -= req.quantity
-        if offer_state["current_stock"] <= 0:
-            restock = offer.get("restock_seconds")
-            offer_state = {"status": "depleted", "available_again_at": datetime.now(timezone.utc) + timedelta(seconds=restock) if restock else None}
-        entry_state.setdefault("offers", {})[req.item_id] = offer_state
-        zone_state["entries"][req.entry_id] = entry_state
-        save_zone_dynamic_state(req.zone_id, zone_state)
-    # Le paiement et l'ajout de l'item sont persistés sur le même profil joueur.
-    player["currency"][currency] = player["currency"].get(currency, 0) - total_price
-    player["inventory"][req.item_id] = player["inventory"].get(req.item_id, 0) + req.quantity
-    save_player(req.player_id, player)
-    return {"bought": req.item_id, "quantity": req.quantity, "total_price": total_price, "player_currency": player["currency"], "player_inventory": player["inventory"]}
-
-
-@router.post("/actions/sell_to_server")
-def sell_to_server(req: SellToServerRequest):
-    """Vend un item au serveur au taux global ``K_SELL`` de sa valeur de base."""
-    # Cette vente ne dépend d'aucune entry de zone : la valeur est déterminée
-    # uniquement par le template de l'item et par K_SELL.
-    player = get_player(req.player_id)
-    if player["inventory"].get(req.item_id, 0) < req.quantity:
-        raise HTTPException(400, f"Pas assez de '{req.item_id}' en inventaire")
-    item = load_template("item", req.item_id)
-    unit_price = round(item.get("base_value", 0) * K_SELL)
-    total_gained = unit_price * req.quantity
-    player["inventory"][req.item_id] -= req.quantity
-    if player["inventory"][req.item_id] <= 0:
-        del player["inventory"][req.item_id]
-    player["currency"]["or"] = player["currency"].get("or", 0) + total_gained
-    save_player(req.player_id, player)
-    return {"sold": req.item_id, "quantity": req.quantity, "total_gained": total_gained, "player_currency": player["currency"], "player_inventory": player["inventory"]}
-
-
 # -----------------------------------------------------------------------------
 # Boutiques
 # -----------------------------------------------------------------------------
 
+def sell_unit_price(item: dict) -> int:
+    """Prix de rachat d'un objet par n'importe quelle boutique (règle globale)."""
+    return round(item.get("base_value", 0) * K_SELL)
+
+
+def load_shop_entry(zone_id: str, entry_id: str) -> tuple[dict, dict]:
+    """Retourne l'entry et le template d'une boutique de zone."""
+    entry = find_entry(load_static_zone_content(zone_id), entry_id)
+    if entry["template_type"] != "shop":
+        raise HTTPException(400, "Cette entry n'est pas une boutique")
+    return entry, load_template("shop", entry["template_id"])
+
+
 @router.post("/actions/shop_buy")
 def shop_buy(req: ShopBuyRequest):
-    """Achète dans une boutique avec validation de quantité, prix et stock."""
-    # Cette route reprend le parcours d'achat contextualisé par une zone et une
-    # entry. Elle valide explicitement la quantité avant toute mutation de stock.
-    zone_static = load_static_zone_content(req.zone_id)
-    entry = find_entry(zone_static, req.entry_id)
-    if entry["template_type"] != "shop":
-        raise HTTPException(400, "Cette entry n'est pas un shop")
-    shop = load_template("shop", entry["template_id"])
+    """Achète une offre de boutique, en tenant compte d'un éventuel stock partagé."""
     if req.quantity < 1:
         raise HTTPException(400, "Quantité invalide")
+    entry, shop = load_shop_entry(req.zone_id, req.entry_id)
     offer = next((o for o in shop["sell_offers"] if o["item_id"] == req.item_id), None)
     if offer is None:
         raise HTTPException(404, f"'{req.item_id}' n'est pas vendu ici")
-    if offer.get("stock") is not None and entry["state_scope"] == "shared":
-        # Le stock est décrémenté avant le crédit de l'inventaire, afin que la
-        # valeur persistée représente immédiatement la disponibilité restante.
-        zone_state = get_zone_dynamic_state(req.zone_id)
+    return _shop_buy_tx(db.transaction(), req, entry, shop, offer)
+
+
+@firestore.transactional
+def _shop_buy_tx(transaction, req: ShopBuyRequest, entry: dict, shop: dict, offer: dict) -> dict:
+    # Le stock n'est consommé que si le paiement est possible : tout est lu,
+    # vérifié, puis écrit dans la même transaction.
+    limited = offer.get("stock") is not None and entry["state_scope"] == "shared"
+    zone_state = get_zone_dynamic_state(req.zone_id, transaction) if limited else None
+    player = get_player(req.player_id, transaction)
+    require_entry_unlocked(entry, player)
+
+    total_cost = offer["price"] * req.quantity
+    currency = shop.get("currency", "or")
+    if player["currency"].get(currency, 0) < total_cost:
+        raise HTTPException(400, f"Pas assez d'{currency} ({total_cost} requis)")
+
+    if limited:
+        # Le stock limité est conservé par entry et par item dans l'état de zone.
         entry_state = zone_state["entries"].setdefault(req.entry_id, {"offers": {}})
-        offer_state = entry_state["offers"].get(req.item_id, {"status": "available", "current_stock": offer["stock"]})
+        offer_state = entry_state.setdefault("offers", {}).get(req.item_id, {"status": "available", "current_stock": offer["stock"]})
         if offer_state.get("status") == "depleted":
+            # Le réapprovisionnement est évalué à la demande, comme les ressources.
             available_again_at = offer_state.get("available_again_at")
             if available_again_at and datetime.now(timezone.utc) >= available_again_at:
                 offer_state = {"status": "available", "current_stock": offer["stock"]}
@@ -664,61 +622,70 @@ def shop_buy(req: ShopBuyRequest):
             restock = offer.get("restock_seconds")
             offer_state = {"status": "depleted", "available_again_at": datetime.now(timezone.utc) + timedelta(seconds=restock) if restock else None}
         entry_state["offers"][req.item_id] = offer_state
-        zone_state["entries"][req.entry_id] = entry_state
-        save_zone_dynamic_state(req.zone_id, zone_state)
-    total_cost = offer["price"] * req.quantity
-    player = get_player(req.player_id)
-    currency = shop.get("currency", "or")
-    # Le solde est vérifié après la résolution de l'offre, mais avant toute
-    # écriture du joueur.
-    if player["currency"].get(currency, 0) < total_cost:
-        raise HTTPException(400, f"Pas assez de {currency} ({total_cost} requis)")
+        save_zone_dynamic_state(req.zone_id, zone_state, transaction)
+
     player["currency"][currency] -= total_cost
     player["inventory"][req.item_id] = player["inventory"].get(req.item_id, 0) + req.quantity
-    save_player(req.player_id, player)
+    save_player(req.player_id, player, transaction)
     return {"bought": req.item_id, "quantity": req.quantity, "total_cost": total_cost, "player_currency": player["currency"], "player_inventory": player["inventory"]}
 
 
 @router.post("/actions/shop_sell")
 def shop_sell(req: ShopSellRequest):
-    """Revendra un item à une boutique au taux global de rachat."""
-    # L'entry sert à vérifier le contexte boutique et à déterminer la monnaie;
-    # tous les items possédant une base_value peuvent être rachetés.
-    zone_static = load_static_zone_content(req.zone_id)
-    entry = find_entry(zone_static, req.entry_id)
-    if entry["template_type"] != "shop":
-        raise HTTPException(400, "Cette entry n'est pas un shop")
-    shop = load_template("shop", entry["template_id"])
+    """Revend un objet à une boutique au taux global de rachat (K_SELL)."""
     if req.quantity < 1:
         raise HTTPException(400, "Quantité invalide")
-    player = get_player(req.player_id)
+    entry, shop = load_shop_entry(req.zone_id, req.entry_id)
+    item = load_template("item", req.item_id)
+    return _shop_sell_tx(db.transaction(), req, entry, shop, item)
+
+
+@firestore.transactional
+def _shop_sell_tx(transaction, req: ShopSellRequest, entry: dict, shop: dict, item: dict) -> dict:
+    player = get_player(req.player_id, transaction)
+    require_entry_unlocked(entry, player)
     if player["inventory"].get(req.item_id, 0) < req.quantity:
         raise HTTPException(400, f"Pas assez de '{req.item_id}' en inventaire")
-    item = load_template("item", req.item_id)
-    unit_price = round(item.get("base_value", 0) * K_SELL, 2)
-    total_earned = round(unit_price * req.quantity, 2)
-    # Le prix est calculé avant la consommation de l'inventaire pour conserver
-    # une réponse cohérente même lorsque plusieurs unités sont vendues.
+    total_earned = sell_unit_price(item) * req.quantity
     player["inventory"][req.item_id] -= req.quantity
     if player["inventory"][req.item_id] <= 0:
         del player["inventory"][req.item_id]
     currency = shop.get("currency", "or")
     player["currency"][currency] = player["currency"].get(currency, 0) + total_earned
-    save_player(req.player_id, player)
+    save_player(req.player_id, player, transaction)
     return {"sold": req.item_id, "quantity": req.quantity, "total_earned": total_earned, "player_currency": player["currency"], "player_inventory": player["inventory"]}
 
 
+@router.get("/shops/sell_prices")
+def shop_sell_prices(player_id: str):
+    """Prix de rachat unitaire de chaque objet du sac du joueur."""
+    player = get_player(player_id)
+    prices = {}
+    for item_id in player["inventory"]:
+        try:
+            prices[item_id] = sell_unit_price(load_template("item", item_id))
+        except HTTPException:
+            # Un objet sans template ne peut pas être évalué ni revendu.
+            continue
+    return {"prices": prices}
+
+
 # -----------------------------------------------------------------------------
-# Marché entre joueurs
+# Autel des Ventes (marché entre joueurs)
 # -----------------------------------------------------------------------------
+#
+# Tous les Autels des Ventes partagent les mêmes annonces : un objet déposé à
+# un autel s'achète depuis n'importe quel autre. ``market_id`` garde seulement
+# l'autel d'origine de l'annonce.
+
+# Nombre de ventes conservées dans l'historique d'un vendeur.
+MAX_MARKET_SALES = 20
+
 
 @router.post("/actions/market_list_item")
 def market_list_item(req: ListItemForSaleRequest):
-    """Dépose un item dans un marché joueur et crée son annonce Firestore."""
-    # Le marché est identifié par l'entry de zone, puis son template fournit la
-    # monnaie utilisée par l'annonce.
-    zone_static = load_static_zone_content(req.zone_id)
-    entry = find_entry(zone_static, req.entry_id)
+    """Dépose un objet à un Autel des Ventes et crée son annonce."""
+    entry = find_entry(load_static_zone_content(req.zone_id), req.entry_id)
     if entry["template_type"] != "player_market":
         raise HTTPException(400, "Cette entry n'est pas un Autel des Ventes")
     market = load_template("player_market", entry["template_id"])
@@ -727,16 +694,27 @@ def market_list_item(req: ListItemForSaleRequest):
     listing_id = f"listing_{uuid.uuid4().hex[:12]}"
     # L'identifiant aléatoire garantit une clé Firestore distincte pour chaque
     # annonce, même si deux joueurs vendent le même item au même prix.
-    listing = {"listing_id": listing_id, "market_id": entry["template_id"], "seller_player_id": req.player_id, "item_id": req.item_id, "quantity": req.quantity, "price": req.price, "currency": market.get("currency", "or"), "listed_at": datetime.now(timezone.utc)}
-    _market_list_item_tx(db.transaction(), req, listing)
+    listing = {
+        "listing_id": listing_id,
+        "market_id": entry["template_id"],
+        "market_name": market.get("name", entry["template_id"]),
+        "seller_player_id": req.player_id,
+        "item_id": req.item_id,
+        "quantity": req.quantity,
+        "price": req.price,
+        "currency": market.get("currency", "or"),
+        "listed_at": datetime.now(timezone.utc),
+    }
+    _market_list_item_tx(db.transaction(), req, entry, listing)
     return listing
 
 
 @firestore.transactional
-def _market_list_item_tx(transaction, req: ListItemForSaleRequest, listing: dict) -> None:
+def _market_list_item_tx(transaction, req: ListItemForSaleRequest, entry: dict, listing: dict) -> None:
     # Le retrait de l'inventaire et la création de l'annonce sont atomiques :
     # deux dépôts simultanés ne peuvent pas lister le même exemplaire.
     player = get_player(req.player_id, transaction)
+    require_entry_unlocked(entry, player)
     if player["inventory"].get(req.item_id, 0) < req.quantity:
         raise HTTPException(400, f"Pas assez de '{req.item_id}' en inventaire")
     # Les items sont placés en dépôt immédiatement : ils ne peuvent donc pas
@@ -748,13 +726,14 @@ def _market_list_item_tx(transaction, req: ListItemForSaleRequest, listing: dict
     transaction.set(db.collection("market_listings").document(listing["listing_id"]), listing)
 
 
-@router.get("/market/{market_id}/listings")
-def market_browse(market_id: str):
-    """Retourne les annonces actives d'un marché joueur."""
+@router.get("/market/listings")
+def market_browse():
+    """Retourne toutes les annonces actives, des plus récentes aux plus anciennes."""
     # Une annonce active est simplement un document encore présent dans cette
     # collection : l'achat et l'annulation suppriment le document.
-    docs = db.collection("market_listings").where("market_id", "==", market_id).stream()
-    return [d.to_dict() for d in docs]
+    listings = [d.to_dict() for d in db.collection("market_listings").stream()]
+    listings.sort(key=lambda listing: listing.get("listed_at") or datetime.min.replace(tzinfo=timezone.utc), reverse=True)
+    return {"listings": listings}
 
 
 @router.post("/actions/market_buy")
@@ -778,13 +757,24 @@ def _market_buy_tx(transaction, req: BuyListingRequest) -> dict:
     seller = get_player(listing["seller_player_id"], transaction)
     currency = listing["currency"]
     if buyer["currency"].get(currency, 0) < listing["price"]:
-        raise HTTPException(400, f"Pas assez de {currency}")
+        raise HTTPException(400, f"Pas assez d'{currency}")
     # L'acheteur paie et reçoit les items, le vendeur est crédité et l'annonce
     # disparaît : les trois écritures sont validées ensemble au commit.
     buyer["currency"][currency] -= listing["price"]
     buyer["inventory"][listing["item_id"]] = buyer["inventory"].get(listing["item_id"], 0) + listing["quantity"]
     save_player(req.player_id, buyer, transaction)
     seller["currency"][currency] = seller["currency"].get(currency, 0) + listing["price"]
+    # Le vendeur n'est pas forcément connecté : la vente est notée dans son
+    # historique pour qu'il la retrouve dans ses annonces.
+    sales = seller.setdefault("market_sales", [])
+    sales.insert(0, {
+        "item_id": listing["item_id"],
+        "quantity": listing["quantity"],
+        "price": listing["price"],
+        "currency": currency,
+        "sold_at": datetime.now(timezone.utc),
+    })
+    del sales[MAX_MARKET_SALES:]
     save_player(listing["seller_player_id"], seller, transaction)
     transaction.delete(listing_ref)
     return {"bought": listing["item_id"], "quantity": listing["quantity"], "price_paid": listing["price"], "player_currency": buyer["currency"], "player_inventory": buyer["inventory"]}

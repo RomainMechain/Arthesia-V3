@@ -275,7 +275,7 @@
     $('allocate').onclick = () => runAction('/actions/allocate_stat_points', { player_id: playerId(), allocations: { atk: 1 } });
     $('startQuest').onclick = () => runAction('/actions/start_quest', { player_id: playerId(), quest_id: $('questId').value.trim() });
     $('turnQuest').onclick = () => runAction('/actions/turn_in_quest', { player_id: playerId(), quest_id: $('questId').value.trim() });
-    $('sellItem').onclick = () => runAction('/actions/sell_to_server', { player_id: playerId(), item_id: $('itemId').value.trim(), quantity: Number($('quantity').value) || 1 });
+    $('sellItem').onclick = () => runAction('/actions/shop_sell', { player_id: playerId(), zone_id: $('zoneId').value.trim(), entry_id: $('entryId').value.trim(), item_id: $('itemId').value.trim(), quantity: Number($('quantity').value) || 1 });
     $('startCombat').onclick = connectCombat;
     $('closeCombat').onclick = () => { if (socket) socket.close(); };
     $('attack').onclick = () => send({ action: 'basic_attack' });
