@@ -105,7 +105,7 @@
         "stock": null,
         "condition": {
           "type": "level",
-          "min": 3
+          "min": 30
         },
         "visibility_when_locked": "hinted",
         "hint": "Des ondulations étranges troublent parfois le miroir du lac, là où nul poisson ne saute."

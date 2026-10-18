@@ -4,14 +4,14 @@ from fastapi import APIRouter, HTTPException
 
 try:
     from .database import db
-    from .content_store import find_quest_givers, load_template
-    from .game_rules import POINT_VALUE, compute_final_stats, quest_progress_view, xp_to_next_level
+    from .content_store import find_quest_givers, load_ordered_floors, load_template
+    from .game_rules import POINT_VALUE, compute_final_stats, quest_progress_view, reachable_floor_ids, xp_to_next_level
     from .models import CreatePlayerRequest
     from .player_store import build_new_player_state
 except ImportError:
     from database import db
-    from content_store import find_quest_givers, load_template
-    from game_rules import POINT_VALUE, compute_final_stats, quest_progress_view, xp_to_next_level
+    from content_store import find_quest_givers, load_ordered_floors, load_template
+    from game_rules import POINT_VALUE, compute_final_stats, quest_progress_view, reachable_floor_ids, xp_to_next_level
     from models import CreatePlayerRequest
     from player_store import build_new_player_state
 
@@ -74,3 +74,16 @@ def get_player_quests(player_id: str):
             "givers": [{"zone_id": giver["zone_id"], "zone_name": giver["zone_name"]} for giver in find_quest_givers(quest_id)],
         })
     return {"quests": quests}
+
+
+@router.get("/players/{player_id}/floors")
+def get_player_floors(player_id: str):
+    """Étages que le joueur peut visiter, dans l'ordre (navigation de la carte)."""
+    doc = db.collection("players").document(player_id).get()
+    if not doc.exists:
+        raise HTTPException(404, f"Joueur '{player_id}' introuvable")
+    floors = load_ordered_floors()
+    return {
+        "reachable": reachable_floor_ids(floors, doc.to_dict()),
+        "floors": [{"id": f["id"], "name": f.get("name")} for f in floors],
+    }

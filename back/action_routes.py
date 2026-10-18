@@ -18,7 +18,7 @@ from fastapi import APIRouter, HTTPException
 from firebase_admin import firestore
 
 try:
-    from .content_store import find_entry, find_quest_givers, load_static_zone_content, load_template
+    from .content_store import find_entry, find_quest_givers, load_ordered_floors, load_static_zone_content, load_template
     from .craft_service import (
         build_recipe_key, generate_craft_item_via_ai, get_cached_craft,
         save_craft_cache, save_new_craft_item,
@@ -26,14 +26,15 @@ try:
     from .database import db
     from .game_rules import (
         advance_quest_objectives, apply_player_level_ups, apply_profession_level_ups, deplete_entry_state,
-        get_profession, is_entry_unlocked, public_entry_state, quest_progress_view, require_entry_unlocked,
+        get_profession, is_entry_unlocked, is_zone_accessible, public_entry_state, quest_progress_view,
+        has_defeated_entry, is_shared_entry, reachable_floor_ids, require_entry_unlocked,
         resolve_entry_state, roll_loot_table, xp_to_next_level,
     )
     from .models import *
     from .player_store import get_player, get_zone_dynamic_state, save_player, save_zone_dynamic_state
     from .progression import check_and_apply_unlocks
 except ImportError:
-    from content_store import find_entry, find_quest_givers, load_static_zone_content, load_template
+    from content_store import find_entry, find_quest_givers, load_ordered_floors, load_static_zone_content, load_template
     from craft_service import (
         build_recipe_key, generate_craft_item_via_ai, get_cached_craft,
         save_craft_cache, save_new_craft_item,
@@ -41,7 +42,8 @@ except ImportError:
     from database import db
     from game_rules import (
         advance_quest_objectives, apply_player_level_ups, apply_profession_level_ups, deplete_entry_state,
-        get_profession, is_entry_unlocked, public_entry_state, quest_progress_view, require_entry_unlocked,
+        get_profession, is_entry_unlocked, is_zone_accessible, public_entry_state, quest_progress_view,
+        has_defeated_entry, is_shared_entry, reachable_floor_ids, require_entry_unlocked,
         resolve_entry_state, roll_loot_table, xp_to_next_level,
     )
     from models import *
@@ -57,6 +59,36 @@ VALID_STATS = {"hp", "atk", "def", "agi", "int", "sag"}
 VALID_SLOTS = {"weapon", "head", "chest", "gloves", "boots", "ring", "amulet", "tool"}
 MAX_ACTIVE_SKILL_SLOTS = 8
 MAX_PASSIVE_SKILL_SLOTS = 4
+
+
+# -----------------------------------------------------------------------------
+# Déplacement
+# -----------------------------------------------------------------------------
+
+@router.post("/actions/travel")
+def travel(req: TravelRequest):
+    """Déplace le joueur dans une zone accessible d'un étage atteignable.
+
+    ``current_zone_id`` sert à la carte (position du joueur, étage affiché).
+    """
+    floors = load_ordered_floors()
+    for floor in floors:
+        zone = next((z for z in floor.get("zones", []) if z["id"] == req.zone_id), None)
+        if zone is not None:
+            return _travel_tx(db.transaction(), req, floors, floor["id"], zone)
+    raise HTTPException(404, f"Zone introuvable : {req.zone_id}")
+
+
+@firestore.transactional
+def _travel_tx(transaction, req: TravelRequest, floors: list[dict], floor_id: str, zone: dict) -> dict:
+    player = get_player(req.player_id, transaction)
+    if floor_id not in reachable_floor_ids(floors, player):
+        raise HTTPException(403, "Cet étage n'est pas encore accessible : franchis d'abord le passage de l'étage précédent")
+    if not is_zone_accessible(zone, player):
+        raise HTTPException(403, "Cette zone n'est pas encore accessible")
+    player["current_zone_id"] = zone["id"]
+    save_player(req.player_id, player, transaction)
+    return {"current_zone_id": zone["id"], "floor_id": floor_id}
 
 
 # -----------------------------------------------------------------------------
@@ -166,9 +198,12 @@ def get_zone_state(zone_id: str, player_id: str | None = None):
     entries = {}
     for entry in zone_static.get("entries", []):
         result = {}
-        if entry.get("state_scope") == "shared":
+        monster = load_template("monster", entry["template_id"]) if entry.get("template_type") == "monster" else None
+        if is_shared_entry(zone_id, entry, monster):
             state = resolve_entry_state(entry, zone_state["entries"].get(entry["id"]))
             result = public_entry_state(entry, state)
+        if player is not None and has_defeated_entry(player, zone_id, entry["id"]):
+            result["status"] = "defeated"
         if player is not None and not is_entry_unlocked(entry, player):
             spawn = entry.get("spawn", {})
             hinted = spawn.get("visibility_when_locked") == "hinted"

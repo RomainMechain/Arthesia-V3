@@ -3,6 +3,11 @@
 from pydantic import BaseModel, Field
 
 
+class TravelRequest(BaseModel):
+    player_id: str
+    zone_id: str
+
+
 class ResourceGatherRequest(BaseModel):
     player_id: str
     zone_id: str

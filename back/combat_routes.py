@@ -26,12 +26,20 @@ from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect
 
 try:
     from .content_store import find_entry, load_static_zone_content, load_template
-    from .game_rules import compute_final_stats, is_entry_unlocked
+    from .game_rules import (
+        compute_final_stats, has_defeated_entry, is_entry_unlocked, is_one_time_per_player, is_shared_entry,
+        resolve_entry_state,
+    )
+    from .player_store import get_zone_dynamic_state
     from .progression import apply_monster_kill_rewards
     from .player_store import get_player
 except ImportError:
     from content_store import find_entry, load_static_zone_content, load_template
-    from game_rules import compute_final_stats, is_entry_unlocked
+    from game_rules import (
+        compute_final_stats, has_defeated_entry, is_entry_unlocked, is_one_time_per_player, is_shared_entry,
+        resolve_entry_state,
+    )
+    from player_store import get_zone_dynamic_state
     from progression import apply_monster_kill_rewards
     from player_store import get_player
 
@@ -203,6 +211,19 @@ async def combat_websocket(websocket: WebSocket):
                 if not is_entry_unlocked(entry, player):
                     await websocket.send_json({"type": "error", "message": "Ce monstre n'est pas encore accessible"})
                     continue
+                if is_one_time_per_player(zone_id, entry, monster) and has_defeated_entry(player, zone_id, entry_id):
+                    await websocket.send_json({"type": "error", "message": "Tu as déjà vaincu ce monstre"})
+                    continue
+                if is_shared_entry(zone_id, entry, monster):
+                    # Inutile de combattre un monstre partagé déjà tué ou un
+                    # boss d'étage déjà vaincu : la victoire ne rapporterait rien.
+                    state = resolve_entry_state(entry, get_zone_dynamic_state(zone_id)["entries"].get(entry_id))
+                    if state.get("status") == "defeated":
+                        await websocket.send_json({"type": "error", "message": "Ce gardien a déjà été vaincu"})
+                        continue
+                    if state.get("status") != "available":
+                        await websocket.send_json({"type": "error", "message": "Ce monstre n'est pas là pour l'instant"})
+                        continue
                 player_stats = compute_final_stats(player)
                 player_hp = player_stats["hp"]
                 player_max_mana = compute_max_mana(player_stats.get("int", 0))

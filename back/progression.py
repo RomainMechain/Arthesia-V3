@@ -20,13 +20,19 @@ try:
     from .config import TEMPLATES_DIR
     from .content_store import find_entry, load_all_floor_skeletons, load_static_zone_content, load_template
     from .database import db
-    from .game_rules import advance_quest_objectives, apply_player_level_ups, compute_kill_xp, respawn_cooldown_seconds, roll_loot_table, evaluate_condition
+    from .game_rules import (
+        advance_quest_objectives, apply_player_level_ups, compute_kill_xp, defeated_entry_key, evaluate_condition,
+        has_defeated_entry, is_one_time_per_player, is_shared_entry, respawn_cooldown_seconds, roll_loot_table,
+    )
     from .player_store import get_player, get_zone_dynamic_state, save_player, save_zone_dynamic_state
 except ImportError:
     from config import TEMPLATES_DIR
     from content_store import find_entry, load_all_floor_skeletons, load_static_zone_content, load_template
     from database import db
-    from game_rules import advance_quest_objectives, apply_player_level_ups, compute_kill_xp, respawn_cooldown_seconds, roll_loot_table, evaluate_condition
+    from game_rules import (
+        advance_quest_objectives, apply_player_level_ups, compute_kill_xp, defeated_entry_key, evaluate_condition,
+        has_defeated_entry, is_one_time_per_player, is_shared_entry, respawn_cooldown_seconds, roll_loot_table,
+    )
     from player_store import get_player, get_zone_dynamic_state, save_player, save_zone_dynamic_state
 
 
@@ -126,7 +132,7 @@ def apply_monster_kill_rewards(player_id: str, zone_id: str, entry_id: str) -> d
 @firestore.transactional
 def _apply_monster_kill_rewards_tx(transaction, player_id: str, zone_id: str, entry_id: str, entry: dict, monster: dict) -> dict:
     # Firestore impose de faire toutes les lectures avant la première écriture.
-    shared = entry["state_scope"] == "shared"
+    shared = is_shared_entry(zone_id, entry, monster)
     zone_state = get_zone_dynamic_state(zone_id, transaction) if shared else None
     player = get_player(player_id, transaction)
 
@@ -155,6 +161,12 @@ def _apply_monster_kill_rewards_tx(transaction, player_id: str, zone_id: str, en
             }
         zone_state["entries"][entry_id] = entry_state
         save_zone_dynamic_state(zone_id, zone_state, transaction)
+    elif is_one_time_per_player(zone_id, entry, monster):
+        # Un boss propre à chaque joueur ne se bat qu'une fois : sa défaite est
+        # notée sur le profil (elle ouvre notamment le passage de l'étage).
+        if has_defeated_entry(player, zone_id, entry_id):
+            raise HTTPException(409, "Tu as déjà vaincu ce monstre")
+        player.setdefault("defeated_entries", []).append(defeated_entry_key(zone_id, entry_id))
 
     # Une fois la rencontre validée, on applique les récompenses sur l'état
     # courant du joueur, lu plus haut dans la transaction.

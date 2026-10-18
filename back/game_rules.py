@@ -15,10 +15,10 @@ from datetime import datetime, timedelta, timezone
 from fastapi import HTTPException
 
 try:
-    from .content_store import load_static_zone_content, load_template
+    from .content_store import load_ordered_floors, load_static_zone_content, load_template
     from .player_store import get_zone_dynamic_state
 except ImportError:
-    from content_store import load_static_zone_content, load_template
+    from content_store import load_ordered_floors, load_static_zone_content, load_template
     from player_store import get_zone_dynamic_state
 
 # Statistiques de départ d'un joueur niveau 1.
@@ -166,11 +166,48 @@ def apply_player_level_ups(player: dict) -> int:
     return levels_gained
 
 
-def is_boss_defeated(zone_id: str) -> bool:
-    """Indique si un boss de la zone possède l'état ``defeated``.
+def is_floor_boss(zone_id: str, monster: dict) -> bool:
+    """Boss de la zone ``boss_zone_id`` d'un étage."""
+    if monster.get("role") != "boss":
+        return False
+    return any(floor.get("boss_zone_id") == zone_id for floor in load_ordered_floors())
 
-    Le contenu du boss est statique, mais son état de défaite est partagé dans
-    Firestore. Une zone ou un contenu introuvable est traité comme non vaincu,
+
+def is_shared_entry(zone_id: str, entry: dict, monster: dict | None = None) -> bool:
+    """Indique si l'état d'une entry est commun à tous les joueurs.
+
+    Un boss d'étage est toujours partagé, quel que soit son ``state_scope`` :
+    vaincu une fois, il l'est pour tout le serveur, ouvre le passage pour tout
+    le monde et ne peut plus être combattu.
+    """
+    if entry.get("state_scope") == "shared":
+        return True
+    return monster is not None and is_floor_boss(zone_id, monster)
+
+
+def is_one_time_per_player(zone_id: str, entry: dict, monster: dict) -> bool:
+    """Entry ``per_player`` qu'un joueur ne bat qu'une fois : un boss (autre
+    qu'un boss d'étage), ou un spawn ``unique_per_player``. Sa défaite est
+    notée sur le profil du joueur."""
+    if is_shared_entry(zone_id, entry, monster):
+        return False
+    return monster.get("role") == "boss" or entry.get("spawn", {}).get("mode") == "unique_per_player"
+
+
+def defeated_entry_key(zone_id: str, entry_id: str) -> str:
+    return f"{zone_id}/{entry_id}"
+
+
+def has_defeated_entry(player: dict, zone_id: str, entry_id: str) -> bool:
+    return defeated_entry_key(zone_id, entry_id) in player.get("defeated_entries", [])
+
+
+def is_boss_defeated(zone_id: str, player: dict | None = None) -> bool:
+    """Indique si un boss de la zone est vaincu.
+
+    Un boss ``shared`` est vaincu pour tout le serveur (état de zone Firestore).
+    Un boss ``per_player`` l'est pour chaque joueur qui l'a battu (profil du
+    joueur). Une zone ou un contenu introuvable est traité comme non vaincu,
     ce qui évite de débloquer une condition sur une donnée invalide.
     """
     try:
@@ -187,6 +224,8 @@ def is_boss_defeated(zone_id: str) -> bool:
         if monster.get("role") == "boss":
             entry_state = zone_state["entries"].get(entry["id"], {})
             if entry_state.get("status") == "defeated":
+                return True
+            if player is not None and has_defeated_entry(player, zone_id, entry["id"]):
                 return True
     return False
 
@@ -215,7 +254,7 @@ def evaluate_condition(condition: dict | None, player: dict) -> bool:
     if condition_type == "zone":
         return condition["zone_id"] in player["unlocks"]["zones"]
     if condition_type == "boss":
-        return is_boss_defeated(condition["zone_id"])
+        return is_boss_defeated(condition["zone_id"], player)
     if condition_type == "kill_count":
         return player["lifetime_counters"]["kills"].get(condition["monster_id"], 0) >= condition["count"]
     if condition_type == "gather_count":
@@ -228,6 +267,31 @@ def evaluate_condition(condition: dict | None, player: dict) -> bool:
         results = [evaluate_condition(item, player) for item in condition["conditions"]]
         return all(results) if condition["mode"] == "all" else any(results)
     return False
+
+
+def is_zone_accessible(zone: dict, player: dict) -> bool:
+    """Une zone est accessible si elle n'a pas de condition, ou si sa condition
+    est remplie (évaluée en direct, pas seulement via ``unlocks.zones``)."""
+    if zone.get("unlock_condition") is None or zone["id"] in player["unlocks"]["zones"]:
+        return True
+    return evaluate_condition(zone["unlock_condition"], player)
+
+
+def reachable_floor_ids(floors: list[dict], player: dict) -> list[str]:
+    """Étages où le joueur peut se rendre, dans l'ordre.
+
+    Le premier étage est toujours accessible ; l'étage suivant le devient quand
+    la zone ``passage`` de l'étage courant est accessible (son déblocage suit la
+    défaite du boss de l'étage).
+    """
+    reachable = []
+    for index, floor in enumerate(floors):
+        if index > 0:
+            passages = [z for z in floors[index - 1].get("zones", []) if z.get("type") == "passage"]
+            if not any(is_zone_accessible(z, player) for z in passages):
+                break
+        reachable.append(floor["id"])
+    return reachable
 
 
 def is_entry_unlocked(entry: dict, player: dict) -> bool:

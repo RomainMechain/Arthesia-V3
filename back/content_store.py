@@ -57,6 +57,19 @@ def get_default_start_zone_id() -> str | None:
     return skeleton.get("start_zone_id")
 
 
+def floor_number(floor: dict) -> int:
+    """Numéro d'un étage d'après son id (``floor_3`` -> 3)."""
+    try:
+        return int(str(floor.get("id", "")).rsplit("_", 1)[-1])
+    except ValueError:
+        return 0
+
+
+def load_ordered_floors() -> list[dict]:
+    """Squelettes d'étage triés du premier au dernier."""
+    return sorted(load_all_floor_skeletons(), key=floor_number)
+
+
 def load_all_floor_skeletons() -> list[dict]:
     skeletons = []
     for path in SKELETONS_DIR.glob("floor_*_skeleton.json"):
