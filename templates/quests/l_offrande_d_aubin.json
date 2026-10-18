@@ -1,0 +1,23 @@
+{
+  "id": "l_offrande_d_aubin",
+  "name": "L'Offrande d'Aubin",
+  "description": "Aubin veut déposer une offrande au pied de la dernière colonne, en remerciement pour la lumière. Il te demande des éclats de colonne, « pour rendre au sanctuaire ce qu'on lui a pris ».",
+  "objectives": [
+    {
+      "type": "deliver_item",
+      "item_id": "eclat_de_colonne",
+      "count": 4
+    }
+  ],
+  "rewards": {
+    "xp": 7,
+    "gold": 27,
+    "items": [
+      {
+        "item_id": "eau_benite_d_aube",
+        "quantity": 2
+      }
+    ]
+  },
+  "repeatable": false
+}

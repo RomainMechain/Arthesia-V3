@@ -1,0 +1,50 @@
+{
+  "id": "eclat_errant",
+  "name": "Éclat Errant",
+  "description": "Un fragment de pierre gravée qui flotte à hauteur d'homme et tourne lentement autour de la statue. Il s'en prend à quiconque traverse le cercle de la clairière.",
+  "level": 7,
+  "role": "normal",
+  "stats": {
+    "hp": 950,
+    "atk": 44,
+    "def": 35,
+    "agi": 17,
+    "int": 48,
+    "sag": 24
+  },
+  "moveset": [
+    {
+      "id": "tranchant_grave",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.21,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "eclat_aveuglant",
+      "damage_type": "magical",
+      "cooldown_seconds": 6,
+      "power": 0.36,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "poussiere_de_lumiere",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 7
+    },
+    {
+      "item_id": "fragment_de_cercle",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 3
+    }
+  ]
+}

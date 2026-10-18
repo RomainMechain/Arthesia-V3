@@ -1,0 +1,28 @@
+{
+  "id": "des_defenses_de_verre",
+  "name": "Des Défenses de Verre",
+  "description": "Halvard a fini par comprendre. Il ne rentrera pas au village : il ne saurait plus y vivre. Mais il veut laisser quelque chose à Yvenne, taillé dans les défenses des sangliers de verre qui rôdent ici. Rapporte-lui de quoi le faire.",
+  "objectives": [
+    {
+      "type": "kill_count",
+      "monster_id": "sanglier_aux_defenses_de_verre",
+      "count": 6
+    },
+    {
+      "type": "deliver_item",
+      "item_id": "defense_de_verre",
+      "count": 3
+    }
+  ],
+  "rewards": {
+    "xp": 15,
+    "gold": 54,
+    "items": [
+      {
+        "item_id": "anneau_de_verre_d_aube",
+        "quantity": 1
+      }
+    ]
+  },
+  "repeatable": false
+}

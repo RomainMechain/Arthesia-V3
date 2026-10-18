@@ -1,0 +1,16 @@
+{
+  "id": "gants_de_pecheur",
+  "name": "Gants de Pêcheur",
+  "description": "Des gants épais et imperméables, utilisés par les pêcheurs de la rive pour manier filets et lignes sans se blesser.",
+  "category": "equipment",
+  "level": 2,
+  "base_value": 60,
+  "stack_size": 1,
+  "equipment": {
+    "slot": "gloves",
+    "level_required": 2,
+    "stat_bonuses": {
+      "agi": 1.4
+    }
+  }
+}

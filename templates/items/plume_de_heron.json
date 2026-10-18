@@ -1,0 +1,9 @@
+{
+  "id": "plume_de_heron",
+  "name": "Plume de Héron",
+  "description": "Une longue plume grise, légère et raide, prisée des artisans pour les empennages et les parures.",
+  "category": "material",
+  "level": 2,
+  "base_value": 10,
+  "stack_size": 20
+}

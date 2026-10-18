@@ -1,0 +1,23 @@
+{
+  "id": "le_bois_qui_ne_vieillit_pas",
+  "name": "Le Bois qui ne Vieillit Pas",
+  "description": "Isarn a promis du bois de chêne au village, mais ses vieux bras ne suivent plus. Il te demande d'en couper pour lui, en prenant garde aux troncs qu'il t'a montrés.",
+  "objectives": [
+    {
+      "type": "gather_count",
+      "resource_id": "chene_ancien",
+      "count": 6
+    }
+  ],
+  "rewards": {
+    "xp": 6,
+    "gold": 24,
+    "items": [
+      {
+        "item_id": "hachette_d_isarn",
+        "quantity": 1
+      }
+    ]
+  },
+  "repeatable": false
+}

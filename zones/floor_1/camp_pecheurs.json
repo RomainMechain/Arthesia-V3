@@ -1,0 +1,299 @@
+{
+  "id": "camp_pecheurs",
+  "name": "Camp des Pêcheurs du Soir",
+  "type": "camp",
+  "position": {
+    "x": 45,
+    "y": 78
+  },
+  "visibility": "visible",
+  "description": "Quelques cabanes de bois flotté s'alignent près de l'eau, filets séchant au vent inexistant. Les pêcheurs parlent à voix basse de choses qu'ils préfèrent ne pas nommer.",
+  "unlock_condition": {
+    "type": "level",
+    "min": 3
+  },
+  "hint": "Les pêcheurs n'accueillent que ceux qui ont déjà fait leurs preuves.",
+  "generation_brief": {
+    "level_range": [
+      4,
+      6
+    ],
+    "difficulty_tier": "coeur",
+    "tags": [
+      "camp",
+      "peche",
+      "social",
+      "artisanat"
+    ],
+    "content_intent": "Petit camp de pêcheurs superstitieux, PNJ donnant objets et rumeurs, artisanat léger lié à la pêche, pas de combat significatif.",
+    "provides": [
+      {
+        "type": "item",
+        "id_suggere": "amulette_pecheur",
+        "via": "Un vieux pêcheur superstitieux offre une amulette tressée d'algues séchées à quiconque l'aide à réparer ses filets."
+      }
+    ]
+  },
+  "entries": [
+    {
+      "id": "ober_presence",
+      "template_type": "npc",
+      "template_id": "ober_vieux_pecheur",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "hilde_presence",
+      "template_type": "npc",
+      "template_id": "hilde_cuisiniere",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "sorne_presence",
+      "template_type": "npc",
+      "template_id": "sorne_guetteur",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_filets_ober",
+      "template_type": "quest_giver",
+      "template_id": "les_filets_d_ober",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_marmite",
+      "template_type": "quest_giver",
+      "template_id": "la_marmite_de_hilde",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_goelands",
+      "template_type": "quest_giver",
+      "template_id": "goelands_voleurs",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_silure",
+      "template_type": "quest_giver",
+      "template_id": "ce_qui_tire_les_filets",
+      "state_scope": "per_player",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "conditional",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": {
+          "type": "quest",
+          "quest_id": "les_filets_d_ober",
+          "state": "completed"
+        },
+        "visibility_when_locked": "hinted",
+        "hint": "Sorne fixe l'eau sous les pontons comme s'il attendait que quelqu'un d'autre que lui ose y regarder."
+      }
+    },
+    {
+      "id": "etal_du_camp",
+      "template_type": "shop",
+      "template_id": "etal_de_hilde",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "pontons_peche",
+      "template_type": "resource",
+      "template_id": "pontons_du_camp",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 90,
+        "stock": 4,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "varech_noeud",
+      "template_type": "resource",
+      "template_id": "varech_des_claies",
+      "state_scope": "shared",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 240,
+        "stock": 2,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "rat_pontons_spawn",
+      "template_type": "monster",
+      "template_id": "rat_des_pontons",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 45,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "rat_pontons_spawn_2",
+      "template_type": "monster",
+      "template_id": "rat_des_pontons",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 45,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "goeland_spawn",
+      "template_type": "monster",
+      "template_id": "goeland_voleur",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 60,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "silure_spawn",
+      "template_type": "monster",
+      "template_id": "silure_des_pontons",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 60,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "roches_du_rivage_noeud",
+      "template_type": "resource",
+      "template_id": "roches_du_rivage",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 90,
+        "stock": 4,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "affut_des_goelands_noeud",
+      "template_type": "resource",
+      "template_id": "affut_des_goelands",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 90,
+        "stock": 4,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    }
+  ]
+}

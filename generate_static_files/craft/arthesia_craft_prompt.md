@@ -91,7 +91,7 @@ faible au plus fort des ingrédients. Tu n'as rien à calculer.
   - cohérence rare : dans la fourchette `equipment_points.rare` (×1,5 à ×2), jamais au-delà.
 
   Exemple avec 7 points : `{"atk": 10, "agi": 2}` (5 + 2) ou `{"def": 8, "hp": 75}` (4 + 3), plutôt
-  que des dizaines de points dans une seule stat. Un outil (`slot: "tool"`) n'a pas de
+  que des dizaines de points dans une seule stat. Les bonus sont des nombres entiers (au moins 1). Un outil (`slot: "tool"`) n'a pas de
   `stat_bonuses`.
 - **Consommable** : `amount` = `consumable_amount.heal` pour un soin ou `consumable_amount.restore_mana`
   pour du mana, ±20 % selon la cohérence. Un `buff_stat` donne 10 à 20 % pendant 30 à 60 s.

@@ -1,0 +1,9 @@
+{
+  "id": "noyau_d_automate",
+  "name": "Noyau d'Automate",
+  "description": "Une sphère de métal tiède, gravée d'anneaux concentriques, qui battait au centre d'un automate. Elle bat encore, faiblement.",
+  "category": "material",
+  "level": 9,
+  "base_value": 45,
+  "stack_size": 20
+}

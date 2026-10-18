@@ -1,0 +1,44 @@
+{
+  "id": "echoppe_thessaly",
+  "name": "Échoppe de Thessaly",
+  "description": "Une petite échoppe de bois installée près de la place centrale, où l'on trouve de quoi se soigner et quelques babioles utiles pour débuter.",
+  "currency": "or",
+  "sell_offers": [
+    {
+      "item_id": "pain_de_miel",
+      "price": 18,
+      "stock": null,
+      "restock_seconds": null
+    },
+    {
+      "item_id": "tisane_apaisante",
+      "price": 18,
+      "stock": null,
+      "restock_seconds": null
+    },
+    {
+      "item_id": "ragout_chaud",
+      "price": 35,
+      "stock": null,
+      "restock_seconds": null
+    },
+    {
+      "item_id": "dague_villageoise",
+      "price": 35,
+      "stock": null,
+      "restock_seconds": null
+    },
+    {
+      "item_id": "amulette_du_levant",
+      "price": 35,
+      "stock": null,
+      "restock_seconds": null
+    },
+    {
+      "item_id": "gants_de_pecheur",
+      "price": 70,
+      "stock": null,
+      "restock_seconds": null
+    }
+  ]
+}

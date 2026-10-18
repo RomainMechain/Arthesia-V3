@@ -1,0 +1,9 @@
+{
+  "id": "fronde_de_fougere_doree",
+  "name": "Fronde de Fougère Dorée",
+  "description": "Une longue feuille de fougère couleur d'aube, souple et parfumée. Les herboristes en font des onguents.",
+  "category": "material",
+  "level": 5,
+  "base_value": 25,
+  "stack_size": 20
+}

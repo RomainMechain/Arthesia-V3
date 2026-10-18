@@ -1,0 +1,11 @@
+{
+  "id": "ober_vieux_pecheur",
+  "name": "Ober",
+  "description": "Le plus vieux pêcheur du camp, assis au bout du ponton, ses filets étalés sur les genoux. Il porte autour du cou une dizaine d'amulettes tressées et n'en enlève jamais aucune.",
+  "role": "Vieux pêcheur",
+  "dialogues": [
+    "Une amulette d'algues, ça ne protège de rien. Mais l'eau du milieu, elle, fait semblant de le croire. Ça suffit.",
+    "Mes filets reviennent troués par en dessous. Pas par un poisson. Par quelque chose qui tire droit, sans jamais se débattre.",
+    "Mon père pêchait déjà ici sous la même lumière. Et le sien aussi. Personne ne se demande combien de temps dure un matin."
+  ]
+}

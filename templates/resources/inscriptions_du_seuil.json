@@ -1,0 +1,21 @@
+{
+  "id": "inscriptions_du_seuil",
+  "name": "Inscriptions du Seuil",
+  "description": "Un mur couvert d'inscriptions, plus nettes que partout ailleurs dans les ruines. Il faut du temps et du papier pour en relever un passage.",
+  "level": 9,
+  "profession_required": {
+    "profession_id": "archeologie",
+    "min_level": 5,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 6,
+  "yields": [
+    {
+      "item_id": "estampage_d_inscription",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 10
+    }
+  ]
+}

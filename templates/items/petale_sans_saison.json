@@ -1,0 +1,9 @@
+{
+  "id": "petale_sans_saison",
+  "name": "Pétale sans Saison",
+  "description": "Un pétale pâle qui ne se flétrit jamais. Posé sur la main, il garde la forme exacte qu'il avait sur la fleur.",
+  "category": "material",
+  "level": 6,
+  "base_value": 30,
+  "stack_size": 20
+}

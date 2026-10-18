@@ -1,0 +1,27 @@
+{
+  "id": "eaux_basses_de_la_rive",
+  "name": "Eaux Basses de la Rive",
+  "description": "Une anse peu profonde où l'eau, claire comme du verre, ne fait presque jamais de vagues. Des ombres argentées y glissent entre les galets, toujours aux mêmes endroits.",
+  "level": 1,
+  "profession_required": {
+    "profession_id": "peche",
+    "min_level": 1,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 4,
+  "yields": [
+    {
+      "item_id": "truite_argentee_aube",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 10
+    },
+    {
+      "item_id": "ablette_doree",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 10
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "id": "pontons_du_camp",
+  "name": "Pontons du Camp",
+  "description": "Des pontons de bois flotté où l'on pêche en eau plus profonde qu'à la rive. Les perches y mordent sans jamais lutter, comme si elles savaient déjà comment ça finit.",
+  "level": 4,
+  "profession_required": {
+    "profession_id": "peche",
+    "min_level": 2,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 4,
+  "yields": [
+    {
+      "item_id": "perche_des_pontons",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 10
+    },
+    {
+      "item_id": "ablette_doree",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 4
+    }
+  ]
+}

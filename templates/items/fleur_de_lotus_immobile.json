@@ -1,0 +1,9 @@
+{
+  "id": "fleur_de_lotus_immobile",
+  "name": "Fleur de Lotus Immobile",
+  "description": "Une fleur de lotus blanche qui ne se referme jamais. Coupée, elle reste aussi fraîche qu'au milieu du lac.",
+  "category": "material",
+  "level": 6,
+  "base_value": 30,
+  "stack_size": 20
+}

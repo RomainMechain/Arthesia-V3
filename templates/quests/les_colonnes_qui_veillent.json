@@ -1,0 +1,23 @@
+{
+  "id": "les_colonnes_qui_veillent",
+  "name": "Les Colonnes qui Veillent",
+  "description": "Les gardiens de colonne empêchent Aubin d'atteindre les inscriptions qu'il lui manque. Fais-les taire assez longtemps pour qu'il puisse finir sa copie.",
+  "objectives": [
+    {
+      "type": "kill_count",
+      "monster_id": "gardien_de_colonne",
+      "count": 8
+    }
+  ],
+  "rewards": {
+    "xp": 13,
+    "gold": 48,
+    "items": [
+      {
+        "item_id": "pain_du_pelerin",
+        "quantity": 2
+      }
+    ]
+  },
+  "repeatable": false
+}

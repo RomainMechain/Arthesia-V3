@@ -1,0 +1,9 @@
+{
+  "id": "sceau_du_seuil",
+  "name": "Sceau du Seuil",
+  "description": "Le sceau qu'Aubin a assemblé à partir de ceux des dormants. Il ouvre la porte du Gardien. Une fois la porte ouverte, il ne se referme plus.",
+  "category": "material",
+  "level": 9,
+  "base_value": 45,
+  "stack_size": 1
+}

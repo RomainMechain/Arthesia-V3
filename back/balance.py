@@ -16,6 +16,12 @@ POINT_VALUE = {"hp": 25, "atk": 2, "def": 2, "agi": 1, "int": 2, "sag": 2}
 # Points gagnés à chaque niveau.
 STAT_POINTS_PER_LEVEL = 6
 
+# Compétences équipables. Les monstres sont calibrés pour un joueur qui utilise
+# MAX_ACTIVE_SKILL_SLOTS compétences actives : chaque compétence en plus
+# s'ajouterait au rythme de dégâts et rendrait le contenu trivial.
+MAX_ACTIVE_SKILL_SLOTS = 4
+MAX_PASSIVE_SKILL_SLOTS = 4
+
 STATS = ("hp", "atk", "def", "agi", "int", "sag")
 
 
@@ -100,8 +106,10 @@ COMBAT_XP_SHARE = 0.7
 # premiers niveaux vont plus vite (15 min pour le premier).
 HOURS_PER_LEVEL_GROWTH = 1.012
 EARLY_LEVELS = 10
-# Part du seuil de niveau apportée par une quête, selon son ampleur.
-QUEST_XP_SHARE = {"small": 0.06, "normal": 0.12, "major": 0.25}
+# Part du seuil de niveau apportée par une quête, selon son ampleur. Un étage
+# compte ~30 quêtes (2 à 4 par zone, 4 à 6 en ville), mêlant les trois
+# ampleurs : ces parts leur font apporter ~30 % de l'XP de l'étage.
+QUEST_XP_SHARE = {"small": 0.03, "normal": 0.06, "major": 0.12}
 
 
 def hours_per_level(level: int) -> float:

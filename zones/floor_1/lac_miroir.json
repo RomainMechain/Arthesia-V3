@@ -1,0 +1,236 @@
+{
+  "id": "lac_miroir",
+  "name": "Lac-Miroir",
+  "type": "water",
+  "position": {
+    "x": 50,
+    "y": 60
+  },
+  "visibility": "visible",
+  "description": "Plus loin sur l'eau, le lac devient un miroir parfait, presque trop immobile. Quelque chose, sous la surface, semble observer en retour.",
+  "unlock_condition": {
+    "type": "item",
+    "item_id": "amulette_pecheur",
+    "state": "owned"
+  },
+  "hint": "Nul ne s'aventure sur les eaux profondes sans une amulette bénie par les pêcheurs.",
+  "generation_brief": {
+    "level_range": [
+      4,
+      6
+    ],
+    "difficulty_tier": "coeur",
+    "tags": [
+      "lac",
+      "mystere",
+      "peche_avancee",
+      "tension"
+    ],
+    "content_intent": "Récolte avancée (pêche rare, plantes aquatiques rares) et créatures du lac légèrement altérées par l'aube ; ambiance de tension latente, quelque chose d'anormal sous la surface.",
+    "provides": [
+      {
+        "type": "quest",
+        "id_suggere": "chant_du_lac",
+        "via": "Une mélodie sourde monte parfois du fond du lac ; une quête d'enquête permet de la localiser et de la comprendre en partie."
+      }
+    ]
+  },
+  "entries": [
+    {
+      "id": "carpe_spawn",
+      "template_type": "monster",
+      "template_id": "carpe_aux_yeux_vides",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 45,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "carpe_spawn_2",
+      "template_type": "monster",
+      "template_id": "carpe_aux_yeux_vides",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 45,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "brochet_spawn",
+      "template_type": "monster",
+      "template_id": "brochet_miroir",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 60,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "tortue_spawn",
+      "template_type": "monster",
+      "template_id": "tortue_a_carapace_gravee",
+      "state_scope": "shared",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 90,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "joncs_noeud",
+      "template_type": "resource",
+      "template_id": "joncs_du_large",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 90,
+        "stock": 4,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "eaux_profondes_noeud",
+      "template_type": "resource",
+      "template_id": "eaux_profondes_du_miroir",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 90,
+        "stock": 4,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "lotus_noeud",
+      "template_type": "resource",
+      "template_id": "lotus_immobile",
+      "state_scope": "shared",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 240,
+        "stock": 2,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "tais_presence",
+      "template_type": "npc",
+      "template_id": "tais_plongeuse",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_chant",
+      "template_type": "quest_giver",
+      "template_id": "chant_du_lac",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_joncs",
+      "template_type": "quest_giver",
+      "template_id": "un_radeau_de_joncs",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_brochets",
+      "template_type": "quest_giver",
+      "template_id": "les_brochets_du_miroir",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_tortues",
+      "template_type": "quest_giver",
+      "template_id": "les_carapaces_gravees",
+      "state_scope": "per_player",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "conditional",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": {
+          "type": "quest",
+          "quest_id": "chant_du_lac",
+          "state": "completed"
+        },
+        "visibility_when_locked": "hinted",
+        "hint": "Taïs n'a pas tout dit de ce qu'elle a vu au fond. Elle attend de savoir si tu as entendu le chant, toi aussi."
+      }
+    }
+  ]
+}

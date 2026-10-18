@@ -1,0 +1,17 @@
+{
+  "id": "plastron_d_ecailles",
+  "name": "Plastron d'Écailles",
+  "description": "Un plastron de cuir couvert de plaques de carapace gravée. Les cercles s'alignent d'une plaque à l'autre, comme s'ils avaient toujours été faits pour se rejoindre.",
+  "category": "equipment",
+  "level": 6,
+  "base_value": 180,
+  "stack_size": 1,
+  "equipment": {
+    "slot": "chest",
+    "level_required": 6,
+    "stat_bonuses": {
+      "def": 5,
+      "hp": 42
+    }
+  }
+}

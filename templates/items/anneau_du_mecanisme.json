@@ -1,0 +1,18 @@
+{
+  "id": "anneau_du_mecanisme",
+  "name": "Anneau du Mécanisme",
+  "description": "Le plus petit des sept anneaux du mécanisme, détaché quand le Gardien s'est effondré. Il continue de tourner lentement sur lui-même, posé dans la paume.",
+  "category": "equipment",
+  "level": 10,
+  "base_value": 300,
+  "stack_size": 1,
+  "equipment": {
+    "slot": "ring",
+    "level_required": 10,
+    "stat_bonuses": {
+      "int": 8,
+      "sag": 6,
+      "hp": 50
+    }
+  }
+}

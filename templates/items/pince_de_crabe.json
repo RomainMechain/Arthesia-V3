@@ -1,0 +1,9 @@
+{
+  "id": "pince_de_crabe",
+  "name": "Pince de Crabe",
+  "description": "Une pince dure comme du galet. Les villageois en tirent une chair maigre mais savoureuse.",
+  "category": "material",
+  "level": 1,
+  "base_value": 5,
+  "stack_size": 20
+}

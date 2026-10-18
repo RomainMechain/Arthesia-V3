@@ -1,0 +1,21 @@
+{
+  "id": "lierre_dore",
+  "name": "Lierre Doré",
+  "description": "Un lierre aux feuilles dorées qui grimpe le long des colonnes. Il pousse uniquement vers le fond du sanctuaire, comme attiré par la lumière.",
+  "level": 10,
+  "profession_required": {
+    "profession_id": "herboristerie",
+    "min_level": 5,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 3,
+  "yields": [
+    {
+      "item_id": "feuille_de_lierre_dore",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 10
+    }
+  ]
+}

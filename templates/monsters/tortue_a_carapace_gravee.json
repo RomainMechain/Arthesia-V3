@@ -1,0 +1,44 @@
+{
+  "id": "tortue_a_carapace_gravee",
+  "name": "Tortue à Carapace Gravée",
+  "description": "Une tortue d'eau douce aussi large qu'une table, qui remonte lentement des profondeurs. Sur sa carapace, les plaques dessinent des cercles concentriques parfaits, comme ceux que Sorne dessine dans son carnet.",
+  "level": 6,
+  "role": "normal",
+  "stats": {
+    "hp": 1000,
+    "atk": 38,
+    "def": 36,
+    "agi": 10,
+    "int": 41,
+    "sag": 21
+  },
+  "moveset": [
+    {
+      "id": "bec_crochu",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.21,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "plongee_lourde",
+      "damage_type": "physical",
+      "cooldown_seconds": 8,
+      "power": 0.48,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "plaque_de_carapace_gravee",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 10
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "id": "crabe_des_galets",
+  "name": "Crabe des Galets",
+  "description": "Un crabe à la carapace couleur de pierre mouillée, qui se confond avec les galets de la rive jusqu'à ce qu'on lui marche dessus.",
+  "level": 1,
+  "role": "normal",
+  "stats": {
+    "hp": 294,
+    "atk": 13,
+    "def": 11,
+    "agi": 6,
+    "int": 14,
+    "sag": 8
+  },
+  "moveset": [
+    {
+      "id": "pincement",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.15,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "etau_de_pierre",
+      "damage_type": "physical",
+      "cooldown_seconds": 7,
+      "power": 0.29,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "pince_de_crabe",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 8
+    },
+    {
+      "item_id": "ablette_doree",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 2
+    }
+  ]
+}

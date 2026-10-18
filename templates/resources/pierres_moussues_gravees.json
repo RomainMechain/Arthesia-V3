@@ -1,0 +1,21 @@
+{
+  "id": "pierres_moussues_gravees",
+  "name": "Pierres Moussues Gravées",
+  "description": "Des pierres couvertes de mousse entre les racines des vieux arbres. Sous la mousse, des motifs à peine visibles, qu'il faut dégager avec soin.",
+  "level": 4,
+  "profession_required": {
+    "profession_id": "archeologie",
+    "min_level": 2,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 4,
+  "yields": [
+    {
+      "item_id": "fragment_moussu",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 10
+    }
+  ]
+}

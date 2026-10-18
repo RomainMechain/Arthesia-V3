@@ -1,0 +1,44 @@
+{
+  "id": "oiseau_chanteur",
+  "name": "Oiseau Chanteur",
+  "description": "Un petit oiseau au plumage clair, dont le chant semble suivre une mélodie étrangement répétitive, comme figée dans le même instant que le reste de la forêt.",
+  "level": 1,
+  "role": "normal",
+  "stats": {
+    "hp": 280,
+    "atk": 12,
+    "def": 9,
+    "agi": 6,
+    "int": 15,
+    "sag": 9
+  },
+  "moveset": [
+    {
+      "id": "bec_acere",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.15,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "cri_percant",
+      "damage_type": "magical",
+      "cooldown_seconds": 5,
+      "power": 0.21,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "plume_doree",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 10
+    }
+  ]
+}

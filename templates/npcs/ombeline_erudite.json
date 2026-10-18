@@ -1,0 +1,11 @@
+{
+  "id": "ombeline_erudite",
+  "name": "Ombeline",
+  "description": "Une érudite venue d'on ne sait où, installée sous une arche à moitié effondrée avec des carnets couverts de relevés. Elle copie les runes une à une, et pâlit un peu plus à chaque inscription qu'elle comprend.",
+  "role": "Érudite",
+  "dialogues": [
+    "Ces runes ne racontent pas une histoire. Ce sont des consignes. Quelqu'un a écrit ici comment faire tenir quelque chose.",
+    "Le même signe revient partout : un cercle, coupé par une ligne horizontale. Le soleil, posé sur l'horizon. Et qui ne bouge pas.",
+    "Les villageois disent que l'aube est un don. Je ne contredis personne. Mais ici, rien ne ressemble à un don."
+  ]
+}

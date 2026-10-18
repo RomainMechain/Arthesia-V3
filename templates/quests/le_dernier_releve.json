@@ -1,0 +1,37 @@
+{
+  "id": "le_dernier_releve",
+  "name": "Le Dernier Relevé",
+  "description": "Les mêmes cercles sont partout : sur une pierre recrachée par un silure du camp, sur la carapace des tortues du lac, sous l'écorce des vieux arbres de la forêt. Pose-les ensemble au pied de la statue. Si les cercles s'accordent, tu sauras qu'ils ont été tracés par la même main.",
+  "objectives": [
+    {
+      "type": "deliver_item",
+      "item_id": "pierre_aux_cercles",
+      "count": 1
+    },
+    {
+      "type": "deliver_item",
+      "item_id": "plaque_de_carapace_gravee",
+      "count": 1
+    },
+    {
+      "type": "deliver_item",
+      "item_id": "ecorce_aux_motifs",
+      "count": 1
+    }
+  ],
+  "rewards": {
+    "xp": 13,
+    "gold": 48,
+    "items": [
+      {
+        "item_id": "carte_des_cercles",
+        "quantity": 1
+      },
+      {
+        "item_id": "eau_de_la_clairiere",
+        "quantity": 2
+      }
+    ]
+  },
+  "repeatable": false
+}

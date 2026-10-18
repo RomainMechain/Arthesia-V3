@@ -1,0 +1,11 @@
+{
+  "id": "bertold_ravaudeur",
+  "name": "Bertold",
+  "description": "Un pêcheur aux doigts noueux, assis sur une barque retournée au bord de la rive. Il ravaude ses filets du matin au matin, puisque le soir ne vient jamais.",
+  "role": "Ravaudeur de filets",
+  "dialogues": [
+    "Mes filets ne s'usent pas comme avant. Ils se déchirent toujours au même endroit, comme si quelque chose tirait dessus, en bas.",
+    "Les truites argentées ? Elles nagent dans l'anse depuis que je suis gamin. Les mêmes, j'en jurerais.",
+    "Ne t'avance pas au-delà des roseaux. Personne ne pêche plus loin, et personne ne se souvient vraiment pourquoi."
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "id": "filets_a_ravauder",
+  "name": "Des Filets à Ravauder",
+  "description": "Bertold manque de fibres pour réparer ses filets, déchirés une fois de plus au même endroit. Il te demande d'aller cueillir des roseaux dorés au bord de l'eau.",
+  "objectives": [
+    {
+      "type": "gather_count",
+      "resource_id": "roseaux_dores",
+      "count": 4
+    }
+  ],
+  "rewards": {
+    "xp": 1,
+    "gold": 5,
+    "items": []
+  },
+  "repeatable": false
+}

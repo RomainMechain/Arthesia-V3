@@ -1,0 +1,14 @@
+{
+  "id": "galette_de_baies_figees",
+  "name": "Galette de Baies Figées",
+  "description": "Une galette dure et sucrée, faite de baies dorées pilées. Halvard en a toujours une réserve, et ne se rappelle pas l'avoir préparée.",
+  "category": "consumable",
+  "level": 6,
+  "base_value": 90,
+  "stack_size": 10,
+  "consumable": {
+    "effect_type": "heal",
+    "amount": 126,
+    "duration_seconds": 0
+  }
+}

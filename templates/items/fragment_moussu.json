@@ -1,0 +1,9 @@
+{
+  "id": "fragment_moussu",
+  "name": "Fragment Moussu",
+  "description": "Un fragment de pierre gravée encore couvert de mousse. Les motifs, une fois nettoyés, forment un arc de cercle.",
+  "category": "material",
+  "level": 4,
+  "base_value": 20,
+  "stack_size": 20
+}

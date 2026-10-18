@@ -1,0 +1,21 @@
+{
+  "id": "filon_de_pierre_runique",
+  "name": "Filon de Pierre Runique",
+  "description": "Une veine de pierre claire qui affleure entre les dalles. Elle est striée de lignes dorées, régulières, qui continuent sous la roche.",
+  "level": 7,
+  "profession_required": {
+    "profession_id": "minage",
+    "min_level": 4,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 5,
+  "yields": [
+    {
+      "item_id": "pierre_runique_brute",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 10
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "id": "dormant_de_bronze",
+  "name": "Dormant de Bronze",
+  "description": "Une silhouette de bronze allongée dans une alcôve, les yeux clos, une main posée sur un sceau gravé. Les dormants ne se lèvent que lorsqu'on les touche, et se battent sans jamais ouvrir les yeux.",
+  "level": 9,
+  "role": "normal",
+  "stats": {
+    "hp": 1260,
+    "atk": 58,
+    "def": 46,
+    "agi": 17,
+    "int": 57,
+    "sag": 30
+  },
+  "moveset": [
+    {
+      "id": "frappe_aveugle",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.24,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "reveil_brutal",
+      "damage_type": "magical",
+      "cooldown_seconds": 6,
+      "power": 0.41,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "sceau_de_dormant",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 6
+    },
+    {
+      "item_id": "engrenage_de_bronze",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 4
+    }
+  ]
+}

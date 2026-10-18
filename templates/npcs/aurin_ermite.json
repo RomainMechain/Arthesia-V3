@@ -1,0 +1,11 @@
+{
+  "id": "aurin_ermite",
+  "name": "Aurin",
+  "description": "Un vieil homme installé sous un auvent de branches tressées, un peu à l'écart du sentier. Il observe la forêt depuis si longtemps qu'il en connaît chaque silence.",
+  "role": "Ermite des bois",
+  "dialogues": [
+    "Les loups dorés n'attaquaient pas, avant. Maintenant, ils rôdent plus près du village chaque matin.",
+    "Cette aube ne vieillit jamais, tu as remarqué ? Moi non plus, je ne vieillis plus vraiment depuis que je vis ici.",
+    "Va, et reviens me dire si la forêt t'a semblé... trop silencieuse."
+  ]
+}

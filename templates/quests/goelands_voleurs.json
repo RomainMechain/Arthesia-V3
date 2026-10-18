@@ -1,0 +1,23 @@
+{
+  "id": "goelands_voleurs",
+  "name": "Goélands Voleurs",
+  "description": "Les goélands du camp s'abattent sur les claies de séchage et emportent la pêche du jour. Sorne, depuis sa tour, te demande d'en chasser assez pour qu'ils aillent voler ailleurs.",
+  "objectives": [
+    {
+      "type": "kill_count",
+      "monster_id": "goeland_voleur",
+      "count": 8
+    }
+  ],
+  "rewards": {
+    "xp": 7,
+    "gold": 30,
+    "items": [
+      {
+        "item_id": "gilet_de_cire",
+        "quantity": 1
+      }
+    ]
+  },
+  "repeatable": false
+}

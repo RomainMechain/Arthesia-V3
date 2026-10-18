@@ -1,0 +1,16 @@
+{
+  "id": "amulette_du_levant",
+  "name": "Amulette du Levant",
+  "description": "Une petite amulette de bois clair gravée d'un motif solaire simple, portée par beaucoup de villageois comme porte-bonheur.",
+  "category": "equipment",
+  "level": 1,
+  "base_value": 30,
+  "stack_size": 1,
+  "equipment": {
+    "slot": "amulet",
+    "level_required": 1,
+    "stat_bonuses": {
+      "sag": 1.4
+    }
+  }
+}

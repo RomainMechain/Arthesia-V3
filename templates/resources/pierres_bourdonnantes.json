@@ -1,0 +1,21 @@
+{
+  "id": "pierres_bourdonnantes",
+  "name": "Pierres Bourdonnantes",
+  "description": "Des pierres à demi enterrées au bord de la clairière, qui vibrent doucement sous la main. Ensemble, elles dessinent un grand cercle dont il manque des morceaux.",
+  "level": 8,
+  "profession_required": {
+    "profession_id": "archeologie",
+    "min_level": 4,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 6,
+  "yields": [
+    {
+      "item_id": "fragment_de_cercle",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 10
+    }
+  ]
+}

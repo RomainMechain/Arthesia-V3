@@ -1,0 +1,21 @@
+{
+  "id": "gravats_des_architectes",
+  "name": "Gravats des Architectes",
+  "description": "Des tas de débris tombés des murs. En les fouillant, on trouve des tessons couverts de signes qu'aucun villageois ne sait lire.",
+  "level": 6,
+  "profession_required": {
+    "profession_id": "archeologie",
+    "min_level": 3,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 4,
+  "yields": [
+    {
+      "item_id": "tesson_grave",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 10
+    }
+  ]
+}

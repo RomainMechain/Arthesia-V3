@@ -1,0 +1,9 @@
+{
+  "id": "eclat_de_pierre_taillee",
+  "name": "Éclat de Pierre Taillée",
+  "description": "Un éclat aux arêtes nettes, détaché d'une pierre du sentier. Une face porte le début d'une ligne gravée.",
+  "category": "material",
+  "level": 2,
+  "base_value": 10,
+  "stack_size": 20
+}

@@ -1,0 +1,31 @@
+{
+  "id": "passage_etage2",
+  "name": "Faille Montante",
+  "type": "passage",
+  "position": {
+    "x": 100,
+    "y": 48
+  },
+  "visibility": "visible",
+  "description": "Depuis la chute du gardien, la lumière dorée vacille pour la première fois, comme une flamme menacée par un courant d'air. Une faille s'est ouverte dans la pierre, laissant entrevoir un escalier qui monte vers l'inconnu.",
+  "unlock_condition": {
+    "type": "boss",
+    "zone_id": "chambre_gardien",
+    "state": "defeated"
+  },
+  "hint": "Une faille de lumière attend, scellée tant que le gardien veille.",
+  "generation_brief": {
+    "level_range": [
+      10,
+      10
+    ],
+    "difficulty_tier": "profondeurs",
+    "tags": [
+      "passage",
+      "transition"
+    ],
+    "content_intent": "Passage simple vers l'étage suivant, peu ou pas de contenu de jeu, juste une ambiance de seuil et un aperçu de ce qui attend plus haut.",
+    "provides": []
+  },
+  "entries": []
+}

@@ -1,0 +1,55 @@
+{
+  "id": "chambre_gardien",
+  "name": "Chambre du Gardien",
+  "type": "boss",
+  "position": {
+    "x": 92,
+    "y": 48
+  },
+  "visibility": "visible",
+  "description": "Au cœur du sanctuaire se dresse une silhouette immobile, faite de pierre et de lumière, veillant sur un mécanisme dont la fonction échappe encore à toute compréhension. Elle se redresse lentement à l'approche du Marqué.",
+  "unlock_condition": {
+    "type": "quest",
+    "quest_id": "cle_des_dormants",
+    "state": "completed"
+  },
+  "hint": "Seul celui qui a percé le rituel des ruines peut espérer franchir le seuil du gardien.",
+  "generation_brief": {
+    "level_range": [
+      10,
+      10
+    ],
+    "difficulty_tier": "profondeurs",
+    "tags": [
+      "boss",
+      "architecte",
+      "aube"
+    ],
+    "content_intent": "Combat de boss unique contre le Gardien de l'Aube, construction animée protégeant le mécanisme ; vaincre le gardien fait vaciller la lumière pour la première fois.",
+    "provides": [
+      {
+        "type": "boss",
+        "id_suggere": "gardien_de_l_aube",
+        "via": "Le combat final de la zone oppose le joueur au Gardien de l'Aube, construction animée liée au mécanisme de la lumière éternelle."
+      }
+    ]
+  },
+  "entries": [
+    {
+      "id": "gardien_aube_boss",
+      "template_type": "monster",
+      "template_id": "gardien_de_l_aube",
+      "state_scope": "shared",
+      "rarity": "very_rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    }
+  ]
+}

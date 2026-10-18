@@ -1,0 +1,17 @@
+{
+  "id": "amulette_chance_gravee",
+  "name": "Amulette de Chance Gravée",
+  "description": "La pince de crabe polie a été fixée à une petite patte de lapin, le tout gravé de motifs superstitieux à la pointe du burin. Un symbole composite, né de deux porte-bonheur de fortune différente, que les superstitieux des bas-étages s'arrachent en espérant cumuler les chances.",
+  "category": "equipment",
+  "level": 1,
+  "base_value": 30,
+  "stack_size": 1,
+  "equipment": {
+    "slot": "amulet",
+    "level_required": 1,
+    "stat_bonuses": {
+      "def": 1,
+      "hp": 5
+    }
+  }
+}

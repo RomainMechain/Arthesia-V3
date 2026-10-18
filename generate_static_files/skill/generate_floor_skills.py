@@ -32,9 +32,9 @@ SKELETONS_DIR = PROJECT_ROOT / "zone_skeletons"
 sys.path.insert(0, str(PROJECT_ROOT))
 from back import content_targets  # noqa: E402
 
+# La clé n'est exigée qu'au moment d'appeler l'API : --print-prompt et
+# --from-response fonctionnent sans elle.
 API_KEY = os.environ.get("ANTHROPIC_API_KEY")
-if not API_KEY:
-    sys.exit("❌ Variable d'environnement ANTHROPIC_API_KEY absente.")
 
 MODEL = "claude-sonnet-5"
 MAX_TOKENS = 32000
@@ -174,6 +174,8 @@ def extract_json(text: str) -> dict:
 
 
 def generate_skills(floor_info: dict, inventory: list[dict], count: int, targets: dict) -> list[dict]:
+    if not API_KEY:
+        sys.exit("❌ Variable d'environnement ANTHROPIC_API_KEY absente.")
     client = anthropic.Anthropic(api_key=API_KEY)
 
     system_prompt = load_system_prompt()
@@ -222,9 +224,11 @@ def extract_leaf_conditions(cond: Optional[dict]) -> list[dict]:
     return [cond]
 
 
-def validate_skills(skills: list[dict], inventory: list[dict], full_index: list[dict]) -> list[str]:
+def validate_skills(skills: list[dict], inventory: list[dict], full_index: list[dict],
+                    zone_ids: set | None = None) -> list[str]:
     warnings = []
-    inventory_ids = {t["id"] for t in inventory}
+    # Une condition « boss vaincu » vise la zone du boss, pas un template.
+    inventory_ids = {t["id"] for t in inventory} | (zone_ids or set())
     known_pairs = {(t.get("kind"), t["id"]) for t in full_index}
 
     exceptional_count = 0
@@ -271,6 +275,9 @@ def validate_skills(skills: list[dict], inventory: list[dict], full_index: list[
         pair = ("skill", skill.get("id"))
         if pair in known_pairs:
             warnings.append(f"Collision : une compétence '{skill.get('id')}' existe déjà.")
+
+    for skill in skills:
+        warnings.extend(content_targets.check_skill(skill))
 
     if exceptional_count > 2:
         warnings.append(f"{exceptional_count} compétences de palier 'Exceptionnelle' détectées "
@@ -330,6 +337,14 @@ def main():
     parser = argparse.ArgumentParser(description="Génère les compétences liées à un étage Arthesia.")
     parser.add_argument("--skeleton", type=str, required=True, help="Chemin du squelette d'étage")
     parser.add_argument("--count", type=int, default=10)
+    # Génération sans l'API (par exemple avec Claude Code) : on écrit le message,
+    # la réponse est produite ailleurs, puis validée et sauvegardée ici.
+    parser.add_argument("--print-prompt", type=str, metavar="FICHIER",
+                        help="Écrit le message utilisateur dans FICHIER, sans appeler l'API")
+    parser.add_argument("--from-response", type=str, metavar="FICHIER",
+                        help="Utilise la réponse JSON de FICHIER au lieu d'appeler l'API")
+    parser.add_argument("--dry-run", action="store_true",
+                        help="Valide la réponse sans rien sauvegarder")
     args = parser.parse_args()
 
     skeleton_path = Path(args.skeleton)
@@ -347,6 +362,7 @@ def main():
         "id": skeleton.get("id"),
         "name": skeleton.get("name"),
         "description": skeleton.get("description"),
+        "lore_brief": skeleton.get("lore_brief"),
     }
 
     inventory = collect_floor_inventory(floor_number)
@@ -360,16 +376,30 @@ def main():
     level_range = [min(levels), max(levels)] if levels else content_targets.floor_level_range(floor_number)
     targets = content_targets.skill_targets(level_range)
 
-    skills = generate_skills(floor_info, inventory, args.count, targets)
+    if args.print_prompt:
+        Path(args.print_prompt).write_text(build_user_message(floor_info, inventory, args.count, targets),
+                                           encoding="utf-8")
+        print(f"\n📝 Message écrit dans {args.print_prompt} (prompt système : {PROMPT_FILE}).")
+        return
+
+    if args.from_response:
+        skills = extract_json(Path(args.from_response).read_text(encoding="utf-8"))["skills"]
+    else:
+        skills = generate_skills(floor_info, inventory, args.count, targets)
 
     full_index = load_index()
-    warnings = validate_skills(skills, inventory, full_index)
+    zone_ids = {zone["id"] for zone in skeleton.get("zones", [])}
+    warnings = validate_skills(skills, inventory, full_index, zone_ids)
     if warnings:
         print("\n⚠️  Points à vérifier :")
         for w in warnings:
             print(f"  - {w}")
     else:
         print("\n✅ Vérifications automatiques passées (références réelles, paliers respectés).")
+
+    if args.dry_run:
+        print("\n🧪 --dry-run : rien n'est sauvegardé.")
+        return
 
     new_entries = save_skills(skills, full_index, floor_number)
     if new_entries:

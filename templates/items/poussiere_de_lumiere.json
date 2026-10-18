@@ -1,0 +1,9 @@
+{
+  "id": "poussiere_de_lumiere",
+  "name": "Poussière de Lumière",
+  "description": "Une poudre dorée qui s'échappe des éclats brisés. Elle brille exactement comme l'aube, et s'éteint si on l'emporte trop loin de la clairière.",
+  "category": "material",
+  "level": 7,
+  "base_value": 35,
+  "stack_size": 20
+}

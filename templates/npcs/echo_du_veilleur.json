@@ -1,0 +1,11 @@
+{
+  "id": "echo_du_veilleur",
+  "name": "Écho d'un Veilleur",
+  "description": "Au centre de la clairière, une statue de pierre agenouillée tient entre ses mains un éclat gravé qui bourdonne. Quand on pose la main sur la pierre, une voix parle, sans que rien ne bouge. Elle ne répond pas aux questions. Elle répète ce qu'on lui a laissé.",
+  "role": "Statue parlante",
+  "dialogues": [
+    "Le cercle tient le soleil. La ligne tient l'horizon. Tant que les Veilleurs veillent, rien ne bouge.",
+    "Nous étions sept autour du cercle. Les autres se sont tus. Le Gardien veille seul, au fond du sanctuaire.",
+    "Ne le dis pas à ceux du village. Ils sont heureux. C'était tout le but."
+  ]
+}

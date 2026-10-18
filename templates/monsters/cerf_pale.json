@@ -1,0 +1,65 @@
+{
+  "id": "cerf_pale",
+  "name": "Le Cerf Pâle",
+  "description": "Au bout de la piste qu'a suivie Vesna, il attend au milieu d'une clairière où rien ne pousse. De loin, c'est un cerf blanc, immense et immobile. De près, on voit que sa robe n'est pas faite de poils mais de lumière tassée, et que ses bois se ramifient en angles parfaitement droits. Il ne respire pas. Ses yeux ne cillent pas. Quand il tourne la tête, c'est d'un seul mouvement, sans hésitation, comme une porte qu'on referme. Les loups d'ambre se couchent autour de lui. Personne ne sait s'il est une bête que l'aube a changée, ou une chose qui a pris la forme d'une bête pour mieux passer inaperçue.",
+  "level": 9,
+  "role": "elite",
+  "stats": {
+    "hp": 1690,
+    "atk": 63,
+    "def": 55,
+    "agi": 19,
+    "int": 63,
+    "sag": 30
+  },
+  "moveset": [
+    {
+      "id": "coup_de_bois",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.27,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "charge_lumineuse",
+      "damage_type": "physical",
+      "cooldown_seconds": 7,
+      "power": 0.54,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "eclat_d_aube",
+      "damage_type": "magical",
+      "cooldown_seconds": 5,
+      "power": 0.385,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "bois_de_cerf_pale",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 4
+    },
+    {
+      "item_id": "ambre_d_aube",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 4
+    },
+    {
+      "item_id": "larme_d_aube",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 2
+    }
+  ]
+}

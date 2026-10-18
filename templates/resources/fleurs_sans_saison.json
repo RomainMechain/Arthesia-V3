@@ -1,0 +1,21 @@
+{
+  "id": "fleurs_sans_saison",
+  "name": "Fleurs sans Saison",
+  "description": "Des fleurs pâles qui poussent en cercle parfait autour de la statue. Elles sont toutes ouvertes, toutes de la même taille, et n'ont jamais connu ni bouton ni fanaison.",
+  "level": 6,
+  "profession_required": {
+    "profession_id": "herboristerie",
+    "min_level": 3,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 3,
+  "yields": [
+    {
+      "item_id": "petale_sans_saison",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 10
+    }
+  ]
+}

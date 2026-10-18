@@ -1,0 +1,9 @@
+{
+  "id": "plume_sans_ombre",
+  "name": "Plume sans Ombre",
+  "description": "Une plume blanche qui ne projette aucune ombre, même posée en plein jour. Elle laisse passer la lumière comme du papier mouillé.",
+  "category": "material",
+  "level": 7,
+  "base_value": 35,
+  "stack_size": 20
+}

@@ -1,0 +1,9 @@
+{
+  "id": "duvet_de_canard",
+  "name": "Duvet de Canard",
+  "description": "Un duvet chaud et léger, apprécié pour rembourrer les vêtements des pêcheurs.",
+  "category": "material",
+  "level": 3,
+  "base_value": 15,
+  "stack_size": 20
+}

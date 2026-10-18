@@ -1,0 +1,28 @@
+{
+  "id": "le_matin_d_halvard",
+  "name": "Le Matin d'Halvard",
+  "description": "Halvard ne croit pas qu'il est perdu depuis longtemps. Pour qu'il te croie, il faudrait lui montrer quelque chose qui ne ment pas : les plumes des chouettes sans ombre, qui ne poussent que sur des oiseaux restés trop longtemps sous cette lumière. Chasse-les et rapporte-lui leurs plumes.",
+  "objectives": [
+    {
+      "type": "kill_count",
+      "monster_id": "chouette_sans_ombre",
+      "count": 10
+    },
+    {
+      "type": "deliver_item",
+      "item_id": "plume_sans_ombre",
+      "count": 3
+    }
+  ],
+  "rewards": {
+    "xp": 26,
+    "gold": 120,
+    "items": [
+      {
+        "item_id": "lame_d_ambre",
+        "quantity": 1
+      }
+    ]
+  },
+  "repeatable": false
+}

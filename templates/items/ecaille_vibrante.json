@@ -1,0 +1,9 @@
+{
+  "id": "ecaille_vibrante",
+  "name": "Écaille Vibrante",
+  "description": "Une grande écaille terne qui frémit légèrement quand on la pose sur une pierre, comme si elle répondait à un son qu'on n'entend pas.",
+  "category": "material",
+  "level": 4,
+  "base_value": 20,
+  "stack_size": 20
+}

@@ -1,0 +1,36 @@
+{
+  "id": "cle_des_dormants",
+  "name": "La Clé des Dormants",
+  "description": "Le rituel recopié par Aubin est clair sur un point : la porte du Gardien ne s'ouvre qu'à celui qui porte les sceaux des dormants. Abats les dormants de bronze, rapporte leurs sceaux à Aubin, et il accomplira le rituel. Mais l'inscription précise aussi qu'il faut être prêt : le Gardien ne fait aucune grâce.",
+  "objectives": [
+    {
+      "type": "kill_count",
+      "monster_id": "dormant_de_bronze",
+      "count": 10
+    },
+    {
+      "type": "deliver_item",
+      "item_id": "sceau_de_dormant",
+      "count": 4
+    },
+    {
+      "type": "level",
+      "min": 9
+    }
+  ],
+  "rewards": {
+    "xp": 31,
+    "gold": 135,
+    "items": [
+      {
+        "item_id": "sceau_du_seuil",
+        "quantity": 1
+      },
+      {
+        "item_id": "lance_du_seuil",
+        "quantity": 1
+      }
+    ]
+  },
+  "repeatable": false
+}

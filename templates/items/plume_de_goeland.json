@@ -1,0 +1,9 @@
+{
+  "id": "plume_de_goeland",
+  "name": "Plume de Goéland",
+  "description": "Une grande plume blanche et grise, raide et légère, encore imprégnée d'une odeur de sel.",
+  "category": "material",
+  "level": 5,
+  "base_value": 25,
+  "stack_size": 20
+}

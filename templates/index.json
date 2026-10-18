@@ -1,0 +1,2261 @@
+[
+  {
+    "id": "aldric_aubergiste",
+    "name": "Aldric",
+    "kind": "npc",
+    "level": null,
+    "tags": [],
+    "description": "Le tenancier de l'unique auberge de Val-de-l'Aube, un homme rond aux mains calleuses, toujours occupé à essuyer des chopes qui ne se salissent jamais bien vite dans ce village si tranquille.",
+    "base_value": null
+  },
+  {
+    "id": "yvenne_ancienne",
+    "name": "Mère Yvenne",
+    "kind": "npc",
+    "level": null,
+    "tags": [],
+    "description": "La doyenne du village, assise presque toujours au même endroit près du puits central. Ses yeux pâles semblent parfois fixer un point au-delà des toits, comme si elle écoutait quelque chose que personne d'autre n'entend.",
+    "base_value": null
+  },
+  {
+    "id": "garin_pecheur",
+    "name": "Garin",
+    "kind": "npc",
+    "level": null,
+    "tags": [],
+    "description": "Un pêcheur bourru installé à l'orée du sentier qui mène à la rive. Il passe ses journées à scruter l'eau immobile du lac, convaincu qu'un poisson bien particulier s'y cache depuis toujours.",
+    "base_value": null
+  },
+  {
+    "id": "intro_peche",
+    "name": "Une Truite pas Comme les Autres",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Garin cherche depuis des années à attraper une truite argentée particulière qui vit dans la rive proche du village. Il vous demande de la lui ramener.",
+    "base_value": null
+  },
+  {
+    "id": "marche_equitable",
+    "name": "Un Marché Équitable",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Aldric manque de champignons dorés pour ses plats. Il vous demande de lui en rapporter quelques-uns, cueillis près de l'orée de la forêt.",
+    "base_value": null
+  },
+  {
+    "id": "silence_des_bois",
+    "name": "Le Silence des Bois",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Mère Yvenne s'inquiète d'un calme anormal dans la forêt voisine, où rôdent des loups à la fourrure étrangement dorée. Elle vous demande d'en réduire le nombre.",
+    "base_value": null
+  },
+  {
+    "id": "offrandes_aube",
+    "name": "Offrandes à l'Aube",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Une mousse lumineuse, que l'on dit née de la lumière elle-même, pousse en silence sous les frondaisons. Mère Yvenne souhaite en recueillir pour un rituel discret du village.",
+    "base_value": null
+  },
+  {
+    "id": "lumiere_qui_ne_vacille_jamais",
+    "name": "La Lumière qui ne Vacille Jamais",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Mère Yvenne, après un long silence, finit par vous confier son doute le plus profond : et si cette aube éternelle n'était pas un don, mais un mécanisme ? Elle vous demande de prouver votre valeur avant d'aller chercher plus loin.",
+    "base_value": null
+  },
+  {
+    "id": "loup_dore",
+    "name": "Loup Doré",
+    "kind": "monster",
+    "level": 1,
+    "tags": [],
+    "description": "Un loup à la fourrure teintée d'un éclat doré inhabituel, comme imprégnée par la lumière constante de l'étage. Son regard est trop calme pour un prédateur.",
+    "base_value": null
+  },
+  {
+    "id": "mousse_lumineuse",
+    "name": "Mousse Lumineuse",
+    "kind": "resource",
+    "level": 1,
+    "tags": [],
+    "description": "Une mousse douce qui semble capter et retenir un peu de la lumière dorée ambiante, même une fois cueillie.",
+    "base_value": null
+  },
+  {
+    "id": "truite_argentee_aube",
+    "name": "Truite Argentée de l'Aube",
+    "kind": "item",
+    "level": 1,
+    "tags": [],
+    "description": "Un poisson aux écailles presque translucides, qui ne semble jamais pâlir ni pourrir, comme figé dans le même instant que le reste de l'étage.",
+    "base_value": 5
+  },
+  {
+    "id": "champignon_dore",
+    "name": "Champignon Doré",
+    "kind": "item",
+    "level": 1,
+    "tags": [],
+    "description": "Un champignon à la chair orangée, commun à l'orée des bois environnant Val-de-l'Aube, apprécié pour son léger goût sucré.",
+    "base_value": 5
+  },
+  {
+    "id": "poil_de_loup_dore",
+    "name": "Poil de Loup Doré",
+    "kind": "item",
+    "level": 1,
+    "tags": [],
+    "description": "Une touffe de fourrure dorée, étrangement chaude au toucher même longtemps après avoir été prélevée.",
+    "base_value": 5
+  },
+  {
+    "id": "mousse_lumineuse_aube",
+    "name": "Mousse Lumineuse Cueillie",
+    "kind": "item",
+    "level": 1,
+    "tags": [],
+    "description": "Une poignée de mousse lumineuse, encore tiède d'une clarté qui ne lui appartient pas vraiment.",
+    "base_value": 5
+  },
+  {
+    "id": "pain_de_miel",
+    "name": "Pain de Miel",
+    "kind": "item",
+    "level": 1,
+    "tags": [],
+    "description": "Un pain doré cuit dans les fours du village, moelleux et sucré, réputé pour redonner des forces rapidement.",
+    "base_value": 15
+  },
+  {
+    "id": "tisane_apaisante",
+    "name": "Tisane Apaisante",
+    "kind": "item",
+    "level": 1,
+    "tags": [],
+    "description": "Une infusion d'herbes locales, servie tiède, qui apaise l'esprit et restaure la concentration.",
+    "base_value": 15
+  },
+  {
+    "id": "ragout_chaud",
+    "name": "Ragoût Chaud",
+    "kind": "item",
+    "level": 2,
+    "tags": [],
+    "description": "Un ragoût épais préparé par Aldric, qui tient au corps bien plus longtemps que sa simple odeur ne le laisse croire.",
+    "base_value": 30
+  },
+  {
+    "id": "dague_villageoise",
+    "name": "Dague Villageoise",
+    "kind": "item",
+    "level": 1,
+    "tags": [],
+    "description": "Une petite dague simple, forgée par le forgeron local pour la chasse et la défense de base, rien de plus.",
+    "base_value": 30
+  },
+  {
+    "id": "amulette_du_levant",
+    "name": "Amulette du Levant",
+    "kind": "item",
+    "level": 1,
+    "tags": [],
+    "description": "Une petite amulette de bois clair gravée d'un motif solaire simple, portée par beaucoup de villageois comme porte-bonheur.",
+    "base_value": 30
+  },
+  {
+    "id": "gants_de_pecheur",
+    "name": "Gants de Pêcheur",
+    "kind": "item",
+    "level": 2,
+    "tags": [],
+    "description": "Des gants épais et imperméables, utilisés par les pêcheurs de la rive pour manier filets et lignes sans se blesser.",
+    "base_value": 60
+  },
+  {
+    "id": "echoppe_thessaly",
+    "name": "Échoppe de Thessaly",
+    "kind": "shop",
+    "level": null,
+    "tags": [],
+    "description": "Une petite échoppe de bois installée près de la place centrale, où l'on trouve de quoi se soigner et quelques babioles utiles pour débuter.",
+    "base_value": null
+  },
+  {
+    "id": "autel_ventes_aube",
+    "name": "Autel des Ventes de Val-de-l'Aube",
+    "kind": "player_market",
+    "level": null,
+    "tags": [],
+    "description": "Un vieil autel de pierre, couvert de runes à moitié effacées, que les villageois utilisent pour échanger entre eux des biens sans jamais se demander pourquoi il fonctionne encore.",
+    "base_value": null
+  },
+  {
+    "id": "lapin_bondissant",
+    "name": "Lapin Bondissant",
+    "kind": "monster",
+    "level": 1,
+    "tags": [],
+    "description": "Un lapin aux yeux clairs qui détale au moindre bruit, sa fourrure teintée d'un reflet doré presque imperceptible sous la brume du sentier.",
+    "base_value": null
+  },
+  {
+    "id": "oiseau_chanteur",
+    "name": "Oiseau Chanteur",
+    "kind": "monster",
+    "level": 1,
+    "tags": [],
+    "description": "Un petit oiseau au plumage clair, dont le chant semble suivre une mélodie étrangement répétitive, comme figée dans le même instant que le reste de la forêt.",
+    "base_value": null
+  },
+  {
+    "id": "renardeau_curieux",
+    "name": "Renardeau Curieux",
+    "kind": "monster",
+    "level": 2,
+    "tags": [],
+    "description": "Un jeune renard qui s'aventure un peu plus loin que ses semblables sur le sentier, attiré par le bruissement des pas. Il mord avant de fuir.",
+    "base_value": null
+  },
+  {
+    "id": "champignons_lisiere",
+    "name": "Champignons de la Lisière",
+    "kind": "resource",
+    "level": 1,
+    "tags": [],
+    "description": "Une petite grappe de champignons orangés poussant au pied des premiers arbres, juste à la sortie du village.",
+    "base_value": null
+  },
+  {
+    "id": "racine_doree",
+    "name": "Racine Dorée",
+    "kind": "resource",
+    "level": 3,
+    "tags": [],
+    "description": "Une racine noueuse affleurant sous les fougères, parcourue de fines veines dorées qui pulsent faiblement au même rythme que la lumière de l'étage.",
+    "base_value": null
+  },
+  {
+    "id": "aurin_ermite",
+    "name": "Aurin",
+    "kind": "npc",
+    "level": null,
+    "tags": [],
+    "description": "Un vieil homme installé sous un auvent de branches tressées, un peu à l'écart du sentier. Il observe la forêt depuis si longtemps qu'il en connaît chaque silence.",
+    "base_value": null
+  },
+  {
+    "id": "veille_silencieuse",
+    "name": "La Veille Silencieuse",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Aurin s'inquiète du nombre croissant de loups dorés rôdant près du sentier. Il vous demande d'en abattre quelques-uns pour calmer ses craintes.",
+    "base_value": null
+  },
+  {
+    "id": "patte_de_lapin",
+    "name": "Patte de Lapin",
+    "kind": "item",
+    "level": 1,
+    "tags": [],
+    "description": "Une petite patte arrière, encore chaude, qu'on dit porter chance aux voyageurs crédules.",
+    "base_value": 5
+  },
+  {
+    "id": "plume_doree",
+    "name": "Plume Dorée",
+    "kind": "item",
+    "level": 1,
+    "tags": [],
+    "description": "Une plume légère teintée d'un reflet doré, qui ne perd jamais tout à fait son éclat.",
+    "base_value": 5
+  },
+  {
+    "id": "queue_de_renardeau",
+    "name": "Queue de Renardeau",
+    "kind": "item",
+    "level": 2,
+    "tags": [],
+    "description": "Une queue touffue, encore souple, prisée par certains artisans du village pour ses poils fins.",
+    "base_value": 10
+  },
+  {
+    "id": "racine_doree_recoltee",
+    "name": "Racine Dorée Récoltée",
+    "kind": "item",
+    "level": 3,
+    "tags": [],
+    "description": "Une racine aux veines dorées encore tièdes, arrachée au sol de la forêt. Son usage reste à découvrir.",
+    "base_value": 15
+  },
+  {
+    "id": "eaux_basses_de_la_rive",
+    "name": "Eaux Basses de la Rive",
+    "kind": "resource",
+    "level": 1,
+    "tags": [],
+    "description": "Une anse peu profonde où l'eau, claire comme du verre, ne fait presque jamais de vagues. Des ombres argentées y glissent entre les galets, toujours aux mêmes endroits.",
+    "base_value": null
+  },
+  {
+    "id": "roseaux_dores",
+    "name": "Roseaux Dorés",
+    "kind": "resource",
+    "level": 1,
+    "tags": [],
+    "description": "De hauts roseaux aux tiges pâles, que la lumière de l'aube teinte d'or jusqu'à la racine. Ils ploient sous une brise que personne ne sent.",
+    "base_value": null
+  },
+  {
+    "id": "nenuphar_pale",
+    "name": "Nénuphar Pâle",
+    "kind": "resource",
+    "level": 3,
+    "tags": [],
+    "description": "Une fleur blanche posée sur l'eau, un peu plus loin que les autres. Ses pétales restent ouverts en permanence, tournés vers le lac comme vers un soleil qui ne monte jamais.",
+    "base_value": null
+  },
+  {
+    "id": "crabe_des_galets",
+    "name": "Crabe des Galets",
+    "kind": "monster",
+    "level": 1,
+    "tags": [],
+    "description": "Un crabe à la carapace couleur de pierre mouillée, qui se confond avec les galets de la rive jusqu'à ce qu'on lui marche dessus.",
+    "base_value": null
+  },
+  {
+    "id": "heron_cendre",
+    "name": "Héron Cendré",
+    "kind": "monster",
+    "level": 2,
+    "tags": [],
+    "description": "Un grand héron gris, immobile au bord de l'eau depuis si longtemps qu'on le prendrait pour une statue. Il ne pêche jamais. Il surveille le lac.",
+    "base_value": null
+  },
+  {
+    "id": "anguille_des_hauts_fonds",
+    "name": "Anguille des Hauts-Fonds",
+    "kind": "monster",
+    "level": 3,
+    "tags": [],
+    "description": "Une anguille sombre qui remonte des eaux profondes jusqu'aux galets de la rive. Sa peau crépite d'une lueur dorée quand elle s'agite, comme si elle avait nagé trop près de quelque chose, là-bas, sous le lac.",
+    "base_value": null
+  },
+  {
+    "id": "bertold_ravaudeur",
+    "name": "Bertold",
+    "kind": "npc",
+    "level": null,
+    "tags": [],
+    "description": "Un pêcheur aux doigts noueux, assis sur une barque retournée au bord de la rive. Il ravaude ses filets du matin au matin, puisque le soir ne vient jamais.",
+    "base_value": null
+  },
+  {
+    "id": "maelis_passeuse",
+    "name": "Maëlis",
+    "kind": "npc",
+    "level": null,
+    "tags": [],
+    "description": "Une jeune passeuse qui garde sa barque amarrée aux roseaux. Elle connaît chaque courant de la rive, mais refuse de ramer jusqu'au milieu du lac, sans jamais dire pourquoi.",
+    "base_value": null
+  },
+  {
+    "id": "filets_a_ravauder",
+    "name": "Des Filets à Ravauder",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Bertold manque de fibres pour réparer ses filets, déchirés une fois de plus au même endroit. Il te demande d'aller cueillir des roseaux dorés au bord de l'eau.",
+    "base_value": null
+  },
+  {
+    "id": "pinces_sur_les_galets",
+    "name": "Des Pinces sur les Galets",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Les crabes des galets se sont multipliés sur la rive et attaquent les barques amarrées. Maëlis te demande d'en chasser assez pour que les pêcheurs puissent de nouveau mettre pied à terre.",
+    "base_value": null
+  },
+  {
+    "id": "ce_qui_remue_sous_l_eau",
+    "name": "Ce qui Remue sous l'Eau",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Maëlis a vu des anguilles à la peau dorée remonter des hauts-fonds, là où elles n'auraient jamais dû venir. Elle te demande d'en abattre quelques-unes et de lui rapporter des pétales de nénuphar pâle, la seule fleur qui pousse aussi loin sur l'eau, pour comprendre ce qui les attire.",
+    "base_value": null
+  },
+  {
+    "id": "ablette_doree",
+    "name": "Ablette Dorée",
+    "kind": "item",
+    "level": 1,
+    "tags": [],
+    "description": "Un petit poisson aux reflets dorés, pêché par dizaines dans l'anse. Il a toujours la même taille, quelle que soit la saison.",
+    "base_value": 5
+  },
+  {
+    "id": "fibre_de_roseau_dore",
+    "name": "Fibre de Roseau Doré",
+    "kind": "item",
+    "level": 1,
+    "tags": [],
+    "description": "Une fibre souple et solide tirée des roseaux de la rive, idéale pour ravauder un filet ou tresser une corde.",
+    "base_value": 5
+  },
+  {
+    "id": "petale_de_nenuphar_pale",
+    "name": "Pétale de Nénuphar Pâle",
+    "kind": "item",
+    "level": 3,
+    "tags": [],
+    "description": "Un pétale blanc et frais, qui ne fane pas une fois cueilli. Il sent l'eau froide et la pierre.",
+    "base_value": 15
+  },
+  {
+    "id": "pince_de_crabe",
+    "name": "Pince de Crabe",
+    "kind": "item",
+    "level": 1,
+    "tags": [],
+    "description": "Une pince dure comme du galet. Les villageois en tirent une chair maigre mais savoureuse.",
+    "base_value": 5
+  },
+  {
+    "id": "plume_de_heron",
+    "name": "Plume de Héron",
+    "kind": "item",
+    "level": 2,
+    "tags": [],
+    "description": "Une longue plume grise, légère et raide, prisée des artisans pour les empennages et les parures.",
+    "base_value": 10
+  },
+  {
+    "id": "peau_d_anguille",
+    "name": "Peau d'Anguille",
+    "kind": "item",
+    "level": 3,
+    "tags": [],
+    "description": "Une peau sombre et souple, parcourue de minces lignes dorées qui ne s'éteignent pas tout à fait, même sèche.",
+    "base_value": 15
+  },
+  {
+    "id": "soupe_de_crabe",
+    "name": "Soupe de Crabe",
+    "kind": "item",
+    "level": 2,
+    "tags": [],
+    "description": "Un bouillon épais où flottent des morceaux de pince, préparé sur la rive dans une marmite cabossée. Il réchauffe mieux qu'un feu.",
+    "base_value": 30
+  },
+  {
+    "id": "bottes_de_passeuse",
+    "name": "Bottes de Passeuse",
+    "kind": "item",
+    "level": 3,
+    "tags": [],
+    "description": "Des bottes de cuir huilé, montantes et imperméables, comme en portent ceux qui vivent les pieds dans l'eau. Maëlis jure qu'elles ont appartenu à sa grand-mère.",
+    "base_value": 90
+  },
+  {
+    "id": "ober_vieux_pecheur",
+    "name": "Ober",
+    "kind": "npc",
+    "level": null,
+    "tags": [],
+    "description": "Le plus vieux pêcheur du camp, assis au bout du ponton, ses filets étalés sur les genoux. Il porte autour du cou une dizaine d'amulettes tressées et n'en enlève jamais aucune.",
+    "base_value": null
+  },
+  {
+    "id": "hilde_cuisiniere",
+    "name": "Hilde",
+    "kind": "npc",
+    "level": null,
+    "tags": [],
+    "description": "La cuisinière du camp, qui fait tourner une marmite fumante devant la plus grande cabane. Elle nourrit tout le monde et écoute tout ce qui se dit autour du feu.",
+    "base_value": null
+  },
+  {
+    "id": "sorne_guetteur",
+    "name": "Sorne",
+    "kind": "npc",
+    "level": null,
+    "tags": [],
+    "description": "Un homme maigre posté jour et nuit sur une tour de guet de bois flotté, les yeux rivés sur le milieu du lac. Il tient un carnet couvert de dessins de cercles et de lignes droites.",
+    "base_value": null
+  },
+  {
+    "id": "les_filets_d_ober",
+    "name": "Les Filets d'Ober",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Ober ne laisse personne approcher l'eau du milieu sans une amulette tressée de sa main. Mais ses filets sont rongés par les rats des pontons, et il lui faut de la fibre de roseau doré pour les réparer. Aide-le, et il te fera une amulette.",
+    "base_value": null
+  },
+  {
+    "id": "la_marmite_de_hilde",
+    "name": "La Marmite de Hilde",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Hilde veut faire griller des brochettes pour le camp, mais les pêcheurs ne rapportent plus assez de petit poisson. Elle te demande quelques ablettes dorées de la rive.",
+    "base_value": null
+  },
+  {
+    "id": "goelands_voleurs",
+    "name": "Goélands Voleurs",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Les goélands du camp s'abattent sur les claies de séchage et emportent la pêche du jour. Sorne, depuis sa tour, te demande d'en chasser assez pour qu'ils aillent voler ailleurs.",
+    "base_value": null
+  },
+  {
+    "id": "ce_qui_tire_les_filets",
+    "name": "Ce qui Tire les Filets",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Ober a fini par l'admettre : ce ne sont pas les rats qui trouent ses filets par en dessous. De gros silures rôdent sous les pontons, et l'un d'eux a recraché un jour une pierre gravée. Sorne veut savoir d'où elles viennent.",
+    "base_value": null
+  },
+  {
+    "id": "etal_de_hilde",
+    "name": "Étal de Hilde",
+    "kind": "shop",
+    "level": null,
+    "tags": [],
+    "description": "Une planche posée sur deux tonneaux, à côté de la marmite. Hilde y vend de quoi tenir debout et quelques affaires que les pêcheurs n'utilisent plus.",
+    "base_value": null
+  },
+  {
+    "id": "pontons_du_camp",
+    "name": "Pontons du Camp",
+    "kind": "resource",
+    "level": 4,
+    "tags": [],
+    "description": "Des pontons de bois flotté où l'on pêche en eau plus profonde qu'à la rive. Les perches y mordent sans jamais lutter, comme si elles savaient déjà comment ça finit.",
+    "base_value": null
+  },
+  {
+    "id": "varech_des_claies",
+    "name": "Varech des Claies",
+    "kind": "resource",
+    "level": 5,
+    "tags": [],
+    "description": "Des algues brunes remontées dans les filets et mises à sécher sur des claies. Une fois sèches, elles gardent une odeur de pierre mouillée.",
+    "base_value": null
+  },
+  {
+    "id": "rat_des_pontons",
+    "name": "Rat des Pontons",
+    "kind": "monster",
+    "level": 4,
+    "tags": [],
+    "description": "Un rat gras et trempé qui vit sous les planches du camp et ronge tout ce qui sent le poisson, filets compris.",
+    "base_value": null
+  },
+  {
+    "id": "goeland_voleur",
+    "name": "Goéland Voleur",
+    "kind": "monster",
+    "level": 5,
+    "tags": [],
+    "description": "Un goéland énorme et sans peur, qui fond sur les claies de séchage et n'hésite pas à piquer quiconque s'interpose.",
+    "base_value": null
+  },
+  {
+    "id": "silure_des_pontons",
+    "name": "Silure des Pontons",
+    "kind": "monster",
+    "level": 6,
+    "tags": [],
+    "description": "Un poisson-chat long comme une barque, qui remonte des profondeurs pour happer ce qui pend des pontons. Ses barbillons luisent faiblement, d'une lueur dorée qui n'a rien à faire si près du fond.",
+    "base_value": null
+  },
+  {
+    "id": "amulette_pecheur",
+    "name": "Amulette du Pêcheur",
+    "kind": "item",
+    "level": 4,
+    "tags": [],
+    "description": "Une amulette d'algues séchées tressées par Ober, nouée d'un fil de roseau doré. Elle ne protège sans doute de rien, mais aucun pêcheur ne s'aventure au milieu du lac sans elle.",
+    "base_value": 120
+  },
+  {
+    "id": "gilet_de_cire",
+    "name": "Gilet de Ciré",
+    "kind": "item",
+    "level": 5,
+    "tags": [],
+    "description": "Un gilet de toile enduite de cire, raide et imperméable, que les pêcheurs du camp portent par-dessus leur chemise.",
+    "base_value": 150
+  },
+  {
+    "id": "gants_de_ravaudeur",
+    "name": "Gants de Ravaudeur",
+    "kind": "item",
+    "level": 5,
+    "tags": [],
+    "description": "Des gants de cuir mince aux doigts coupés, usés par des années de nœuds et de fil tiré. Ils laissent la main libre et rapide.",
+    "base_value": 150
+  },
+  {
+    "id": "brochette_d_ablette",
+    "name": "Brochette d'Ablette",
+    "kind": "item",
+    "level": 4,
+    "tags": [],
+    "description": "Des ablettes dorées grillées sur une baguette de saule, croustillantes et brûlantes. Hilde en fait cuire toute la journée.",
+    "base_value": 60
+  },
+  {
+    "id": "infusion_de_varech",
+    "name": "Infusion de Varech",
+    "kind": "item",
+    "level": 5,
+    "tags": [],
+    "description": "Une infusion verdâtre et salée, amère à boire, qui éclaircit pourtant l'esprit comme une gorgée d'eau froide.",
+    "base_value": 75
+  },
+  {
+    "id": "perche_des_pontons",
+    "name": "Perche des Pontons",
+    "kind": "item",
+    "level": 4,
+    "tags": [],
+    "description": "Une perche rayée de vert et d'or, pêchée sous les pontons du camp. Sa chair est ferme et ne se gâte jamais.",
+    "base_value": 20
+  },
+  {
+    "id": "varech_seche",
+    "name": "Varech Séché",
+    "kind": "item",
+    "level": 5,
+    "tags": [],
+    "description": "Des lanières d'algue brune séchées sur les claies, cassantes et odorantes. Les pêcheurs en font des tresses et des infusions.",
+    "base_value": 25
+  },
+  {
+    "id": "dent_de_rat_des_pontons",
+    "name": "Dent de Rat des Pontons",
+    "kind": "item",
+    "level": 4,
+    "tags": [],
+    "description": "Une incisive jaune et longue, assez dure pour ronger une corde mouillée en une nuit.",
+    "base_value": 20
+  },
+  {
+    "id": "plume_de_goeland",
+    "name": "Plume de Goéland",
+    "kind": "item",
+    "level": 5,
+    "tags": [],
+    "description": "Une grande plume blanche et grise, raide et légère, encore imprégnée d'une odeur de sel.",
+    "base_value": 25
+  },
+  {
+    "id": "barbillon_de_silure",
+    "name": "Barbillon de Silure",
+    "kind": "item",
+    "level": 6,
+    "tags": [],
+    "description": "Un long filament de chair souple, arraché à la gueule d'un silure. Il luit encore faiblement, longtemps après la prise.",
+    "base_value": 30
+  },
+  {
+    "id": "pierre_aux_cercles",
+    "name": "Pierre aux Cercles",
+    "kind": "item",
+    "level": 6,
+    "tags": [],
+    "description": "Une pierre lisse recrachée par un silure, gravée de cercles concentriques parfaitement réguliers. Aucun outil du village ne saurait tailler une ligne aussi nette.",
+    "base_value": 30
+  },
+  {
+    "id": "sanglier_des_fougeres",
+    "name": "Sanglier des Fougères",
+    "kind": "monster",
+    "level": 4,
+    "tags": [],
+    "description": "Un sanglier massif au pelage roussi, qui laboure les fougères dorées de ses défenses. Il charge tout ce qui bouge, sans jamais s'essouffler.",
+    "base_value": null
+  },
+  {
+    "id": "lynx_a_robe_claire",
+    "name": "Lynx à Robe Claire",
+    "kind": "monster",
+    "level": 5,
+    "tags": [],
+    "description": "Un lynx au pelage presque blanc, qui se fond dans les rais de lumière dorée tombant entre les branches. On ne le voit qu'au moment où il bondit.",
+    "base_value": null
+  },
+  {
+    "id": "ours_moussu",
+    "name": "Ours Moussu",
+    "kind": "monster",
+    "level": 6,
+    "tags": [],
+    "description": "Un ours si vieux et si lent que la mousse a poussé sur son dos. Il garde les sentiers les plus profonds de la forêt et ne laisse passer personne.",
+    "base_value": null
+  },
+  {
+    "id": "veilleur_d_ecorce",
+    "name": "Veilleur d'Écorce",
+    "kind": "monster",
+    "level": 6,
+    "tags": [],
+    "description": "Ce qu'on prenait pour un chêne mort se déplie lentement, dans un craquement de bois sec. Sous l'écorce fendue, des lignes droites et des cercles parfaits luisent d'une lueur dorée, la même que celle de l'aube. Les anciens du village racontent qu'un arbre veille au cœur de la forêt et qu'il se réveille quand on y verse trop de sang. Personne ne sait qui l'a planté là, ni ce qu'il garde. Mais ses racines s'enfoncent bien plus profond que celles d'un arbre, et quand il frappe le sol, on sent la pierre vibrer en dessous.",
+    "base_value": null
+  },
+  {
+    "id": "chene_ancien",
+    "name": "Chêne Ancien",
+    "kind": "resource",
+    "level": 4,
+    "tags": [],
+    "description": "Un chêne au tronc si large que trois hommes ne suffiraient pas à l'entourer. Son bois est dense, presque dur comme de la pierre.",
+    "base_value": null
+  },
+  {
+    "id": "fougeres_dorees",
+    "name": "Fougères Dorées",
+    "kind": "resource",
+    "level": 5,
+    "tags": [],
+    "description": "Des fougères hautes comme un homme, dont les frondes ont pris la couleur de l'aube. Elles ne fanent jamais.",
+    "base_value": null
+  },
+  {
+    "id": "tronc_grave",
+    "name": "Tronc Gravé",
+    "kind": "resource",
+    "level": 6,
+    "tags": [],
+    "description": "Un vieux tronc dont l'écorce porte des motifs trop réguliers pour être naturels : des cercles concentriques, des lignes qui se croisent à angle droit. On dirait qu'ils ont poussé avec l'arbre.",
+    "base_value": null
+  },
+  {
+    "id": "traces_du_cerf_pale",
+    "name": "Traces du Cerf Pâle",
+    "kind": "resource",
+    "level": 2,
+    "tags": [],
+    "description": "Des empreintes nettes dans la mousse, et quelques poils blancs accrochés aux ronces. Elles mènent toujours plus loin sous les arbres, mais ne reviennent jamais. N'importe qui peut les suivre.",
+    "base_value": null
+  },
+  {
+    "id": "isarn_bucheron",
+    "name": "Isarn",
+    "kind": "npc",
+    "level": null,
+    "tags": [],
+    "description": "Un bûcheron taciturne qui a monté son camp au pied des premiers chênes. Il abat les arbres morts, mais refuse de toucher à certains troncs, sans jamais expliquer lesquels ni pourquoi.",
+    "base_value": null
+  },
+  {
+    "id": "vesna_traqueuse",
+    "name": "Vesna",
+    "kind": "npc",
+    "level": null,
+    "tags": [],
+    "description": "Une traqueuse aux yeux perçants, vêtue de cuir couleur de feuilles mortes. Elle chasse dans la forêt depuis des années et suit depuis peu une piste qu'elle ne parvient pas à rattraper.",
+    "base_value": null
+  },
+  {
+    "id": "piste_du_cerf_blanc",
+    "name": "La Piste du Cerf Blanc",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Vesna suit depuis des semaines les traces d'un cerf à la robe trop pâle, qui mènent toujours vers le même coin de la forêt. Relève ses traces, puis écarte les ours moussus qui gardent ce sentier : Vesna est sûre que la piste continue au-delà, dans un sous-bois où personne ne va.",
+    "base_value": null
+  },
+  {
+    "id": "le_bois_qui_ne_vieillit_pas",
+    "name": "Le Bois qui ne Vieillit Pas",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Isarn a promis du bois de chêne au village, mais ses vieux bras ne suivent plus. Il te demande d'en couper pour lui, en prenant garde aux troncs qu'il t'a montrés.",
+    "base_value": null
+  },
+  {
+    "id": "sangliers_des_fougeres",
+    "name": "Les Sangliers des Fougères",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Les sangliers ravagent les fougères dorées et chargent les cueilleurs venus du village. Vesna te demande d'en abattre assez pour que les sentiers redeviennent praticables.",
+    "base_value": null
+  },
+  {
+    "id": "les_motifs_sous_l_ecorce",
+    "name": "Les Motifs sous l'Écorce",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Isarn a fini par en parler : certains troncs portent des motifs qui ne sont l'œuvre d'aucun homme. Il veut que quelqu'un en rapporte des morceaux à Mère Yvenne, au village, pour qu'elle les compare à ce que racontaient les anciens. Lui ne s'en approchera pas.",
+    "base_value": null
+  },
+  {
+    "id": "defense_de_sanglier_roux",
+    "name": "Défense de Sanglier Roux",
+    "kind": "item",
+    "level": 4,
+    "tags": [],
+    "description": "Une défense courbe et jaunie, polie par des années à fouiller la terre de la forêt.",
+    "base_value": 20
+  },
+  {
+    "id": "fourrure_de_lynx_clair",
+    "name": "Fourrure de Lynx Clair",
+    "kind": "item",
+    "level": 5,
+    "tags": [],
+    "description": "Une fourrure presque blanche, douce et épaisse, qui semble garder un peu de la lumière dorée entre ses poils.",
+    "base_value": 25
+  },
+  {
+    "id": "griffe_d_ours_moussu",
+    "name": "Griffe d'Ours Moussu",
+    "kind": "item",
+    "level": 6,
+    "tags": [],
+    "description": "Une griffe noire et épaisse, encore couverte d'une fine couche de mousse verte.",
+    "base_value": 30
+  },
+  {
+    "id": "bois_de_chene_ancien",
+    "name": "Bois de Chêne Ancien",
+    "kind": "item",
+    "level": 4,
+    "tags": [],
+    "description": "Une bûche de chêne dense et lourde, au grain serré. Elle ne sèche pas et ne pourrit pas.",
+    "base_value": 20
+  },
+  {
+    "id": "fronde_de_fougere_doree",
+    "name": "Fronde de Fougère Dorée",
+    "kind": "item",
+    "level": 5,
+    "tags": [],
+    "description": "Une longue feuille de fougère couleur d'aube, souple et parfumée. Les herboristes en font des onguents.",
+    "base_value": 25
+  },
+  {
+    "id": "ecorce_aux_motifs",
+    "name": "Écorce aux Motifs",
+    "kind": "item",
+    "level": 6,
+    "tags": [],
+    "description": "Un morceau d'écorce gravé de cercles et de lignes droites. Les motifs sont tièdes au toucher et continuent sous l'écorce, jusque dans le bois.",
+    "base_value": 30
+  },
+  {
+    "id": "coeur_de_seve_doree",
+    "name": "Cœur de Sève Dorée",
+    "kind": "item",
+    "level": 6,
+    "tags": [],
+    "description": "Une boule de sève durcie, translucide et dorée, prélevée au centre du Veilleur d'Écorce. Elle pulse faiblement, au même rythme que la lumière de l'aube.",
+    "base_value": 30
+  },
+  {
+    "id": "poil_de_cerf_pale",
+    "name": "Poil de Cerf Pâle",
+    "kind": "item",
+    "level": 2,
+    "tags": [],
+    "description": "Quelques poils blancs accrochés aux ronces, d'une blancheur trop pure pour une bête de la forêt.",
+    "base_value": 10
+  },
+  {
+    "id": "bois_de_cerf_pale",
+    "name": "Bois de Cerf Pâle",
+    "kind": "item",
+    "level": 6,
+    "tags": [],
+    "description": "Un fragment de bois de cerf d'un blanc parfait, trouvé au bout de la piste. Il est lisse comme de la pierre polie et ne porte aucune trace d'usure.",
+    "base_value": 30
+  },
+  {
+    "id": "hachette_d_isarn",
+    "name": "Hachette d'Isarn",
+    "kind": "item",
+    "level": 4,
+    "tags": [],
+    "description": "La hachette de rechange d'Isarn, au manche patiné par les années. Elle coupe aussi bien le bois que ce qui en sort.",
+    "base_value": 120
+  },
+  {
+    "id": "capuche_de_traqueuse",
+    "name": "Capuche de Traqueuse",
+    "kind": "item",
+    "level": 6,
+    "tags": [],
+    "description": "Une capuche de cuir couleur de feuilles mortes, comme celle que porte Vesna. Elle étouffe les bruits et cache le regard.",
+    "base_value": 180
+  },
+  {
+    "id": "civet_de_sanglier",
+    "name": "Civet de Sanglier",
+    "kind": "item",
+    "level": 5,
+    "tags": [],
+    "description": "Un civet épais mijoté au bois de chêne, qui tient au corps toute une journée de traque.",
+    "base_value": 75
+  },
+  {
+    "id": "carpe_aux_yeux_vides",
+    "name": "Carpe aux Yeux Vides",
+    "kind": "monster",
+    "level": 4,
+    "tags": [],
+    "description": "Une carpe énorme aux écailles ternes, dont les yeux blancs ne suivent rien. Les carpes du miroir nagent toutes dans le même sens, en cercles lents, et n'en sortent que pour attaquer.",
+    "base_value": null
+  },
+  {
+    "id": "brochet_miroir",
+    "name": "Brochet Miroir",
+    "kind": "monster",
+    "level": 5,
+    "tags": [],
+    "description": "Un brochet aux flancs si lisses qu'ils reflètent le ciel doré. On ne le voit qu'au dernier moment, quand le reflet se brise et que les dents apparaissent.",
+    "base_value": null
+  },
+  {
+    "id": "tortue_a_carapace_gravee",
+    "name": "Tortue à Carapace Gravée",
+    "kind": "monster",
+    "level": 6,
+    "tags": [],
+    "description": "Une tortue d'eau douce aussi large qu'une table, qui remonte lentement des profondeurs. Sur sa carapace, les plaques dessinent des cercles concentriques parfaits, comme ceux que Sorne dessine dans son carnet.",
+    "base_value": null
+  },
+  {
+    "id": "joncs_du_large",
+    "name": "Joncs du Large",
+    "kind": "resource",
+    "level": 4,
+    "tags": [],
+    "description": "Des joncs épais qui poussent en îlots flottants au milieu de l'eau immobile. Leurs tiges sont si droites qu'on les dirait plantées au cordeau.",
+    "base_value": null
+  },
+  {
+    "id": "eaux_profondes_du_miroir",
+    "name": "Eaux Profondes du Miroir",
+    "kind": "resource",
+    "level": 5,
+    "tags": [],
+    "description": "Là où le lac devient un miroir, la ligne s'enfonce sans jamais toucher le fond. Ce qui mord vient de très loin en dessous.",
+    "base_value": null
+  },
+  {
+    "id": "lotus_immobile",
+    "name": "Lotus Immobile",
+    "kind": "resource",
+    "level": 6,
+    "tags": [],
+    "description": "Une fleur de lotus posée au milieu du miroir, parfaitement immobile. L'eau ne fait aucune ride autour de sa tige, même quand on la cueille.",
+    "base_value": null
+  },
+  {
+    "id": "tais_plongeuse",
+    "name": "Taïs",
+    "kind": "npc",
+    "level": null,
+    "tags": [],
+    "description": "Une plongeuse aux cheveux toujours mouillés, qui vit sur un radeau ancré au bord du miroir. Elle est la seule du camp à oser descendre sous la surface, et elle remonte chaque fois un peu plus silencieuse.",
+    "base_value": null
+  },
+  {
+    "id": "chant_du_lac",
+    "name": "Le Chant du Lac",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Taïs entend chanter sous le miroir, une vibration sourde qui monte du fond. Les carpes aux yeux vides tournent toutes autour du même point, et leurs écailles vibrent quand le chant s'élève. Chasse-les et rapporte-lui de ces écailles : en les comparant, elle pense pouvoir retrouver d'où vient le chant.",
+    "base_value": null
+  },
+  {
+    "id": "un_radeau_de_joncs",
+    "name": "Un Radeau de Joncs",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Le radeau de Taïs prend l'eau. Elle te demande de lui couper des joncs du large pour le consolider avant sa prochaine plongée.",
+    "base_value": null
+  },
+  {
+    "id": "les_brochets_du_miroir",
+    "name": "Les Brochets du Miroir",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Les brochets du miroir attaquent Taïs chaque fois qu'elle remonte. Éclaircis leurs rangs pour qu'elle puisse plonger en paix.",
+    "base_value": null
+  },
+  {
+    "id": "les_carapaces_gravees",
+    "name": "Les Carapaces Gravées",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Depuis que le chant a été localisé, Taïs est sûre d'une chose : les tortues qui remontent du fond portent les mêmes cercles que les pierres d'en bas. Rapporte-lui des plaques de leur carapace, pour qu'elle les compare à ce qu'elle a vu.",
+    "base_value": null
+  },
+  {
+    "id": "ecaille_vibrante",
+    "name": "Écaille Vibrante",
+    "kind": "item",
+    "level": 4,
+    "tags": [],
+    "description": "Une grande écaille terne qui frémit légèrement quand on la pose sur une pierre, comme si elle répondait à un son qu'on n'entend pas.",
+    "base_value": 20
+  },
+  {
+    "id": "chair_de_carpe",
+    "name": "Chair de Carpe",
+    "kind": "item",
+    "level": 4,
+    "tags": [],
+    "description": "Une chair blanche et ferme, un peu fade, qui ne se gâte jamais même au soleil.",
+    "base_value": 20
+  },
+  {
+    "id": "dent_de_brochet",
+    "name": "Dent de Brochet",
+    "kind": "item",
+    "level": 5,
+    "tags": [],
+    "description": "Une dent fine et recourbée, coupante comme un éclat de verre.",
+    "base_value": 25
+  },
+  {
+    "id": "plaque_de_carapace_gravee",
+    "name": "Plaque de Carapace Gravée",
+    "kind": "item",
+    "level": 6,
+    "tags": [],
+    "description": "Une plaque de carapace couverte de cercles concentriques. Les lignes ne sont pas gravées en surface : elles traversent toute l'épaisseur.",
+    "base_value": 30
+  },
+  {
+    "id": "jonc_tressable",
+    "name": "Jonc Tressable",
+    "kind": "item",
+    "level": 4,
+    "tags": [],
+    "description": "Une tige de jonc longue et souple, parfaite pour tresser des cordes et des nattes.",
+    "base_value": 20
+  },
+  {
+    "id": "sandre_dore",
+    "name": "Sandre Doré",
+    "kind": "item",
+    "level": 5,
+    "tags": [],
+    "description": "Un sandre aux reflets d'or pâle, pêché dans les eaux profondes du miroir. Ses yeux restent ouverts longtemps après la prise.",
+    "base_value": 25
+  },
+  {
+    "id": "fleur_de_lotus_immobile",
+    "name": "Fleur de Lotus Immobile",
+    "kind": "item",
+    "level": 6,
+    "tags": [],
+    "description": "Une fleur de lotus blanche qui ne se referme jamais. Coupée, elle reste aussi fraîche qu'au milieu du lac.",
+    "base_value": 30
+  },
+  {
+    "id": "sandre_grille",
+    "name": "Sandre Grillé",
+    "kind": "item",
+    "level": 5,
+    "tags": [],
+    "description": "Un sandre doré grillé sur des braises de jonc, à la peau craquante et à la chair fondante.",
+    "base_value": 75
+  },
+  {
+    "id": "anneau_d_ecaille_vibrante",
+    "name": "Anneau d'Écaille Vibrante",
+    "kind": "item",
+    "level": 5,
+    "tags": [],
+    "description": "Un anneau taillé dans une écaille vibrante. Porté au doigt, il frémit doucement, et l'on croit entendre, très loin, le chant du lac.",
+    "base_value": 150
+  },
+  {
+    "id": "plastron_d_ecailles",
+    "name": "Plastron d'Écailles",
+    "kind": "item",
+    "level": 6,
+    "tags": [],
+    "description": "Un plastron de cuir couvert de plaques de carapace gravée. Les cercles s'alignent d'une plaque à l'autre, comme s'ils avaient toujours été faits pour se rejoindre.",
+    "base_value": 180
+  },
+  {
+    "id": "loup_d_ambre",
+    "name": "Loup d'Ambre",
+    "kind": "monster",
+    "level": 6,
+    "tags": [],
+    "description": "Un loup dont la fourrure s'est figée par plaques en une sorte d'ambre translucide. Sous la résine, on devine ses poils, immobiles, comme pris dans un instant qui ne passe plus.",
+    "base_value": null
+  },
+  {
+    "id": "chouette_sans_ombre",
+    "name": "Chouette sans Ombre",
+    "kind": "monster",
+    "level": 7,
+    "tags": [],
+    "description": "Une chouette blanche qui ne projette aucune ombre, même sous la lumière la plus crue. Elle chasse sans bruit et pousse, en piquant, un cri qui éblouit plus qu'il ne s'entend.",
+    "base_value": null
+  },
+  {
+    "id": "tisseuse_doree",
+    "name": "Tisseuse Dorée",
+    "kind": "monster",
+    "level": 8,
+    "tags": [],
+    "description": "Une araignée grosse comme un chien, qui tend entre les troncs des toiles faites d'une soie lumineuse. Ses toiles ne dessinent pas des spirales, mais des cercles concentriques parfaits.",
+    "base_value": null
+  },
+  {
+    "id": "sanglier_aux_defenses_de_verre",
+    "name": "Sanglier aux Défenses de Verre",
+    "kind": "monster",
+    "level": 9,
+    "tags": [],
+    "description": "Un sanglier énorme aux défenses devenues transparentes, comme du verre soufflé. La lumière dorée les traverse et se brise en éclats sur le sol quand il charge.",
+    "base_value": null
+  },
+  {
+    "id": "cerf_pale",
+    "name": "Le Cerf Pâle",
+    "kind": "monster",
+    "level": 9,
+    "tags": [],
+    "description": "Au bout de la piste qu'a suivie Vesna, il attend au milieu d'une clairière où rien ne pousse. De loin, c'est un cerf blanc, immense et immobile. De près, on voit que sa robe n'est pas faite de poils mais de lumière tassée, et que ses bois se ramifient en angles parfaitement droits. Il ne respire pas. Ses yeux ne cillent pas. Quand il tourne la tête, c'est d'un seul mouvement, sans hésitation, comme une porte qu'on referme. Les loups d'ambre se couchent autour de lui. Personne ne sait s'il est une bête que l'aube a changée, ou une chose qui a pris la forme d'une bête pour mieux passer inaperçue.",
+    "base_value": null
+  },
+  {
+    "id": "ronces_dorees",
+    "name": "Ronces Dorées",
+    "kind": "resource",
+    "level": 7,
+    "tags": [],
+    "description": "Des ronces aux épines dorées, chargées de baies qui ne mûrissent ni ne pourrissent. Elles sont exactement comme elles étaient hier.",
+    "base_value": null
+  },
+  {
+    "id": "if_millenaire",
+    "name": "If Millénaire",
+    "kind": "resource",
+    "level": 8,
+    "tags": [],
+    "description": "Un if au tronc noir et tordu, dont le bois résonne comme du métal sous la hache. Ses aiguilles ne tombent jamais.",
+    "base_value": null
+  },
+  {
+    "id": "coulee_d_ambre",
+    "name": "Coulée d'Ambre",
+    "kind": "resource",
+    "level": 9,
+    "tags": [],
+    "description": "Une résine dorée qui suinte d'un tronc fendu et durcit en coulant. Des insectes y sont pris, figés en plein vol, et certains n'appartiennent à aucune espèce connue.",
+    "base_value": null
+  },
+  {
+    "id": "halvard_egare",
+    "name": "Halvard",
+    "kind": "npc",
+    "level": null,
+    "tags": [],
+    "description": "Un homme en habits de chasseur d'un autre temps, assis contre une souche. Il dit être parti du village ce matin pour suivre un cerf blanc, et ne comprend pas pourquoi personne ne le cherche. Au village, on raconte qu'un Halvard a disparu dans la forêt du temps des grands-parents.",
+    "base_value": null
+  },
+  {
+    "id": "les_loups_d_ambre",
+    "name": "Les Loups d'Ambre",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Les loups d'ambre encerclent la souche où Halvard s'est réfugié. Disperse-les assez longtemps pour qu'il puisse reprendre son souffle.",
+    "base_value": null
+  },
+  {
+    "id": "les_fils_de_lumiere",
+    "name": "Les Fils de Lumière",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Les tisseuses dorées ont tendu leurs toiles en travers du seul chemin du retour. Halvard jure qu'hier encore, il n'y en avait pas. Abats-en assez pour ouvrir un passage.",
+    "base_value": null
+  },
+  {
+    "id": "le_matin_d_halvard",
+    "name": "Le Matin d'Halvard",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Halvard ne croit pas qu'il est perdu depuis longtemps. Pour qu'il te croie, il faudrait lui montrer quelque chose qui ne ment pas : les plumes des chouettes sans ombre, qui ne poussent que sur des oiseaux restés trop longtemps sous cette lumière. Chasse-les et rapporte-lui leurs plumes.",
+    "base_value": null
+  },
+  {
+    "id": "des_defenses_de_verre",
+    "name": "Des Défenses de Verre",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Halvard a fini par comprendre. Il ne rentrera pas au village : il ne saurait plus y vivre. Mais il veut laisser quelque chose à Yvenne, taillé dans les défenses des sangliers de verre qui rôdent ici. Rapporte-lui de quoi le faire.",
+    "base_value": null
+  },
+  {
+    "id": "croc_d_ambre",
+    "name": "Croc d'Ambre",
+    "kind": "item",
+    "level": 6,
+    "tags": [],
+    "description": "Un croc de loup pris dans une gangue d'ambre translucide. Il est tiède, comme s'il venait d'être arraché.",
+    "base_value": 30
+  },
+  {
+    "id": "plume_sans_ombre",
+    "name": "Plume sans Ombre",
+    "kind": "item",
+    "level": 7,
+    "tags": [],
+    "description": "Une plume blanche qui ne projette aucune ombre, même posée en plein jour. Elle laisse passer la lumière comme du papier mouillé.",
+    "base_value": 35
+  },
+  {
+    "id": "baie_figee",
+    "name": "Baie Figée",
+    "kind": "item",
+    "level": 7,
+    "tags": [],
+    "description": "Une baie dorée, ferme et sucrée, qui reste exactement comme elle a été cueillie, quel que soit le temps qui passe.",
+    "base_value": 35
+  },
+  {
+    "id": "soie_doree",
+    "name": "Soie Dorée",
+    "kind": "item",
+    "level": 8,
+    "tags": [],
+    "description": "Un écheveau de soie lumineuse, tirée d'une toile de tisseuse. Elle reste tendue toute seule, comme si quelque chose la tirait encore.",
+    "base_value": 40
+  },
+  {
+    "id": "defense_de_verre",
+    "name": "Défense de Verre",
+    "kind": "item",
+    "level": 9,
+    "tags": [],
+    "description": "Une défense de sanglier devenue entièrement transparente. La lumière qui la traverse se décompose en cercles dorés.",
+    "base_value": 45
+  },
+  {
+    "id": "bois_d_if_noirci",
+    "name": "Bois d'If Noirci",
+    "kind": "item",
+    "level": 8,
+    "tags": [],
+    "description": "Une pièce de bois d'if noir, dense et lourde, qui sonne comme du métal quand on la frappe.",
+    "base_value": 40
+  },
+  {
+    "id": "ambre_d_aube",
+    "name": "Ambre d'Aube",
+    "kind": "item",
+    "level": 9,
+    "tags": [],
+    "description": "Un morceau d'ambre doré où la lumière semble prise au piège. On y distingue parfois un minuscule cercle parfait, en son centre.",
+    "base_value": 45
+  },
+  {
+    "id": "larme_d_aube",
+    "name": "Larme d'Aube",
+    "kind": "item",
+    "level": 9,
+    "tags": [],
+    "description": "Une goutte de lumière solidifiée, prélevée sur le Cerf Pâle. Elle ne refroidit jamais, et dans le noir, elle éclaire exactement comme l'aube de l'étage.",
+    "base_value": 45
+  },
+  {
+    "id": "galette_de_baies_figees",
+    "name": "Galette de Baies Figées",
+    "kind": "item",
+    "level": 6,
+    "tags": [],
+    "description": "Une galette dure et sucrée, faite de baies dorées pilées. Halvard en a toujours une réserve, et ne se rappelle pas l'avoir préparée.",
+    "base_value": 90
+  },
+  {
+    "id": "bottes_de_ronce",
+    "name": "Bottes de Ronce",
+    "kind": "item",
+    "level": 8,
+    "tags": [],
+    "description": "Des bottes de cuir épais renforcées de tiges de ronce tressées. Les épines dorées n'y accrochent plus.",
+    "base_value": 240
+  },
+  {
+    "id": "lame_d_ambre",
+    "name": "Lame d'Ambre",
+    "kind": "item",
+    "level": 8,
+    "tags": [],
+    "description": "Le couteau de chasse d'Halvard, dont la lame s'est peu à peu couverte d'ambre. Elle n'a jamais perdu son tranchant.",
+    "base_value": 240
+  },
+  {
+    "id": "anneau_de_verre_d_aube",
+    "name": "Anneau de Verre d'Aube",
+    "kind": "item",
+    "level": 9,
+    "tags": [],
+    "description": "Un anneau taillé par Halvard dans une défense de verre. Il en a fait deux. Il garde l'autre pour Yvenne, au cas où.",
+    "base_value": 270
+  },
+  {
+    "id": "sentinelle_de_pierre",
+    "name": "Sentinelle de Pierre",
+    "kind": "monster",
+    "level": 6,
+    "tags": [],
+    "description": "Une silhouette de pierre taillée, haute comme deux hommes, postée devant les murs effondrés. Des runes s'allument sur son torse quand on approche, et elle se met en marche sans un bruit.",
+    "base_value": null
+  },
+  {
+    "id": "rouage_errant",
+    "name": "Rouage Errant",
+    "kind": "monster",
+    "level": 7,
+    "tags": [],
+    "description": "Une grande roue de bronze qui roule seule entre les colonnes, suivant toujours le même tracé. Quand quelque chose se met en travers, elle s'arrête, pivote, et libère un éclair doré.",
+    "base_value": null
+  },
+  {
+    "id": "colosse_moussu",
+    "name": "Colosse Moussu",
+    "kind": "monster",
+    "level": 8,
+    "tags": [],
+    "description": "Une construction massive que la forêt a presque engloutie : de la mousse dans les articulations, des racines entre les plaques de pierre. Elle bouge encore, lentement, comme si elle finissait un geste commencé il y a des siècles.",
+    "base_value": null
+  },
+  {
+    "id": "automate_sans_visage",
+    "name": "Automate sans Visage",
+    "kind": "monster",
+    "level": 9,
+    "tags": [],
+    "description": "Une silhouette de bronze aux proportions humaines, mais lisse là où devrait se trouver un visage. Il patrouille dans les salles les plus profondes et s'incline devant chaque rune qu'il croise, avant de reprendre sa ronde.",
+    "base_value": null
+  },
+  {
+    "id": "gravats_des_architectes",
+    "name": "Gravats des Architectes",
+    "kind": "resource",
+    "level": 6,
+    "tags": [],
+    "description": "Des tas de débris tombés des murs. En les fouillant, on trouve des tessons couverts de signes qu'aucun villageois ne sait lire.",
+    "base_value": null
+  },
+  {
+    "id": "filon_de_pierre_runique",
+    "name": "Filon de Pierre Runique",
+    "kind": "resource",
+    "level": 7,
+    "tags": [],
+    "description": "Une veine de pierre claire qui affleure entre les dalles. Elle est striée de lignes dorées, régulières, qui continuent sous la roche.",
+    "base_value": null
+  },
+  {
+    "id": "dalle_scellee",
+    "name": "Dalle Scellée",
+    "kind": "resource",
+    "level": 9,
+    "tags": [],
+    "description": "Une dalle de pierre polie, encastrée dans le sol d'une salle effondrée. Ses bords sont scellés par un métal qui n'a pas rouillé.",
+    "base_value": null
+  },
+  {
+    "id": "ombeline_erudite",
+    "name": "Ombeline",
+    "kind": "npc",
+    "level": null,
+    "tags": [],
+    "description": "Une érudite venue d'on ne sait où, installée sous une arche à moitié effondrée avec des carnets couverts de relevés. Elle copie les runes une à une, et pâlit un peu plus à chaque inscription qu'elle comprend.",
+    "base_value": null
+  },
+  {
+    "id": "le_mur_effondre",
+    "name": "Le Mur Effondré",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Derrière un mur effondré, Ombeline a aperçu une salle dont les runes brillent encore. Mais les sentinelles de pierre en gardent l'accès. Abats-les, et rapporte-lui les éclats de rune qu'elles portent : elle pense pouvoir s'en servir pour ouvrir la salle.",
+    "base_value": null
+  },
+  {
+    "id": "les_rouages_errants",
+    "name": "Les Rouages Errants",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Les rouages de bronze roulent sans fin entre les colonnes, et leurs éclairs empêchent Ombeline d'approcher les inscriptions. Arrête-en quelques-uns.",
+    "base_value": null
+  },
+  {
+    "id": "sous_la_mousse",
+    "name": "Sous la Mousse",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Les colosses moussus bloquent les galeries du fond. Ombeline voudrait savoir ce que la forêt a recouvert : abats-en assez pour dégager le passage.",
+    "base_value": null
+  },
+  {
+    "id": "ce_que_disent_les_runes",
+    "name": "Ce que Disent les Runes",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Le fragment de rune encore tiède a confirmé ce que craignait Ombeline. Pour en être sûre, elle veut comparer ses relevés aux noyaux des automates sans visage, qui semblent porter les mêmes signes. Rapporte-lui-en.",
+    "base_value": null
+  },
+  {
+    "id": "fragment_rune_aube",
+    "name": "Fragment de Rune de l'Aube",
+    "kind": "item",
+    "level": 7,
+    "tags": [],
+    "description": "Un éclat de pierre gravé d'un cercle coupé par une ligne droite. Il est encore tiède, et sa lueur grandit quand on le tourne vers l'est.",
+    "base_value": 35
+  },
+  {
+    "id": "eclat_de_rune_eteinte",
+    "name": "Éclat de Rune Éteinte",
+    "kind": "item",
+    "level": 6,
+    "tags": [],
+    "description": "Un morceau de pierre gravée dont la rune s'est éteinte quand la sentinelle s'est effondrée. Elle se rallume parfois, une seconde, sans raison.",
+    "base_value": 30
+  },
+  {
+    "id": "bloc_de_pierre_taillee",
+    "name": "Bloc de Pierre Taillée",
+    "kind": "item",
+    "level": 6,
+    "tags": [],
+    "description": "Un bloc de pierre aux arêtes parfaitement droites, sans la moindre trace d'outil.",
+    "base_value": 30
+  },
+  {
+    "id": "engrenage_de_bronze",
+    "name": "Engrenage de Bronze",
+    "kind": "item",
+    "level": 7,
+    "tags": [],
+    "description": "Une roue dentée de bronze, aux dents si fines et si régulières qu'aucun forgeron du village ne saurait la refaire.",
+    "base_value": 35
+  },
+  {
+    "id": "pierre_moussue",
+    "name": "Pierre Moussue",
+    "kind": "item",
+    "level": 8,
+    "tags": [],
+    "description": "Une plaque de pierre arrachée à un colosse, couverte d'une mousse qui pousse en lignes droites.",
+    "base_value": 40
+  },
+  {
+    "id": "noyau_d_automate",
+    "name": "Noyau d'Automate",
+    "kind": "item",
+    "level": 9,
+    "tags": [],
+    "description": "Une sphère de métal tiède, gravée d'anneaux concentriques, qui battait au centre d'un automate. Elle bat encore, faiblement.",
+    "base_value": 45
+  },
+  {
+    "id": "tesson_grave",
+    "name": "Tesson Gravé",
+    "kind": "item",
+    "level": 6,
+    "tags": [],
+    "description": "Un fragment de céramique ou de pierre couvert de signes réguliers. Pris seul, il ne veut rien dire.",
+    "base_value": 30
+  },
+  {
+    "id": "pierre_runique_brute",
+    "name": "Pierre Runique Brute",
+    "kind": "item",
+    "level": 7,
+    "tags": [],
+    "description": "Un morceau de pierre claire veiné de lignes dorées. Les lignes continuent à l'intérieur quand on la brise.",
+    "base_value": 35
+  },
+  {
+    "id": "plaque_de_bronze_ancien",
+    "name": "Plaque de Bronze Ancien",
+    "kind": "item",
+    "level": 9,
+    "tags": [],
+    "description": "Une plaque de bronze sans une trace d'oxydation, gravée de lignes et de cercles. Elle est plus lourde qu'elle ne devrait l'être.",
+    "base_value": 45
+  },
+  {
+    "id": "elixir_de_racine",
+    "name": "Élixir de Racine",
+    "kind": "item",
+    "level": 7,
+    "tags": [],
+    "description": "Une décoction amère de racines dorées, que les explorateurs des ruines boivent pour tenir debout.",
+    "base_value": 105
+  },
+  {
+    "id": "gantelets_de_pierre",
+    "name": "Gantelets de Pierre",
+    "kind": "item",
+    "level": 8,
+    "tags": [],
+    "description": "Des gantelets de cuir renforcés de plaques prises sur un colosse. La mousse y repousse, quoi qu'on fasse.",
+    "base_value": 240
+  },
+  {
+    "id": "heaume_runique",
+    "name": "Heaume Runique",
+    "kind": "item",
+    "level": 9,
+    "tags": [],
+    "description": "Un casque de bronze lisse, dont la visière porte un unique cercle coupé d'une ligne. Ombeline jure qu'il bourdonne quand on le pose sur une rune.",
+    "base_value": 270
+  },
+  {
+    "id": "echo_du_veilleur",
+    "name": "Écho d'un Veilleur",
+    "kind": "npc",
+    "level": null,
+    "tags": [],
+    "description": "Au centre de la clairière, une statue de pierre agenouillée tient entre ses mains un éclat gravé qui bourdonne. Quand on pose la main sur la pierre, une voix parle, sans que rien ne bouge. Elle ne répond pas aux questions. Elle répète ce qu'on lui a laissé.",
+    "base_value": null
+  },
+  {
+    "id": "eclat_errant",
+    "name": "Éclat Errant",
+    "kind": "monster",
+    "level": 7,
+    "tags": [],
+    "description": "Un fragment de pierre gravée qui flotte à hauteur d'homme et tourne lentement autour de la statue. Il s'en prend à quiconque traverse le cercle de la clairière.",
+    "base_value": null
+  },
+  {
+    "id": "veilleur_fige",
+    "name": "Veilleur Figé",
+    "kind": "monster",
+    "level": 8,
+    "tags": [],
+    "description": "Une des six autres statues du cercle, couchée dans les herbes et couverte de lierre. Parfois, elle se relève d'un seul coup, comme réveillée en sursaut, et frappe tout ce qui bouge avant de se recoucher.",
+    "base_value": null
+  },
+  {
+    "id": "fleurs_sans_saison",
+    "name": "Fleurs sans Saison",
+    "kind": "resource",
+    "level": 6,
+    "tags": [],
+    "description": "Des fleurs pâles qui poussent en cercle parfait autour de la statue. Elles sont toutes ouvertes, toutes de la même taille, et n'ont jamais connu ni bouton ni fanaison.",
+    "base_value": null
+  },
+  {
+    "id": "pierres_bourdonnantes",
+    "name": "Pierres Bourdonnantes",
+    "kind": "resource",
+    "level": 8,
+    "tags": [],
+    "description": "Des pierres à demi enterrées au bord de la clairière, qui vibrent doucement sous la main. Ensemble, elles dessinent un grand cercle dont il manque des morceaux.",
+    "base_value": null
+  },
+  {
+    "id": "les_veilleurs_oublies",
+    "name": "Les Veilleurs Oubliés",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "La statue répète que le cercle doit tenir. Mais les éclats qui tournent autour d'elle se sont détachés et frappent à l'aveugle, et le bourdonnement faiblit. Abats les éclats errants et rapporte leur poussière de lumière au pied de la statue : peut-être dira-t-elle ce qu'elle garde.",
+    "base_value": null
+  },
+  {
+    "id": "le_dernier_releve",
+    "name": "Le Dernier Relevé",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Les mêmes cercles sont partout : sur une pierre recrachée par un silure du camp, sur la carapace des tortues du lac, sous l'écorce des vieux arbres de la forêt. Pose-les ensemble au pied de la statue. Si les cercles s'accordent, tu sauras qu'ils ont été tracés par la même main.",
+    "base_value": null
+  },
+  {
+    "id": "poussiere_de_lumiere",
+    "name": "Poussière de Lumière",
+    "kind": "item",
+    "level": 7,
+    "tags": [],
+    "description": "Une poudre dorée qui s'échappe des éclats brisés. Elle brille exactement comme l'aube, et s'éteint si on l'emporte trop loin de la clairière.",
+    "base_value": 35
+  },
+  {
+    "id": "fragment_de_cercle",
+    "name": "Fragment de Cercle",
+    "kind": "item",
+    "level": 8,
+    "tags": [],
+    "description": "Un arc de pierre gravée, morceau d'un cercle bien plus grand. La courbe est parfaite, au point qu'on pourrait en déduire toute la taille du cercle.",
+    "base_value": 40
+  },
+  {
+    "id": "petale_sans_saison",
+    "name": "Pétale sans Saison",
+    "kind": "item",
+    "level": 6,
+    "tags": [],
+    "description": "Un pétale pâle qui ne se flétrit jamais. Posé sur la main, il garde la forme exacte qu'il avait sur la fleur.",
+    "base_value": 30
+  },
+  {
+    "id": "carte_des_cercles",
+    "name": "Carte des Cercles",
+    "kind": "item",
+    "level": 8,
+    "tags": [],
+    "description": "Un relevé fait de tes propres mains, où les cercles du camp, du lac et de la forêt s'emboîtent parfaitement. Tous convergent vers un même point, au-delà des ruines, là où se dresse le sanctuaire.",
+    "base_value": 40
+  },
+  {
+    "id": "eau_de_la_clairiere",
+    "name": "Eau de la Clairière",
+    "kind": "item",
+    "level": 8,
+    "tags": [],
+    "description": "Une eau recueillie dans la vasque au pied de la statue. Elle est parfaitement immobile dans la fiole, même quand on la secoue, et clarifie l'esprit d'une seule gorgée.",
+    "base_value": 120
+  },
+  {
+    "id": "pendentif_du_veilleur",
+    "name": "Pendentif du Veilleur",
+    "kind": "item",
+    "level": 7,
+    "tags": [],
+    "description": "Un petit disque de pierre gravé d'un cercle coupé d'une ligne, tombé des mains de la statue quand le bourdonnement a repris. Il vibre doucement contre la peau.",
+    "base_value": 210
+  },
+  {
+    "id": "gardien_de_colonne",
+    "name": "Gardien de Colonne",
+    "kind": "monster",
+    "level": 8,
+    "tags": [],
+    "description": "Une statue adossée à chaque colonne de l'antichambre, les bras croisés sur la poitrine. Quand on passe trop près, elle décroise les bras.",
+    "base_value": null
+  },
+  {
+    "id": "dormant_de_bronze",
+    "name": "Dormant de Bronze",
+    "kind": "monster",
+    "level": 9,
+    "tags": [],
+    "description": "Une silhouette de bronze allongée dans une alcôve, les yeux clos, une main posée sur un sceau gravé. Les dormants ne se lèvent que lorsqu'on les touche, et se battent sans jamais ouvrir les yeux.",
+    "base_value": null
+  },
+  {
+    "id": "porte_lumiere",
+    "name": "Porte-Lumière",
+    "kind": "monster",
+    "level": 10,
+    "tags": [],
+    "description": "Une construction élancée qui porte à bout de bras un prisme où la lumière de l'aube se concentre jusqu'à brûler. Elle marche lentement, de colonne en colonne, comme si elle rallumait quelque chose.",
+    "base_value": null
+  },
+  {
+    "id": "heraut_de_l_aube",
+    "name": "Le Héraut de l'Aube",
+    "kind": "monster",
+    "level": 10,
+    "tags": [],
+    "description": "Au fond de l'antichambre, une colonne se fend, et il en sort. Il ressemble aux dormants, mais ses yeux sont ouverts : deux disques dorés où tourne lentement un cercle coupé d'une ligne. Il porte un voile de lumière tissée qui flotte sans le moindre souffle d'air. On dit qu'il était chargé d'annoncer au Gardien que le cercle tenait toujours, et qu'il l'annonce encore, chaque matin, au même instant, depuis que le matin ne finit plus. Quand trop de dormants tombent, il se lève pour savoir pourquoi. Il ne parle pas. Il juge.",
+    "base_value": null
+  },
+  {
+    "id": "veine_d_or_pale",
+    "name": "Veine d'Or Pâle",
+    "kind": "resource",
+    "level": 8,
+    "tags": [],
+    "description": "Un filon de métal clair qui court dans le sol de l'antichambre, en lignes parfaitement droites, d'une colonne à l'autre.",
+    "base_value": null
+  },
+  {
+    "id": "lierre_dore",
+    "name": "Lierre Doré",
+    "kind": "resource",
+    "level": 10,
+    "tags": [],
+    "description": "Un lierre aux feuilles dorées qui grimpe le long des colonnes. Il pousse uniquement vers le fond du sanctuaire, comme attiré par la lumière.",
+    "base_value": null
+  },
+  {
+    "id": "inscriptions_du_seuil",
+    "name": "Inscriptions du Seuil",
+    "kind": "resource",
+    "level": 9,
+    "tags": [],
+    "description": "Un mur couvert d'inscriptions, plus nettes que partout ailleurs dans les ruines. Il faut du temps et du papier pour en relever un passage.",
+    "base_value": null
+  },
+  {
+    "id": "aubin_pelerin",
+    "name": "Aubin",
+    "kind": "npc",
+    "level": null,
+    "tags": [],
+    "description": "Un pèlerin du village venu prier la lumière au plus près de sa source. Il a recopié, avec l'aide des notes d'Ombeline, le rituel gravé sur les murs, sans en comprendre la moitié. Il est le seul à ne pas avoir peur, et c'est peut-être le plus inquiétant.",
+    "base_value": null
+  },
+  {
+    "id": "cle_des_dormants",
+    "name": "La Clé des Dormants",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Le rituel recopié par Aubin est clair sur un point : la porte du Gardien ne s'ouvre qu'à celui qui porte les sceaux des dormants. Abats les dormants de bronze, rapporte leurs sceaux à Aubin, et il accomplira le rituel. Mais l'inscription précise aussi qu'il faut être prêt : le Gardien ne fait aucune grâce.",
+    "base_value": null
+  },
+  {
+    "id": "les_colonnes_qui_veillent",
+    "name": "Les Colonnes qui Veillent",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Les gardiens de colonne empêchent Aubin d'atteindre les inscriptions qu'il lui manque. Fais-les taire assez longtemps pour qu'il puisse finir sa copie.",
+    "base_value": null
+  },
+  {
+    "id": "l_offrande_d_aubin",
+    "name": "L'Offrande d'Aubin",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Aubin veut déposer une offrande au pied de la dernière colonne, en remerciement pour la lumière. Il te demande des éclats de colonne, « pour rendre au sanctuaire ce qu'on lui a pris ».",
+    "base_value": null
+  },
+  {
+    "id": "la_lumiere_qui_brule",
+    "name": "La Lumière qui Brûle",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Les porte-lumière rallument une à une les colonnes du fond, et la lumière y devient insoutenable. Aubin, pour la première fois, a l'air inquiet. Arrête-les.",
+    "base_value": null
+  },
+  {
+    "id": "eclat_de_colonne",
+    "name": "Éclat de Colonne",
+    "kind": "item",
+    "level": 8,
+    "tags": [],
+    "description": "Un éclat de pierre blanche détaché d'une colonne du sanctuaire. Il est chaud, et sa face intérieure est lisse comme du verre.",
+    "base_value": 40
+  },
+  {
+    "id": "or_pale",
+    "name": "Or Pâle",
+    "kind": "item",
+    "level": 8,
+    "tags": [],
+    "description": "Un métal clair, presque blanc, qui ne ternit pas. Il est plus léger que l'or et chante doucement quand on le frappe.",
+    "base_value": 40
+  },
+  {
+    "id": "sceau_de_dormant",
+    "name": "Sceau de Dormant",
+    "kind": "item",
+    "level": 9,
+    "tags": [],
+    "description": "Un disque de bronze que les dormants tiennent sous la main. Il porte un cercle coupé d'une ligne, et au revers, un nombre que personne ne sait lire.",
+    "base_value": 45
+  },
+  {
+    "id": "prisme_d_aube",
+    "name": "Prisme d'Aube",
+    "kind": "item",
+    "level": 10,
+    "tags": [],
+    "description": "Un prisme de cristal où la lumière de l'étage se concentre. Tenu trop longtemps, il chauffe jusqu'à brûler.",
+    "base_value": 50
+  },
+  {
+    "id": "voile_du_heraut",
+    "name": "Voile du Héraut",
+    "kind": "item",
+    "level": 10,
+    "tags": [],
+    "description": "Un lambeau de lumière tissée, arraché au Héraut de l'Aube. Il flotte dans la main sans le moindre souffle d'air.",
+    "base_value": 50
+  },
+  {
+    "id": "feuille_de_lierre_dore",
+    "name": "Feuille de Lierre Doré",
+    "kind": "item",
+    "level": 10,
+    "tags": [],
+    "description": "Une feuille de lierre couleur d'aube, dont les nervures dessinent des lignes droites.",
+    "base_value": 50
+  },
+  {
+    "id": "estampage_d_inscription",
+    "name": "Estampage d'Inscription",
+    "kind": "item",
+    "level": 9,
+    "tags": [],
+    "description": "Un relevé d'inscription du seuil. On y lit, en partie : « Ici dorment ceux qui tiennent le matin. Que le Gardien ne s'éveille que si le cercle rompt. »",
+    "base_value": 45
+  },
+  {
+    "id": "sceau_du_seuil",
+    "name": "Sceau du Seuil",
+    "kind": "item",
+    "level": 9,
+    "tags": [],
+    "description": "Le sceau qu'Aubin a assemblé à partir de ceux des dormants. Il ouvre la porte du Gardien. Une fois la porte ouverte, il ne se referme plus.",
+    "base_value": 45
+  },
+  {
+    "id": "pain_du_pelerin",
+    "name": "Pain du Pèlerin",
+    "kind": "item",
+    "level": 8,
+    "tags": [],
+    "description": "Un pain lourd et doré qu'Aubin emporte dans ses pèlerinages. Il dit qu'il ne rassit jamais, et il a raison.",
+    "base_value": 120
+  },
+  {
+    "id": "eau_benite_d_aube",
+    "name": "Eau Bénite d'Aube",
+    "kind": "item",
+    "level": 9,
+    "tags": [],
+    "description": "Une eau qu'Aubin a laissée toute une prière au pied des colonnes. Elle est tiède et brille faiblement.",
+    "base_value": 135
+  },
+  {
+    "id": "lance_du_seuil",
+    "name": "Lance du Seuil",
+    "kind": "item",
+    "level": 9,
+    "tags": [],
+    "description": "Une lance de bronze trouvée dans l'alcôve d'un dormant. Sa pointe porte le cercle coupé d'une ligne, et elle ne rouille pas.",
+    "base_value": 270
+  },
+  {
+    "id": "cuirasse_d_or_pale",
+    "name": "Cuirasse d'Or Pâle",
+    "kind": "item",
+    "level": 10,
+    "tags": [],
+    "description": "Une cuirasse de métal clair, légère et sans une rayure. Elle chauffe à la lumière, mais jamais assez pour brûler.",
+    "base_value": 300
+  },
+  {
+    "id": "gardien_de_l_aube",
+    "name": "Le Gardien de l'Aube",
+    "kind": "monster",
+    "level": 10,
+    "tags": [],
+    "description": "Au centre de la chambre, un mécanisme de pierre et de métal tourne sans bruit : sept anneaux concentriques autour d'un disque de lumière posé sur une ligne d'horizon. Devant lui se tient le Gardien, agenouillé depuis toujours. Il est fait de la même pierre que les Veilleurs de la clairière, mais la lumière ne coule pas sur lui : elle coule en lui, par les fentes de son armure, jusqu'aux anneaux qu'il entretient. Quand le Marqué entre, il se redresse lentement, sans hâte, comme quelqu'un qui savait depuis le premier matin que ce jour viendrait. Il ne défend pas un trésor. Il défend un instant. Et tant qu'il tient debout, le soleil ne bougera pas.",
+    "base_value": null
+  },
+  {
+    "id": "coeur_du_gardien",
+    "name": "Cœur du Gardien",
+    "kind": "item",
+    "level": 10,
+    "tags": [],
+    "description": "Une sphère de lumière solide, prise dans une cage de pierre. Au moment où le Gardien est tombé, elle a cligné, une seule fois. Depuis, sa lueur n'est plus tout à fait régulière.",
+    "base_value": 50
+  },
+  {
+    "id": "anneau_du_mecanisme",
+    "name": "Anneau du Mécanisme",
+    "kind": "item",
+    "level": 10,
+    "tags": [],
+    "description": "Le plus petit des sept anneaux du mécanisme, détaché quand le Gardien s'est effondré. Il continue de tourner lentement sur lui-même, posé dans la paume.",
+    "base_value": 300
+  },
+  {
+    "id": "couronne_du_gardien",
+    "name": "Couronne du Gardien",
+    "kind": "item",
+    "level": 10,
+    "tags": [],
+    "description": "Le cercle de pierre que le Gardien portait au front, gravé d'un soleil posé sur l'horizon. Il est tiède, et le restera, dit-on, tant que l'aube tiendra.",
+    "base_value": 300
+  },
+  {
+    "id": "bois_mort_de_lisiere",
+    "name": "Bois Mort de la Lisière",
+    "kind": "resource",
+    "level": 1,
+    "tags": [],
+    "description": "Des branches tombées au pied des premiers arbres. Elles sont sèches, mais pas une n'a pourri, même celles qui reposent là depuis des années.",
+    "base_value": null
+  },
+  {
+    "id": "branche_morte",
+    "name": "Branche Morte",
+    "kind": "item",
+    "level": 1,
+    "tags": [],
+    "description": "Une branche sèche et légère, parfaite pour débuter. Elle brûle bien et ne se fend jamais.",
+    "base_value": 5
+  },
+  {
+    "id": "pierres_taillees_enfouies",
+    "name": "Pierres Taillées Enfouies",
+    "kind": "resource",
+    "level": 2,
+    "tags": [],
+    "description": "Des pierres à moitié enterrées le long du sentier, trop régulières pour être naturelles. En grattant la terre, on dégage leurs arêtes droites.",
+    "base_value": null
+  },
+  {
+    "id": "eclat_de_pierre_taillee",
+    "name": "Éclat de Pierre Taillée",
+    "kind": "item",
+    "level": 2,
+    "tags": [],
+    "description": "Un éclat aux arêtes nettes, détaché d'une pierre du sentier. Une face porte le début d'une ligne gravée.",
+    "base_value": 10
+  },
+  {
+    "id": "terriers_de_lapins",
+    "name": "Terriers de Lapins",
+    "kind": "resource",
+    "level": 1,
+    "tags": [],
+    "description": "Des terriers creusés sous les fougères, où les lapins dorés se réfugient. Avec un peu de patience, on y pose un collet.",
+    "base_value": null
+  },
+  {
+    "id": "fourrure_de_lapin",
+    "name": "Fourrure de Lapin",
+    "kind": "item",
+    "level": 1,
+    "tags": [],
+    "description": "Une petite fourrure douce, aux reflets dorés presque imperceptibles.",
+    "base_value": 5
+  },
+  {
+    "id": "galets_veines",
+    "name": "Galets Veinés",
+    "kind": "resource",
+    "level": 2,
+    "tags": [],
+    "description": "Des galets pâles roulés sur la rive, striés de veines plus sombres. Certains sont assez durs pour qu'on les taille en outils.",
+    "base_value": null
+  },
+  {
+    "id": "galet_veine",
+    "name": "Galet Veiné",
+    "kind": "item",
+    "level": 2,
+    "tags": [],
+    "description": "Un galet dur et lisse, traversé d'une veine minérale. Les veines sont toutes parallèles.",
+    "base_value": 10
+  },
+  {
+    "id": "affut_des_berges",
+    "name": "Affût des Berges",
+    "kind": "resource",
+    "level": 3,
+    "tags": [],
+    "description": "Un abri de roseaux d'où l'on guette les canards qui se posent sur l'eau immobile. Ils ne s'envolent jamais très loin.",
+    "base_value": null
+  },
+  {
+    "id": "duvet_de_canard",
+    "name": "Duvet de Canard",
+    "kind": "item",
+    "level": 3,
+    "tags": [],
+    "description": "Un duvet chaud et léger, apprécié pour rembourrer les vêtements des pêcheurs.",
+    "base_value": 15
+  },
+  {
+    "id": "roches_du_rivage",
+    "name": "Roches du Rivage",
+    "kind": "resource",
+    "level": 4,
+    "tags": [],
+    "description": "Des roches lourdes affleurant près des pontons, que les pêcheurs cassent pour lester leurs filets.",
+    "base_value": null
+  },
+  {
+    "id": "pierre_de_lest",
+    "name": "Pierre de Lest",
+    "kind": "item",
+    "level": 4,
+    "tags": [],
+    "description": "Une pierre dense taillée pour lester un filet. Elle coule droit, sans jamais tourner.",
+    "base_value": 20
+  },
+  {
+    "id": "affut_des_goelands",
+    "name": "Affût des Goélands",
+    "kind": "resource",
+    "level": 5,
+    "tags": [],
+    "description": "Un perchoir de bois flotté où les goélands viennent se poser entre deux pillages. Il faut être rapide et silencieux.",
+    "base_value": null
+  },
+  {
+    "id": "duvet_de_goeland",
+    "name": "Duvet de Goéland",
+    "kind": "item",
+    "level": 5,
+    "tags": [],
+    "description": "Un duvet gris et épais, imprégné d'une odeur de sel.",
+    "base_value": 25
+  },
+  {
+    "id": "pierres_moussues_gravees",
+    "name": "Pierres Moussues Gravées",
+    "kind": "resource",
+    "level": 4,
+    "tags": [],
+    "description": "Des pierres couvertes de mousse entre les racines des vieux arbres. Sous la mousse, des motifs à peine visibles, qu'il faut dégager avec soin.",
+    "base_value": null
+  },
+  {
+    "id": "fragment_moussu",
+    "name": "Fragment Moussu",
+    "kind": "item",
+    "level": 4,
+    "tags": [],
+    "description": "Un fragment de pierre gravée encore couvert de mousse. Les motifs, une fois nettoyés, forment un arc de cercle.",
+    "base_value": 20
+  },
+  {
+    "id": "affleurement_rocheux",
+    "name": "Affleurement Rocheux",
+    "kind": "resource",
+    "level": 5,
+    "tags": [],
+    "description": "Une arête de roche qui perce le sol de la forêt, veinée de reflets dorés.",
+    "base_value": null
+  },
+  {
+    "id": "minerai_de_fer_dore",
+    "name": "Minerai de Fer Doré",
+    "kind": "item",
+    "level": 5,
+    "tags": [],
+    "description": "Un minerai lourd aux reflets dorés. Une fois fondu, il donne un fer qui ne rouille pas.",
+    "base_value": 25
+  },
+  {
+    "id": "croc_dore",
+    "name": "Croc Doré",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "À force d'affronter les loups dorés de la lisière, tu as appris leur façon de mordre : vite, sans élan, là où ça fait mal.",
+    "floor_origin": 1
+  },
+  {
+    "id": "mains_de_ravaudeur",
+    "name": "Mains de Ravaudeur",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "Couper et tresser les roseaux dorés t'a donné les mains sûres et patientes des pêcheurs de la rive.",
+    "floor_origin": 1
+  },
+  {
+    "id": "carapace_des_galets",
+    "name": "Carapace des Galets",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "Comme les crabes de la rive, tu te ramasses sur toi-même et laisses les coups glisser sur une carapace qui n'existe pas.",
+    "floor_origin": 1
+  },
+  {
+    "id": "bond_du_lynx",
+    "name": "Bond du Lynx",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "Le lynx à robe claire ne se montre qu'au moment de frapper. Après en avoir affronté des dizaines, tu sais toi aussi surgir de la lumière.",
+    "floor_origin": 1
+  },
+  {
+    "id": "chant_du_fond",
+    "name": "Chant du Fond",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "Tu as entendu le chant qui monte sous le miroir. Tu sais maintenant le faire vibrer à ton tour : une note sourde qui ébranle et ralentit tout ce qu'elle traverse.",
+    "floor_origin": 1
+  },
+  {
+    "id": "seve_des_fougeres",
+    "name": "Sève des Fougères",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "Les fougères dorées ne fanent jamais. À force de les cueillir, tu as appris à faire passer un peu de cette sève immobile dans tes propres blessures.",
+    "floor_origin": 1
+  },
+  {
+    "id": "instinct_de_traqueuse",
+    "name": "Instinct de Traqueuse",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "Suivre la piste du cerf pâle t'a appris ce que sait Vesna : quand la bête se retourne, c'est le moment d'être plus vif qu'elle.",
+    "floor_origin": 1
+  },
+  {
+    "id": "peau_d_ambre",
+    "name": "Peau d'Ambre",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "Les loups d'ambre portent sur eux un instant figé. À force de les combattre, un peu de cette résine semble avoir pris sur toi, et les coups s'y enlisent.",
+    "floor_origin": 1
+  },
+  {
+    "id": "verdict_du_heraut",
+    "name": "Verdict du Héraut",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "Le Héraut de l'Aube ne parlait pas, il jugeait. Après l'avoir abattu et avoir ouvert la porte des dormants, tu portes à ton tour son verdict : un cercle de lumière qui s'abat sans appel.",
+    "floor_origin": 1
+  },
+  {
+    "id": "lumiere_figee",
+    "name": "Lumière Figée",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "Tu as abattu le Cerf Pâle et entendu ce que répète la statue de la clairière. Tu sais désormais, l'espace d'un instant, arrêter la lumière autour de toi : elle se fige en une armure et tes gestes s'y aiguisent.",
+    "floor_origin": 1
+  },
+  {
+    "id": "patience_du_pecheur",
+    "name": "Patience du Pêcheur",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "Des heures à attendre que la truite argentée morde sur une eau qui ne bouge jamais. Tu y as gagné un calme que rien ne trouble, et l'esprit plus clair.",
+    "floor_origin": 1
+  },
+  {
+    "id": "toile_doree",
+    "name": "Toile Dorée",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "Tu as appris des tisseuses à jeter un fil de lumière qui s'enroule autour de l'ennemi et freine chacun de ses gestes.",
+    "floor_origin": 1
+  },
+  {
+    "id": "rune_de_rupture",
+    "name": "Rune de Rupture",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "Le mur effondré t'a livré une rune qui ne sert pas à tenir, mais à défaire. Tracée sur l'ennemi, elle fend ses défenses comme une pierre trop vieille.",
+    "floor_origin": 1
+  },
+  {
+    "id": "secousse_du_colosse",
+    "name": "Secousse du Colosse",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "Les colosses moussus finissent un geste commencé il y a des siècles. Après en avoir abattu des dizaines, tu sais toi aussi frapper le sol de tout ton poids, lentement, sans hâte et sans pitié.",
+    "floor_origin": 1
+  },
+  {
+    "id": "matin_d_halvard",
+    "name": "Le Matin d'Halvard",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "Halvard n'a jamais compris combien de temps il était resté. Toi, tu as appris de lui qu'on peut tenir encore un instant, et que cet instant peut durer.",
+    "floor_origin": 1
+  },
+  {
+    "id": "frappe",
+    "name": "Frappe",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "Un coup franc, porté de toute sa force. Le premier geste que la Tour apprend à ceux qu'elle marque.",
+    "floor_origin": null
+  },
+  {
+    "id": "trait_de_lumiere",
+    "name": "Trait de Lumière",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "Un éclat de lumière dorée, tiré de l'aube elle-même et lancé d'un geste de la main.",
+    "floor_origin": null
+  },
+  {
+    "id": "premiers_soins",
+    "name": "Premiers Soins",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "Quelques gestes sûrs pour refermer une plaie et reprendre son souffle au milieu du combat.",
+    "floor_origin": null
+  },
+  {
+    "id": "coup_puissant",
+    "name": "Coup Puissant",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "Un coup lent et lourd, préparé une fraction de seconde de trop, mais qui porte.",
+    "floor_origin": null
+  },
+  {
+    "id": "eclat_d_aube",
+    "name": "Éclat d'Aube",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "La lumière se concentre un instant dans la paume, puis éclate contre l'ennemi.",
+    "floor_origin": null
+  }
+]

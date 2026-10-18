@@ -1,0 +1,9 @@
+{
+  "id": "minerai_de_fer_dore",
+  "name": "Minerai de Fer Doré",
+  "description": "Un minerai lourd aux reflets dorés. Une fois fondu, il donne un fer qui ne rouille pas.",
+  "category": "material",
+  "level": 5,
+  "base_value": 25,
+  "stack_size": 20
+}

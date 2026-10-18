@@ -1,0 +1,9 @@
+{
+  "id": "plaque_de_bronze_ancien",
+  "name": "Plaque de Bronze Ancien",
+  "description": "Une plaque de bronze sans une trace d'oxydation, gravée de lignes et de cercles. Elle est plus lourde qu'elle ne devrait l'être.",
+  "category": "material",
+  "level": 9,
+  "base_value": 45,
+  "stack_size": 20
+}

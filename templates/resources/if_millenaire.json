@@ -1,0 +1,21 @@
+{
+  "id": "if_millenaire",
+  "name": "If Millénaire",
+  "description": "Un if au tronc noir et tordu, dont le bois résonne comme du métal sous la hache. Ses aiguilles ne tombent jamais.",
+  "level": 8,
+  "profession_required": {
+    "profession_id": "bucheronnage",
+    "min_level": 4,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 5,
+  "yields": [
+    {
+      "item_id": "bois_d_if_noirci",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 10
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "id": "couronne_du_gardien",
+  "name": "Couronne du Gardien",
+  "description": "Le cercle de pierre que le Gardien portait au front, gravé d'un soleil posé sur l'horizon. Il est tiède, et le restera, dit-on, tant que l'aube tiendra.",
+  "category": "equipment",
+  "level": 10,
+  "base_value": 300,
+  "stack_size": 1,
+  "equipment": {
+    "slot": "head",
+    "level_required": 10,
+    "stat_bonuses": {
+      "def": 8,
+      "sag": 6,
+      "hp": 50
+    }
+  }
+}

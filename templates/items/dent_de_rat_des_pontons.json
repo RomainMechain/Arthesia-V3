@@ -1,0 +1,9 @@
+{
+  "id": "dent_de_rat_des_pontons",
+  "name": "Dent de Rat des Pontons",
+  "description": "Une incisive jaune et longue, assez dure pour ronger une corde mouillée en une nuit.",
+  "category": "material",
+  "level": 4,
+  "base_value": 20,
+  "stack_size": 20
+}

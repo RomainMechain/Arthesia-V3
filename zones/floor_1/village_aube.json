@@ -1,0 +1,218 @@
+{
+  "id": "village_aube",
+  "name": "Val-de-l'Aube",
+  "type": "town",
+  "position": {
+    "x": 15,
+    "y": 50
+  },
+  "visibility": "visible",
+  "description": "Val-de-l'Aube somnole sous une lumière dorée qui ne faiblit jamais. Les toits de chaume brillent d'une teinte orangée paisible, et les villageois vaquent à leurs occupations comme si l'heure n'avait pas d'importance. Personne ici ne semble s'inquiéter que le soleil ne se soit jamais levé plus haut.",
+  "unlock_condition": null,
+  "hint": null,
+  "generation_brief": {
+    "level_range": [
+      1,
+      2
+    ],
+    "difficulty_tier": "entree",
+    "tags": [
+      "social",
+      "hub",
+      "marche",
+      "aube"
+    ],
+    "content_intent": "Hub social paisible : PNJ marchands, quêtes d'introduction, aucune menace directe, ambiance dorée et calme trompeuse.",
+    "provides": [
+      {
+        "type": "quest",
+        "id_suggere": "intro_peche",
+        "via": "Un villageois demande qu'on attrape un poisson précis dans la rive proche, en guise d'introduction à la vie du village."
+      }
+    ]
+  },
+  "entries": [
+    {
+      "id": "npc_aldric",
+      "template_type": "npc",
+      "template_id": "aldric_aubergiste",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "npc_yvenne",
+      "template_type": "npc",
+      "template_id": "yvenne_ancienne",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "npc_garin",
+      "template_type": "npc",
+      "template_id": "garin_pecheur",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quest_intro_peche",
+      "template_type": "quest_giver",
+      "template_id": "intro_peche",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quest_marche_equitable",
+      "template_type": "quest_giver",
+      "template_id": "marche_equitable",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quest_silence_bois",
+      "template_type": "quest_giver",
+      "template_id": "silence_des_bois",
+      "state_scope": "per_player",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "conditional",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": {
+          "type": "quest",
+          "quest_id": "intro_peche",
+          "state": "completed"
+        },
+        "visibility_when_locked": "hinted",
+        "hint": "Mère Yvenne semble soucieuse du calme inhabituel qui règne dans les bois."
+      }
+    },
+    {
+      "id": "quest_offrandes_aube",
+      "template_type": "quest_giver",
+      "template_id": "offrandes_aube",
+      "state_scope": "per_player",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "conditional",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": {
+          "type": "quest",
+          "quest_id": "silence_des_bois",
+          "state": "completed"
+        },
+        "visibility_when_locked": "hinted",
+        "hint": "On murmure que des motifs étranges se cachent sous l'écorce et sous l'eau du lac."
+      }
+    },
+    {
+      "id": "quest_lumiere_vacille",
+      "template_type": "quest_giver",
+      "template_id": "lumiere_qui_ne_vacille_jamais",
+      "state_scope": "per_player",
+      "rarity": "very_rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "conditional",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": {
+          "type": "group",
+          "mode": "all",
+          "conditions": [
+            {
+              "type": "level",
+              "min": 2
+            },
+            {
+              "type": "quest",
+              "quest_id": "offrandes_aube",
+              "state": "completed"
+            }
+          ]
+        },
+        "visibility_when_locked": "hinted",
+        "hint": "Mère Yvenne baisse la voix lorsqu'on évoque la source véritable de l'aube."
+      }
+    },
+    {
+      "id": "shop_echoppe",
+      "template_type": "shop",
+      "template_id": "echoppe_thessaly",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "market_autel",
+      "template_type": "player_market",
+      "template_id": "autel_ventes_aube",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    }
+  ]
+}

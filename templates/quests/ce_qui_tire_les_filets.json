@@ -1,0 +1,23 @@
+{
+  "id": "ce_qui_tire_les_filets",
+  "name": "Ce qui Tire les Filets",
+  "description": "Ober a fini par l'admettre : ce ne sont pas les rats qui trouent ses filets par en dessous. De gros silures rôdent sous les pontons, et l'un d'eux a recraché un jour une pierre gravée. Sorne veut savoir d'où elles viennent.",
+  "objectives": [
+    {
+      "type": "kill_count",
+      "monster_id": "silure_des_pontons",
+      "count": 6
+    }
+  ],
+  "rewards": {
+    "xp": 9,
+    "gold": 36,
+    "items": [
+      {
+        "item_id": "pierre_aux_cercles",
+        "quantity": 1
+      }
+    ]
+  },
+  "repeatable": false
+}

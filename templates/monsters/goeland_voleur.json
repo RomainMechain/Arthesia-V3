@@ -1,0 +1,44 @@
+{
+  "id": "goeland_voleur",
+  "name": "Goéland Voleur",
+  "description": "Un goéland énorme et sans peur, qui fond sur les claies de séchage et n'hésite pas à piquer quiconque s'interpose.",
+  "level": 5,
+  "role": "normal",
+  "stats": {
+    "hp": 720,
+    "atk": 36,
+    "def": 25,
+    "agi": 14,
+    "int": 35,
+    "sag": 19
+  },
+  "moveset": [
+    {
+      "id": "coup_de_bec_crochu",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.21,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "pique_en_pique",
+      "damage_type": "physical",
+      "cooldown_seconds": 7,
+      "power": 0.42,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "plume_de_goeland",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 10
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "id": "gardien_de_l_aube",
+  "name": "Le Gardien de l'Aube",
+  "description": "Au centre de la chambre, un mécanisme de pierre et de métal tourne sans bruit : sept anneaux concentriques autour d'un disque de lumière posé sur une ligne d'horizon. Devant lui se tient le Gardien, agenouillé depuis toujours. Il est fait de la même pierre que les Veilleurs de la clairière, mais la lumière ne coule pas sur lui : elle coule en lui, par les fentes de son armure, jusqu'aux anneaux qu'il entretient. Quand le Marqué entre, il se redresse lentement, sans hâte, comme quelqu'un qui savait depuis le premier matin que ce jour viendrait. Il ne défend pas un trésor. Il défend un instant. Et tant qu'il tient debout, le soleil ne bougera pas.",
+  "level": 10,
+  "role": "boss",
+  "stats": {
+    "hp": 3755,
+    "atk": 75,
+    "def": 71,
+    "agi": 22,
+    "int": 75,
+    "sag": 32
+  },
+  "moveset": [
+    {
+      "id": "poing_de_l_horizon",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.14,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "ecrasement_des_anneaux",
+      "damage_type": "physical",
+      "cooldown_seconds": 7,
+      "power": 0.28,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "rayon_du_cercle",
+      "damage_type": "magical",
+      "cooldown_seconds": 5,
+      "power": 0.21,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "aube_eternelle",
+      "damage_type": "magical",
+      "cooldown_seconds": 10,
+      "power": 0.42,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": [
+    {
+      "hp_above_percent": 50,
+      "moveset_ids": [
+        "poing_de_l_horizon",
+        "ecrasement_des_anneaux",
+        "rayon_du_cercle"
+      ]
+    },
+    {
+      "hp_above_percent": 0,
+      "moveset_ids": [
+        "poing_de_l_horizon",
+        "ecrasement_des_anneaux",
+        "rayon_du_cercle",
+        "aube_eternelle"
+      ]
+    }
+  ],
+  "loot_table": [
+    {
+      "item_id": "coeur_du_gardien",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 4
+    },
+    {
+      "item_id": "anneau_du_mecanisme",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 3
+    },
+    {
+      "item_id": "couronne_du_gardien",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 3
+    }
+  ]
+}

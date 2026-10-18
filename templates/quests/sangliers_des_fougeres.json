@@ -1,0 +1,23 @@
+{
+  "id": "sangliers_des_fougeres",
+  "name": "Les Sangliers des Fougères",
+  "description": "Les sangliers ravagent les fougères dorées et chargent les cueilleurs venus du village. Vesna te demande d'en abattre assez pour que les sentiers redeviennent praticables.",
+  "objectives": [
+    {
+      "type": "kill_count",
+      "monster_id": "sanglier_des_fougeres",
+      "count": 8
+    }
+  ],
+  "rewards": {
+    "xp": 6,
+    "gold": 24,
+    "items": [
+      {
+        "item_id": "civet_de_sanglier",
+        "quantity": 2
+      }
+    ]
+  },
+  "repeatable": false
+}

@@ -1,0 +1,9 @@
+{
+  "id": "fourrure_de_lynx_clair",
+  "name": "Fourrure de Lynx Clair",
+  "description": "Une fourrure presque blanche, douce et épaisse, qui semble garder un peu de la lumière dorée entre ses poils.",
+  "category": "material",
+  "level": 5,
+  "base_value": 25,
+  "stack_size": 20
+}

@@ -1,0 +1,9 @@
+{
+  "id": "petale_de_nenuphar_pale",
+  "name": "Pétale de Nénuphar Pâle",
+  "description": "Un pétale blanc et frais, qui ne fane pas une fois cueilli. Il sent l'eau froide et la pierre.",
+  "category": "material",
+  "level": 3,
+  "base_value": 15,
+  "stack_size": 20
+}

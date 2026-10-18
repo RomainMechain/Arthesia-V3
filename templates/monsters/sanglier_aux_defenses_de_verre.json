@@ -1,0 +1,44 @@
+{
+  "id": "sanglier_aux_defenses_de_verre",
+  "name": "Sanglier aux Défenses de Verre",
+  "description": "Un sanglier énorme aux défenses devenues transparentes, comme du verre soufflé. La lumière dorée les traverse et se brise en éclats sur le sol quand il charge.",
+  "level": 9,
+  "role": "normal",
+  "stats": {
+    "hp": 1350,
+    "atk": 55,
+    "def": 48,
+    "agi": 15,
+    "int": 57,
+    "sag": 30
+  },
+  "moveset": [
+    {
+      "id": "coup_de_verre",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.21,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "charge_eclatante",
+      "damage_type": "physical",
+      "cooldown_seconds": 7,
+      "power": 0.42,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "defense_de_verre",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 10
+    }
+  ]
+}

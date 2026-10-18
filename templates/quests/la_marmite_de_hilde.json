@@ -1,0 +1,23 @@
+{
+  "id": "la_marmite_de_hilde",
+  "name": "La Marmite de Hilde",
+  "description": "Hilde veut faire griller des brochettes pour le camp, mais les pêcheurs ne rapportent plus assez de petit poisson. Elle te demande quelques ablettes dorées de la rive.",
+  "objectives": [
+    {
+      "type": "deliver_item",
+      "item_id": "ablette_doree",
+      "count": 4
+    }
+  ],
+  "rewards": {
+    "xp": 3,
+    "gold": 12,
+    "items": [
+      {
+        "item_id": "brochette_d_ablette",
+        "quantity": 2
+      }
+    ]
+  },
+  "repeatable": false
+}

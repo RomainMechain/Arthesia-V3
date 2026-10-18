@@ -1,0 +1,9 @@
+{
+  "id": "or_pale",
+  "name": "Or Pâle",
+  "description": "Un métal clair, presque blanc, qui ne ternit pas. Il est plus léger que l'or et chante doucement quand on le frappe.",
+  "category": "material",
+  "level": 8,
+  "base_value": 40,
+  "stack_size": 20
+}

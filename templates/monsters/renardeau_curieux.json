@@ -1,0 +1,44 @@
+{
+  "id": "renardeau_curieux",
+  "name": "Renardeau Curieux",
+  "description": "Un jeune renard qui s'aventure un peu plus loin que ses semblables sur le sentier, attiré par le bruissement des pas. Il mord avant de fuir.",
+  "level": 2,
+  "role": "normal",
+  "stats": {
+    "hp": 400,
+    "atk": 18,
+    "def": 13,
+    "agi": 9,
+    "int": 18,
+    "sag": 10
+  },
+  "moveset": [
+    {
+      "id": "morsure_vive",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.15,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "feinte_agile",
+      "damage_type": "physical",
+      "cooldown_seconds": 7,
+      "power": 0.29,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "queue_de_renardeau",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 10
+    }
+  ]
+}

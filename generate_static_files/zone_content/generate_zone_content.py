@@ -35,9 +35,9 @@ SKELETONS_DIR = PROJECT_ROOT / "zone_skeletons"
 sys.path.insert(0, str(PROJECT_ROOT))
 from back import content_targets  # noqa: E402
 
+# La clé n'est exigée qu'au moment d'appeler l'API : --print-prompt et
+# --from-response fonctionnent sans elle.
 API_KEY = os.environ.get("ANTHROPIC_API_KEY")
-if not API_KEY:
-    sys.exit("❌ Variable d'environnement ANTHROPIC_API_KEY absente.")
 
 MODEL = "claude-sonnet-5"
 MAX_TOKENS = 32000
@@ -73,25 +73,40 @@ def save_index(index: list[dict]) -> None:
     INDEX_FILE.write_text(json.dumps(index, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
-def filter_relevant_templates(index: list[dict], zone: dict, max_items: int = 25) -> list[dict]:
-    """Filtrage simple v1 : recoupement de tags + proximité de niveau avec la zone.
-    À affiner plus tard (embeddings, filtrage par type de zone, etc.) si le token cost pique trop."""
+# Places réservées à chaque kind dans l'extrait de bibliothèque. Les PNJ et
+# les quêtes n'ont pas de niveau et se réutilisent rarement (un PNJ vit à un
+# seul endroit) : sans quota, ils occuperaient toute la place, au détriment des
+# monstres et objets que la zone pourrait reprendre.
+LIBRARY_QUOTAS = {"monster": 10, "item": 16, "resource": 6, "npc": 3, "quest": 3, "shop": 1, "player_market": 1}
+
+
+def filter_relevant_templates(index: list[dict], zone: dict, max_items: int = 40) -> list[dict]:
+    """Templates proposés à la réutilisation : par kind, les plus proches en
+    tags puis en niveau de la zone, dans la limite de LIBRARY_QUOTAS. Les
+    places non prises par un kind servent aux plus proches des autres."""
     brief = zone.get("generation_brief", {})
     zone_tags = set(brief.get("tags", []))
     level_range = brief.get("level_range", [1, 99])
-    level_mid = (level_range[0] + level_range[1]) / 2
+    level_mid = (level_range[0] + level_range[-1]) / 2
 
-    scored = []
-    for tpl in index:
+    def score(tpl: dict) -> float:
         tag_overlap = len(zone_tags & set(tpl.get("tags", [])))
         level_val = tpl.get("level")
-        # npc/quest/shop/player_market n'ont pas de notion de niveau : ne pas les pénaliser
-        level_distance = abs(level_val - level_mid) if level_val is not None else 0
-        score = tag_overlap * 10 - level_distance
-        scored.append((score, tpl))
+        # Sans niveau (PNJ, quête, boutique) : classé après les templates proches.
+        level_distance = abs(level_val - level_mid) if level_val is not None else 5
+        return tag_overlap * 10 - level_distance
 
-    scored.sort(key=lambda x: x[0], reverse=True)
-    return [tpl for _, tpl in scored[:max_items]]
+    ranked = sorted(index, key=score, reverse=True)
+    chosen, leftovers, taken = [], [], {}
+    for tpl in ranked:
+        kind = tpl.get("kind")
+        if taken.get(kind, 0) < LIBRARY_QUOTAS.get(kind, 2):
+            taken[kind] = taken.get(kind, 0) + 1
+            chosen.append(tpl)
+        else:
+            leftovers.append(tpl)
+    chosen += leftovers[:max(0, max_items - len(chosen))]
+    return sorted(chosen[:max_items], key=score, reverse=True)
 
 
 def build_library_excerpt(templates: list[dict]) -> list[dict]:
@@ -138,18 +153,110 @@ def find_manifest_obligations(skeleton: dict, zone_id: str) -> list[dict]:
 # APPEL API
 # =============================================================================
 
+# =============================================================================
+# DÉPENDANCES ENTRE LES ZONES DE L'ÉTAGE
+# =============================================================================
+
+ENTRY_KIND = {"monster": "monster", "resource": "resource", "npc": "npc", "quest_giver": "quest",
+              "shop": "shop", "player_market": "player_market"}
+
+
+def load_template_file(kind: str, template_id: str) -> dict | None:
+    path = TEMPLATES_DIR / KIND_TO_FOLDER[kind] / f"{template_id}.json"
+    return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+
+
+def condition_needs(condition, needs: dict) -> None:
+    """Ajoute à ``needs`` ce qu'une condition demande d'obtenir (monstre, ressource, objet)."""
+    if not isinstance(condition, dict):
+        return
+    kind = condition.get("type")
+    if kind == "group":
+        for sub in condition.get("conditions", []):
+            condition_needs(sub, needs)
+    elif kind == "kill_count":
+        needs["monster"].add(condition.get("monster_id"))
+    elif kind == "gather_count":
+        needs["resource"].add(condition.get("resource_id"))
+    elif kind in ("deliver_item", "item"):
+        needs["item"].add(condition.get("item_id"))
+
+
+def floor_dependencies(floor_number: int) -> tuple[dict, list[dict]]:
+    """Ce que les zones déjà générées de l'étage demandent (objectifs de quête,
+    conditions d'apparition) sans qu'aucune zone de l'étage ne le fournisse.
+
+    Renvoie les besoins non couverts par type, et la liste des demandeurs (quête
+    ou entrée) pour donner du contexte au modèle."""
+    needs = {"monster": set(), "resource": set(), "item": set()}
+    provided = {"monster": set(), "resource": set(), "item": set()}
+    askers = []
+    for path in sorted((ZONES_DIR / f"floor_{floor_number}").glob("*.json")):
+        zone = json.loads(path.read_text(encoding="utf-8"))
+        for entry in zone.get("entries", []):
+            condition_needs(entry.get("spawn", {}).get("condition"), needs)
+            kind = ENTRY_KIND.get(entry.get("template_type"))
+            template = load_template_file(kind, entry.get("template_id")) if kind else None
+            if not template:
+                continue
+            if kind in ("monster", "resource"):
+                provided[kind].add(template["id"])
+            for loot in (template.get("loot_table") or []) + (template.get("yields") or []):
+                provided["item"].add(loot.get("item_id"))
+            for offer in template.get("sell_offers") or []:
+                provided["item"].add(offer.get("item_id"))
+            for reward in (template.get("rewards") or {}).get("items", []):
+                provided["item"].add(reward.get("item_id"))
+            if kind == "quest":
+                for objective in template.get("objectives", []):
+                    condition_needs(objective, needs)
+                askers.append({"quest_id": template["id"], "name": template.get("name"),
+                               "description": template.get("description"), "zone_id": zone.get("id"),
+                               "objectives": template.get("objectives")})
+    missing = {kind: sorted(i for i in needs[kind] - provided[kind] if i) for kind in needs}
+    # Seules les quêtes qui attendent un élément manquant donnent du contexte utile.
+    missing_ids = {i for ids in missing.values() for i in ids}
+    askers = [a for a in askers if any(o.get(key) in missing_ids for o in a["objectives"]
+                                       for key in ("monster_id", "resource_id", "item_id"))]
+    return missing, askers
+
+
+def pending_dependencies(floor_number: int) -> dict | None:
+    """Bloc envoyé au modèle : ce qu'il reste à placer dans l'étage, avec les
+    templates concernés et les quêtes qui en ont besoin."""
+    missing, askers = floor_dependencies(floor_number)
+    if not any(missing.values()):
+        return None
+    templates = []
+    for kind, ids in missing.items():
+        for template_id in ids:
+            template = load_template_file(kind, template_id) or {"id": template_id}
+            templates.append({"kind": kind, "id": template_id, "name": template.get("name"),
+                              "level": template.get("level"),
+                              "description": (template.get("description") or "")[:200]})
+    return {"missing": templates, "requested_by": askers}
+
+
 def load_system_prompt() -> str:
     if not PROMPT_FILE.exists():
         sys.exit(f"❌ Prompt introuvable : {PROMPT_FILE}")
     return PROMPT_FILE.read_text(encoding="utf-8")
 
 
-def build_user_message(zone: dict, obligations: list[dict], library_excerpt: list[dict], targets: dict) -> str:
+def floor_info(skeleton: dict) -> dict:
+    """Identité de l'étage, pour que toutes ses zones partagent le même fil."""
+    return {key: skeleton.get(key) for key in ("id", "name", "description", "lore_brief")}
+
+
+def build_user_message(floor: dict, zone: dict, obligations: list[dict], library_excerpt: list[dict],
+                       targets: dict, pending: dict | None = None) -> str:
     return (
         "Génère le contenu de cette zone avec les paramètres suivants :\n\n"
+        f"floor:\n{json.dumps(floor, ensure_ascii=False, indent=2)}\n\n"
         f"zone:\n{json.dumps(zone, ensure_ascii=False, indent=2)}\n\n"
         f"balance_targets:\n{json.dumps(targets, ensure_ascii=False)}\n\n"
         f"manifest_obligations:\n{json.dumps(obligations, ensure_ascii=False, indent=2)}\n\n"
+        f"floor_pending_dependencies:\n{json.dumps(pending, ensure_ascii=False, indent=2)}\n\n"
         f"template_library_excerpt:\n{json.dumps(library_excerpt, ensure_ascii=False, indent=2)}\n\n"
         "Réponds uniquement avec le JSON demandé, sans aucun texte avant ou après."
     )
@@ -192,11 +299,14 @@ def extract_json(text: str) -> dict:
     raise json.JSONDecodeError("Aucun JSON valide trouvé dans la réponse", cleaned, 0)
 
 
-def generate_zone_content(zone: dict, obligations: list[dict], library_excerpt: list[dict], targets: dict) -> dict:
+def generate_zone_content(floor: dict, zone: dict, obligations: list[dict], library_excerpt: list[dict],
+                          targets: dict, pending: dict | None = None) -> dict:
+    if not API_KEY:
+        sys.exit("❌ Variable d'environnement ANTHROPIC_API_KEY absente.")
     client = anthropic.Anthropic(api_key=API_KEY)
 
     system_prompt = load_system_prompt()
-    user_message = build_user_message(zone, obligations, library_excerpt, targets)
+    user_message = build_user_message(floor, zone, obligations, library_excerpt, targets, pending)
 
     print(f"🌐 Appel à {MODEL} pour la zone '{zone['id']}'...")
     # Streaming : le SDK refuse un appel non streamé au-delà d'environ 21 000
@@ -432,11 +542,19 @@ def save_zone_content(skeleton_zone: dict, result: dict, floor_number: int) -> P
 def main():
     parser = argparse.ArgumentParser(description="Génère le contenu détaillé d'une zone Arthesia.")
     parser.add_argument("--skeleton", type=str, required=True, help="Chemin du squelette d'étage")
-    parser.add_argument("--zone-id", type=str, required=True)
+    parser.add_argument("--zone-id", type=str, help="Zone à générer (sans : affiche seulement les dépendances)")
     parser.add_argument("--floor-number", type=int, default=None,
                          help="Par défaut, déduit de l'id du squelette (floor_N).")
-    parser.add_argument("--max-templates", type=int, default=25,
+    parser.add_argument("--max-templates", type=int, default=40,
                          help="Nombre max de templates envoyés au modèle pour réutilisation")
+    # Génération sans l'API (par exemple avec Claude Code) : on écrit le message,
+    # la réponse est produite ailleurs, puis validée et sauvegardée ici.
+    parser.add_argument("--print-prompt", type=str, metavar="FICHIER",
+                        help="Écrit le message utilisateur dans FICHIER, sans appeler l'API")
+    parser.add_argument("--from-response", type=str, metavar="FICHIER",
+                        help="Utilise la réponse JSON de FICHIER au lieu d'appeler l'API")
+    parser.add_argument("--dry-run", action="store_true",
+                        help="Valide la réponse sans rien sauvegarder")
     args = parser.parse_args()
 
     skeleton_path = Path(args.skeleton)
@@ -447,6 +565,10 @@ def main():
         sys.exit(f"❌ Squelette introuvable : {skeleton_path}")
 
     skeleton = load_skeleton(skeleton_path)
+    if not args.zone_id:
+        match = re.search(r"(\d+)", skeleton.get("id", "floor_0"))
+        report_pending(args.floor_number or (int(match.group(1)) if match else 0))
+        return
     zone = find_zone(skeleton, args.zone_id)
     obligations = find_manifest_obligations(skeleton, args.zone_id)
 
@@ -469,7 +591,22 @@ def main():
     targets = content_targets.zone_targets(level_range, tier)
     print(f"⚖️  Niveaux {level_range[0]}-{level_range[-1]}, profondeur « {tier} ».")
 
-    result = generate_zone_content(zone, obligations, library_excerpt, targets)
+    # Ce que les zones déjà générées demandent sans le fournir : proposé à
+    # cette zone, à placer si son thème et ses niveaux conviennent.
+    pending = pending_dependencies(floor_number)
+    if pending:
+        print(f"🔗 {len(pending['missing'])} élément(s) demandé(s) par l'étage et encore placés nulle part.")
+
+    if args.print_prompt:
+        message = build_user_message(floor_info(skeleton), zone, obligations, library_excerpt, targets, pending)
+        Path(args.print_prompt).write_text(message, encoding="utf-8")
+        print(f"\n📝 Message écrit dans {args.print_prompt} (prompt système : {PROMPT_FILE}).")
+        return
+
+    if args.from_response:
+        result = extract_json(Path(args.from_response).read_text(encoding="utf-8"))
+    else:
+        result = generate_zone_content(floor_info(skeleton), zone, obligations, library_excerpt, targets, pending)
 
     warnings, colliding_pairs = validate_result(result, full_index, obligations)
     # Écarts aux chiffres d'équilibrage : signalés, à corriger à la main ou en relançant.
@@ -482,6 +619,10 @@ def main():
     else:
         print("\n✅ Vérifications automatiques passées (références valides, obligations trouvées).")
 
+    if args.dry_run:
+        print("\n🧪 --dry-run : rien n'est sauvegardé.")
+        return
+
     new_index_entries = save_new_templates(result.get("new_templates", []), colliding_pairs)
     if new_index_entries:
         save_index(full_index + new_index_entries)
@@ -490,6 +631,19 @@ def main():
     print(f"\n💾 Zone sauvegardée : {zone_path}")
     print(f"   {len(result.get('entries', []))} entries, "
           f"{len(result.get('new_templates', []))} nouveaux templates")
+    report_pending(floor_number)
+
+
+def report_pending(floor_number: int) -> None:
+    missing, askers = floor_dependencies(floor_number)
+    if not any(missing.values()):
+        print("\n🔗 Tout ce que demandent les quêtes et conditions de l'étage est placé quelque part.")
+        return
+    print("\n🔗 Encore placés nulle part dans l'étage (à prévoir dans les zones suivantes) :")
+    for kind, ids in missing.items():
+        for template_id in ids:
+            users = [a["quest_id"] for a in askers if any(template_id in json.dumps(o) for o in a["objectives"])]
+            print(f"  - {kind} {template_id}" + (f" (quête {', '.join(users)})" if users else ""))
 
 
 if __name__ == "__main__":

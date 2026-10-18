@@ -1,0 +1,161 @@
+{
+  "id": "veilleurs_oublies",
+  "name": "Clairière des Veilleurs Oubliés",
+  "type": "ruins",
+  "position": {
+    "x": 55,
+    "y": 42
+  },
+  "visibility": "hidden",
+  "description": "Une clairière circulaire, protégée des regards par des arbres qui semblent s'être délibérément refermés sur elle. Au centre, un éclat de pierre gravée bourdonne d'une énergie ancienne, et pour la première fois, l'aube paraît artificielle.",
+  "unlock_condition": {
+    "type": "group",
+    "mode": "all",
+    "conditions": [
+      {
+        "type": "item",
+        "item_id": "fragment_rune_aube",
+        "state": "owned"
+      },
+      {
+        "type": "quest",
+        "quest_id": "chant_du_lac",
+        "state": "completed"
+      }
+    ]
+  },
+  "hint": null,
+  "generation_brief": {
+    "level_range": [
+      6,
+      8
+    ],
+    "difficulty_tier": "coeur",
+    "tags": [
+      "secret",
+      "lore",
+      "aube",
+      "rituel"
+    ],
+    "content_intent": "Zone cachée courte et dense en lore : un fragment de vérité sur le mécanisme de l'aube, peu de combat, principalement exploration et découverte contemplative.",
+    "provides": []
+  },
+  "entries": [
+    {
+      "id": "echo_presence",
+      "template_type": "npc",
+      "template_id": "echo_du_veilleur",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "eclat_spawn",
+      "template_type": "monster",
+      "template_id": "eclat_errant",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 60,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "veilleur_fige_spawn",
+      "template_type": "monster",
+      "template_id": "veilleur_fige",
+      "state_scope": "shared",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 180,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "fleurs_noeud",
+      "template_type": "resource",
+      "template_id": "fleurs_sans_saison",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 90,
+        "stock": 4,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "pierres_noeud",
+      "template_type": "resource",
+      "template_id": "pierres_bourdonnantes",
+      "state_scope": "shared",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 240,
+        "stock": 2,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_veilleurs",
+      "template_type": "quest_giver",
+      "template_id": "les_veilleurs_oublies",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_releve",
+      "template_type": "quest_giver",
+      "template_id": "le_dernier_releve",
+      "state_scope": "per_player",
+      "rarity": "very_rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "conditional",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": {
+          "type": "quest",
+          "quest_id": "les_veilleurs_oublies",
+          "state": "completed"
+        },
+        "visibility_when_locked": "hinted",
+        "hint": "L'écho se tait parfois au milieu d'une phrase, comme s'il attendait qu'on lui apporte la suite."
+      }
+    }
+  ]
+}

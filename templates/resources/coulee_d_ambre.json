@@ -1,0 +1,21 @@
+{
+  "id": "coulee_d_ambre",
+  "name": "Coulée d'Ambre",
+  "description": "Une résine dorée qui suinte d'un tronc fendu et durcit en coulant. Des insectes y sont pris, figés en plein vol, et certains n'appartiennent à aucune espèce connue.",
+  "level": 9,
+  "profession_required": {
+    "profession_id": "bucheronnage",
+    "min_level": 5,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 5,
+  "yields": [
+    {
+      "item_id": "ambre_d_aube",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 10
+    }
+  ]
+}

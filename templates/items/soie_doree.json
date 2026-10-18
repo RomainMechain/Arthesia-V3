@@ -1,0 +1,9 @@
+{
+  "id": "soie_doree",
+  "name": "Soie Dorée",
+  "description": "Un écheveau de soie lumineuse, tirée d'une toile de tisseuse. Elle reste tendue toute seule, comme si quelque chose la tirait encore.",
+  "category": "material",
+  "level": 8,
+  "base_value": 40,
+  "stack_size": 20
+}

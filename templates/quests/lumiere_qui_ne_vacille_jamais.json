@@ -1,0 +1,27 @@
+{
+  "id": "lumiere_qui_ne_vacille_jamais",
+  "name": "La Lumière qui ne Vacille Jamais",
+  "description": "Mère Yvenne, après un long silence, finit par vous confier son doute le plus profond : et si cette aube éternelle n'était pas un don, mais un mécanisme ? Elle vous demande de prouver votre valeur avant d'aller chercher plus loin.",
+  "objectives": [
+    {
+      "type": "kill_count",
+      "monster_id": "loup_dore",
+      "count": 15
+    },
+    {
+      "type": "level",
+      "min": 2
+    }
+  ],
+  "rewards": {
+    "xp": 7,
+    "gold": 30,
+    "items": [
+      {
+        "item_id": "amulette_du_levant",
+        "quantity": 1
+      }
+    ]
+  },
+  "repeatable": false
+}

@@ -1,0 +1,48 @@
+{
+  "id": "lumiere_figee",
+  "name": "Lumière Figée",
+  "description": "Tu as abattu le Cerf Pâle et entendu ce que répète la statue de la clairière. Tu sais désormais, l'espace d'un instant, arrêter la lumière autour de toi : elle se fige en une armure et tes gestes s'y aiguisent.",
+  "kind": "active",
+  "unlock_condition": {
+    "type": "group",
+    "mode": "all",
+    "conditions": [
+      {
+        "type": "kill_count",
+        "monster_id": "cerf_pale",
+        "count": 1
+      },
+      {
+        "type": "quest",
+        "quest_id": "les_veilleurs_oublies",
+        "state": "completed"
+      }
+    ]
+  },
+  "damage_type": "magical",
+  "cooldown_seconds": 20,
+  "mana_cost": 46,
+  "telegraph_seconds": 0,
+  "avoidable_by": null,
+  "effects": [
+    {
+      "type": "shield",
+      "amount_power": 2.35,
+      "duration_seconds": 10
+    },
+    {
+      "type": "buff",
+      "stat": "atk",
+      "amount_percent": 20,
+      "duration_seconds": 12,
+      "target": "self"
+    },
+    {
+      "type": "buff",
+      "stat": "int",
+      "amount_percent": 20,
+      "duration_seconds": 12,
+      "target": "self"
+    }
+  ]
+}

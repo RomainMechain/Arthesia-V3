@@ -75,7 +75,12 @@ def generate_craft_item_via_ai(workshop: dict, parameters: dict, inputs_full: li
             system=load_craft_system_prompt(),
             messages=[{"role": "user", "content": user_message}],
         )
+    except anthropic.AuthenticationError as exc:
+        # Erreur de configuration du serveur, pas du joueur : on la signale clairement.
+        print(f"❌ Craft IA : clé ANTHROPIC_API_KEY refusée par l'API ({exc})")
+        raise HTTPException(503, "La création d'objets inédits est indisponible : la clé API du serveur est invalide.") from exc
     except anthropic.APIError as exc:
+        print(f"❌ Craft IA : erreur de l'API ({type(exc).__name__} : {exc})")
         raise HTTPException(503, "La création d'un objet inédit est indisponible pour l'instant — réessaie plus tard.") from exc
     if response.stop_reason in ("max_tokens", "refusal"):
         raise HTTPException(502, "Réponse IA incomplète pour le craft — réessaie.")

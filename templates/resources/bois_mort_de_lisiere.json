@@ -1,0 +1,21 @@
+{
+  "id": "bois_mort_de_lisiere",
+  "name": "Bois Mort de la Lisière",
+  "description": "Des branches tombées au pied des premiers arbres. Elles sont sèches, mais pas une n'a pourri, même celles qui reposent là depuis des années.",
+  "level": 1,
+  "profession_required": {
+    "profession_id": "bucheronnage",
+    "min_level": 1,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 4,
+  "yields": [
+    {
+      "item_id": "branche_morte",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 10
+    }
+  ]
+}

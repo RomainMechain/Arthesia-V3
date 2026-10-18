@@ -1,0 +1,9 @@
+{
+  "id": "poil_de_loup_dore",
+  "name": "Poil de Loup Doré",
+  "description": "Une touffe de fourrure dorée, étrangement chaude au toucher même longtemps après avoir été prélevée.",
+  "category": "material",
+  "level": 1,
+  "base_value": 5,
+  "stack_size": 20
+}

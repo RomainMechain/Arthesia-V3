@@ -1,0 +1,18 @@
+{
+  "id": "pendentif_du_veilleur",
+  "name": "Pendentif du Veilleur",
+  "description": "Un petit disque de pierre gravé d'un cercle coupé d'une ligne, tombé des mains de la statue quand le bourdonnement a repris. Il vibre doucement contre la peau.",
+  "category": "equipment",
+  "level": 7,
+  "base_value": 210,
+  "stack_size": 1,
+  "equipment": {
+    "slot": "amulet",
+    "level_required": 7,
+    "stat_bonuses": {
+      "sag": 4,
+      "int": 4,
+      "hp": 22
+    }
+  }
+}

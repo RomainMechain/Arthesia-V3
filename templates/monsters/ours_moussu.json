@@ -1,0 +1,44 @@
+{
+  "id": "ours_moussu",
+  "name": "Ours Moussu",
+  "description": "Un ours si vieux et si lent que la mousse a poussé sur son dos. Il garde les sentiers les plus profonds de la forêt et ne laisse passer personne.",
+  "level": 6,
+  "role": "normal",
+  "stats": {
+    "hp": 1000,
+    "atk": 39,
+    "def": 34,
+    "agi": 11,
+    "int": 41,
+    "sag": 21
+  },
+  "moveset": [
+    {
+      "id": "patte_lourde",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.21,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "etreinte_d_ours",
+      "damage_type": "physical",
+      "cooldown_seconds": 8,
+      "power": 0.48,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "griffe_d_ours_moussu",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 10
+    }
+  ]
+}

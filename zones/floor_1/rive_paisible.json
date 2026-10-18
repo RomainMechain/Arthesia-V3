@@ -1,0 +1,261 @@
+{
+  "id": "rive_paisible",
+  "name": "Rive Paisible",
+  "type": "water",
+  "position": {
+    "x": 28,
+    "y": 68
+  },
+  "visibility": "visible",
+  "description": "L'eau du lac lèche doucement une rive de galets pâles. Des roseaux ploient sous une brise qui ne semble jamais se lever vraiment, et quelques barques attendent, immobiles.",
+  "unlock_condition": {
+    "type": "quest",
+    "quest_id": "intro_peche",
+    "state": "active"
+  },
+  "hint": "On dit qu'il faut d'abord rendre service à quelqu'un du village pour qu'on vous laisse approcher la rive.",
+  "generation_brief": {
+    "level_range": [
+      1,
+      3
+    ],
+    "difficulty_tier": "entree",
+    "tags": [
+      "peche",
+      "lac",
+      "social"
+    ],
+    "content_intent": "Zone de récolte centrée sur la pêche et les plantes aquatiques, avec PNJ pêcheurs et une quête d'introduction ; danger faible mais une tension diffuse concernant le lac plus loin.",
+    "provides": []
+  },
+  "entries": [
+    {
+      "id": "peche_eaux_basses",
+      "template_type": "resource",
+      "template_id": "eaux_basses_de_la_rive",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 90,
+        "stock": 4,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "roseaux_dores_noeud",
+      "template_type": "resource",
+      "template_id": "roseaux_dores",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 90,
+        "stock": 4,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "nenuphar_noeud",
+      "template_type": "resource",
+      "template_id": "nenuphar_pale",
+      "state_scope": "shared",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 240,
+        "stock": 2,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "crabe_spawn",
+      "template_type": "monster",
+      "template_id": "crabe_des_galets",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 45,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "crabe_spawn_2",
+      "template_type": "monster",
+      "template_id": "crabe_des_galets",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 45,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "heron_spawn",
+      "template_type": "monster",
+      "template_id": "heron_cendre",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 60,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "anguille_spawn",
+      "template_type": "monster",
+      "template_id": "anguille_des_hauts_fonds",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 60,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "bertold_presence",
+      "template_type": "npc",
+      "template_id": "bertold_ravaudeur",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "maelis_presence",
+      "template_type": "npc",
+      "template_id": "maelis_passeuse",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_filets",
+      "template_type": "quest_giver",
+      "template_id": "filets_a_ravauder",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_crabes",
+      "template_type": "quest_giver",
+      "template_id": "pinces_sur_les_galets",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_hauts_fonds",
+      "template_type": "quest_giver",
+      "template_id": "ce_qui_remue_sous_l_eau",
+      "state_scope": "per_player",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "conditional",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": {
+          "type": "quest",
+          "quest_id": "pinces_sur_les_galets",
+          "state": "completed"
+        },
+        "visibility_when_locked": "hinted",
+        "hint": "Maëlis regarde souvent vers les hauts-fonds, comme si elle attendait que quelqu'un d'autre ose y aller."
+      }
+    },
+    {
+      "id": "galets_veines_noeud",
+      "template_type": "resource",
+      "template_id": "galets_veines",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 90,
+        "stock": 4,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "affut_des_berges_noeud",
+      "template_type": "resource",
+      "template_id": "affut_des_berges",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 90,
+        "stock": 4,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    }
+  ]
+}

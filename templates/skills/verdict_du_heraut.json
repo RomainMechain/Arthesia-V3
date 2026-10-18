@@ -1,0 +1,33 @@
+{
+  "id": "verdict_du_heraut",
+  "name": "Verdict du Héraut",
+  "description": "Le Héraut de l'Aube ne parlait pas, il jugeait. Après l'avoir abattu et avoir ouvert la porte des dormants, tu portes à ton tour son verdict : un cercle de lumière qui s'abat sans appel.",
+  "kind": "active",
+  "unlock_condition": {
+    "type": "group",
+    "mode": "all",
+    "conditions": [
+      {
+        "type": "kill_count",
+        "monster_id": "heraut_de_l_aube",
+        "count": 1
+      },
+      {
+        "type": "quest",
+        "quest_id": "cle_des_dormants",
+        "state": "completed"
+      }
+    ]
+  },
+  "damage_type": "magical",
+  "cooldown_seconds": 20,
+  "mana_cost": 50,
+  "telegraph_seconds": 0,
+  "avoidable_by": null,
+  "effects": [
+    {
+      "type": "damage",
+      "power": 4.69
+    }
+  ]
+}

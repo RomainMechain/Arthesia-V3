@@ -1,0 +1,14 @@
+{
+  "id": "pain_du_pelerin",
+  "name": "Pain du Pèlerin",
+  "description": "Un pain lourd et doré qu'Aubin emporte dans ses pèlerinages. Il dit qu'il ne rassit jamais, et il a raison.",
+  "category": "consumable",
+  "level": 8,
+  "base_value": 120,
+  "stack_size": 10,
+  "consumable": {
+    "effect_type": "heal",
+    "amount": 160,
+    "duration_seconds": 0
+  }
+}

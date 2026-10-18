@@ -1,0 +1,18 @@
+{
+  "id": "bottes_de_ronce",
+  "name": "Bottes de Ronce",
+  "description": "Des bottes de cuir épais renforcées de tiges de ronce tressées. Les épines dorées n'y accrochent plus.",
+  "category": "equipment",
+  "level": 8,
+  "base_value": 240,
+  "stack_size": 1,
+  "equipment": {
+    "slot": "boots",
+    "level_required": 8,
+    "stat_bonuses": {
+      "agi": 2,
+      "def": 5,
+      "hp": 25
+    }
+  }
+}

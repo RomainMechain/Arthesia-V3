@@ -1,0 +1,14 @@
+{
+  "id": "eau_de_la_clairiere",
+  "name": "Eau de la Clairière",
+  "description": "Une eau recueillie dans la vasque au pied de la statue. Elle est parfaitement immobile dans la fiole, même quand on la secoue, et clarifie l'esprit d'une seule gorgée.",
+  "category": "consumable",
+  "level": 8,
+  "base_value": 120,
+  "stack_size": 10,
+  "consumable": {
+    "effect_type": "restore_mana",
+    "amount": 60,
+    "duration_seconds": 0
+  }
+}

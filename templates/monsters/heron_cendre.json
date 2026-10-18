@@ -1,0 +1,44 @@
+{
+  "id": "heron_cendre",
+  "name": "Héron Cendré",
+  "description": "Un grand héron gris, immobile au bord de l'eau depuis si longtemps qu'on le prendrait pour une statue. Il ne pêche jamais. Il surveille le lac.",
+  "level": 2,
+  "role": "normal",
+  "stats": {
+    "hp": 380,
+    "atk": 19,
+    "def": 13,
+    "agi": 9,
+    "int": 19,
+    "sag": 10
+  },
+  "moveset": [
+    {
+      "id": "coup_de_bec",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.15,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "plongeon_brutal",
+      "damage_type": "physical",
+      "cooldown_seconds": 6,
+      "power": 0.25,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "plume_de_heron",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 10
+    }
+  ]
+}

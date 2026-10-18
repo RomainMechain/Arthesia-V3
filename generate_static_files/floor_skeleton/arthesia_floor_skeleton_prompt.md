@@ -101,6 +101,7 @@ fournira. Une condition non résolvable rendrait une zone inaccessible pour touj
   "id": "floor_<n>",
   "name": "...",
   "description": "2-3 phrases d'ambiance générale de l'étage.",
+  "lore_brief": "4-6 phrases jamais montrées au joueur : le fil narratif de l'étage, la vérité cachée, ce que chaque lieu en laisse entrevoir et ce qui doit rester mystérieux.",
   "start_zone_id": "...",
   "boss_zone_id": "...",
   "zones": [
@@ -153,6 +154,8 @@ doivent être visuellement proches).
 - [ ] Types de `unlock_condition` variés (pas uniquement `level`).
 - [ ] Toute condition `item`/`quest`/`boss` a une entrée dans `condition_manifest` avec un `resolved_by`
       clair.
+- [ ] `lore_brief` renseigné : le contenu de chaque zone est généré séparément à partir de ce texte,
+      c'est lui qui garde les zones cohérentes entre elles.
 - [ ] JSON strictement valide, aucun texte hors du JSON.
 
 ---

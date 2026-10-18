@@ -1,0 +1,11 @@
+{
+  "id": "garin_pecheur",
+  "name": "Garin",
+  "description": "Un pêcheur bourru installé à l'orée du sentier qui mène à la rive. Il passe ses journées à scruter l'eau immobile du lac, convaincu qu'un poisson bien particulier s'y cache depuis toujours.",
+  "role": "Pêcheur",
+  "dialogues": [
+    "L'eau ne bouge presque jamais ici. C'est étrange, pour un lac vivant.",
+    "Il y a une truite argentée, là-dessous, qui ne ressemble à aucune autre. Je n'ai jamais réussi à la ferrer.",
+    "Ramène-la-moi, et je te raconterai ce que j'ai vu flotter sous la surface, une nuit qui n'existait pas."
+  ]
+}

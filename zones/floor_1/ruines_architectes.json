@@ -1,0 +1,264 @@
+{
+  "id": "ruines_architectes",
+  "name": "Ruines d'Orvalt",
+  "type": "ruins",
+  "position": {
+    "x": 65,
+    "y": 48
+  },
+  "visibility": "visible",
+  "description": "Des blocs de pierre taillée, envahis par les racines, émergent du sol comme les os d'un géant enterré. Des runes, usées mais encore actives, luisent faiblement d'une lumière qui n'est pas celle de l'aube.",
+  "unlock_condition": {
+    "type": "group",
+    "mode": "all",
+    "conditions": [
+      {
+        "type": "zone",
+        "zone_id": "lac_miroir",
+        "state": "unlocked"
+      },
+      {
+        "type": "zone",
+        "zone_id": "sous_bois_perdu",
+        "state": "unlocked"
+      }
+    ]
+  },
+  "hint": "On raconte que les ruines n'apparaissent qu'à ceux qui ont arpenté à la fois les eaux et les bois profonds.",
+  "generation_brief": {
+    "level_range": [
+      6,
+      9
+    ],
+    "difficulty_tier": "coeur",
+    "tags": [
+      "ruines",
+      "mine",
+      "archeologie",
+      "runes",
+      "combat"
+    ],
+    "content_intent": "Combat plus difficile contre des constructions animées des Architectes, minage et archéologie au centre du gameplay, runes à découvrir qui posent les bases du lore.",
+    "provides": [
+      {
+        "type": "item",
+        "id_suggere": "fragment_rune_aube",
+        "via": "Lâché par une construction des Architectes qui garde un mur effondré, ou remis en récompense d'une quête d'exploration des ruines : un fragment de rune encore tiède. Ne dépend d'aucun niveau de métier."
+      }
+    ]
+  },
+  "entries": [
+    {
+      "id": "sentinelle_spawn",
+      "template_type": "monster",
+      "template_id": "sentinelle_de_pierre",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 45,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "sentinelle_spawn_2",
+      "template_type": "monster",
+      "template_id": "sentinelle_de_pierre",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 45,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "rouage_spawn",
+      "template_type": "monster",
+      "template_id": "rouage_errant",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 60,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "colosse_spawn",
+      "template_type": "monster",
+      "template_id": "colosse_moussu",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 60,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "automate_spawn",
+      "template_type": "monster",
+      "template_id": "automate_sans_visage",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 60,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "gravats_noeud",
+      "template_type": "resource",
+      "template_id": "gravats_des_architectes",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 90,
+        "stock": 4,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "filon_noeud",
+      "template_type": "resource",
+      "template_id": "filon_de_pierre_runique",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 90,
+        "stock": 4,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "dalle_noeud",
+      "template_type": "resource",
+      "template_id": "dalle_scellee",
+      "state_scope": "shared",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 240,
+        "stock": 2,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "ombeline_presence",
+      "template_type": "npc",
+      "template_id": "ombeline_erudite",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_mur",
+      "template_type": "quest_giver",
+      "template_id": "le_mur_effondre",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_rouages",
+      "template_type": "quest_giver",
+      "template_id": "les_rouages_errants",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_colosses",
+      "template_type": "quest_giver",
+      "template_id": "sous_la_mousse",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_runes",
+      "template_type": "quest_giver",
+      "template_id": "ce_que_disent_les_runes",
+      "state_scope": "per_player",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "conditional",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": {
+          "type": "quest",
+          "quest_id": "le_mur_effondre",
+          "state": "completed"
+        },
+        "visibility_when_locked": "hinted",
+        "hint": "Ombeline a recopié une inscription qu'elle n'ose pas traduire à voix haute. Elle attend d'avoir de quoi la vérifier."
+      }
+    }
+  ]
+}

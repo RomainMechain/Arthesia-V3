@@ -1,0 +1,17 @@
+{
+  "id": "lame_d_ambre",
+  "name": "Lame d'Ambre",
+  "description": "Le couteau de chasse d'Halvard, dont la lame s'est peu à peu couverte d'ambre. Elle n'a jamais perdu son tranchant.",
+  "category": "equipment",
+  "level": 8,
+  "base_value": 240,
+  "stack_size": 1,
+  "equipment": {
+    "slot": "weapon",
+    "level_required": 8,
+    "stat_bonuses": {
+      "atk": 9,
+      "agi": 1
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "id": "anneau_d_ecaille_vibrante",
+  "name": "Anneau d'Écaille Vibrante",
+  "description": "Un anneau taillé dans une écaille vibrante. Porté au doigt, il frémit doucement, et l'on croit entendre, très loin, le chant du lac.",
+  "category": "equipment",
+  "level": 5,
+  "base_value": 150,
+  "stack_size": 1,
+  "equipment": {
+    "slot": "ring",
+    "level_required": 5,
+    "stat_bonuses": {
+      "int": 4,
+      "sag": 2,
+      "hp": 12
+    }
+  }
+}

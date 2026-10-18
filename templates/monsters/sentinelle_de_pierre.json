@@ -1,0 +1,50 @@
+{
+  "id": "sentinelle_de_pierre",
+  "name": "Sentinelle de Pierre",
+  "description": "Une silhouette de pierre taillée, haute comme deux hommes, postée devant les murs effondrés. Des runes s'allument sur son torse quand on approche, et elle se met en marche sans un bruit.",
+  "level": 6,
+  "role": "normal",
+  "stats": {
+    "hp": 880,
+    "atk": 40,
+    "def": 36,
+    "agi": 10,
+    "int": 41,
+    "sag": 21
+  },
+  "moveset": [
+    {
+      "id": "poing_de_granit",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.21,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "frappe_scellee",
+      "damage_type": "physical",
+      "cooldown_seconds": 7,
+      "power": 0.42,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "eclat_de_rune_eteinte",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 6
+    },
+    {
+      "item_id": "bloc_de_pierre_taillee",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 4
+    }
+  ]
+}

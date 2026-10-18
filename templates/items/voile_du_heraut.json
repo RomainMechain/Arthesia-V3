@@ -1,0 +1,9 @@
+{
+  "id": "voile_du_heraut",
+  "name": "Voile du Héraut",
+  "description": "Un lambeau de lumière tissée, arraché au Héraut de l'Aube. Il flotte dans la main sans le moindre souffle d'air.",
+  "category": "material",
+  "level": 10,
+  "base_value": 50,
+  "stack_size": 10
+}

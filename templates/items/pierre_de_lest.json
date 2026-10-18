@@ -1,0 +1,9 @@
+{
+  "id": "pierre_de_lest",
+  "name": "Pierre de Lest",
+  "description": "Une pierre dense taillée pour lester un filet. Elle coule droit, sans jamais tourner.",
+  "category": "material",
+  "level": 4,
+  "base_value": 20,
+  "stack_size": 20
+}

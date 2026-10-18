@@ -1,0 +1,14 @@
+{
+  "id": "soupe_de_crabe",
+  "name": "Soupe de Crabe",
+  "description": "Un bouillon épais où flottent des morceaux de pince, préparé sur la rive dans une marmite cabossée. Il réchauffe mieux qu'un feu.",
+  "category": "consumable",
+  "level": 2,
+  "base_value": 30,
+  "stack_size": 10,
+  "consumable": {
+    "effect_type": "heal",
+    "amount": 58,
+    "duration_seconds": 0
+  }
+}

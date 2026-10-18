@@ -1,0 +1,586 @@
+{
+  "id": "floor_1",
+  "name": "L'Aube qui ne Finit Jamais",
+  "description": "Le premier étage de la Tour baigne dans une aube dorée et immuable, un matin qui ne finit jamais de se lever sur des forêts anciennes et des lacs silencieux. Les villageois y vivent en paix, bénis par une lumière dont ils ignorent l'origine. Mais sous la beauté de ce monde suspendu, les ruines des Architectes attendent, et quelque chose veille sur l'aube elle-même.",
+  "lore_brief": "L'aube éternelle de cet étage n'est pas un phénomène naturel : elle est entretenue par un mécanisme architecte enfoui au cœur des ruines, et stabilisée par une entité-gardienne dans le sanctuaire le plus profond. Les villageois, depuis des générations, ont rebaptisé ce prodige en bénédiction et se gardent bien d'en chercher la cause, par superstition autant que par confort. La forêt ancienne et le lac portent tous deux des traces discrètes de l'influence du mécanisme — faune légèrement altérée, silence anormal, motifs géométriques dans l'écorce et sous l'eau. Le fragment caché dans la clairière des Veilleurs Oubliés est la première preuve tangible que l'aube est fabriquée, et non donnée. Le gardien du sanctuaire n'est pas un monstre à vaincre pour lui-même : c'est une pièce vivante du mécanisme, et sa défaite doit faire vaciller la lumière pour la première fois depuis sa mise en place, annonçant que l'étage suivant ne connaîtra peut-être plus cette même clémence.",
+  "start_zone_id": "village_aube",
+  "boss_zone_id": "chambre_gardien",
+  "zones": [
+    {
+      "id": "village_aube",
+      "name": "Val-de-l'Aube",
+      "type": "town",
+      "position": {
+        "x": 15,
+        "y": 50
+      },
+      "visibility": "visible",
+      "description": "Val-de-l'Aube somnole sous une lumière dorée qui ne faiblit jamais. Les toits de chaume brillent d'une teinte orangée paisible, et les villageois vaquent à leurs occupations comme si l'heure n'avait pas d'importance. Personne ici ne semble s'inquiéter que le soleil ne se soit jamais levé plus haut.",
+      "unlock_condition": null,
+      "hint": null,
+      "generation_brief": {
+        "level_range": [
+          1,
+          2
+        ],
+        "difficulty_tier": "entree",
+        "tags": [
+          "social",
+          "hub",
+          "marche",
+          "aube"
+        ],
+        "content_intent": "Hub social paisible : PNJ marchands, quêtes d'introduction, aucune menace directe, ambiance dorée et calme trompeuse.",
+        "provides": [
+          {
+            "type": "quest",
+            "id_suggere": "intro_peche",
+            "via": "Un villageois demande qu'on attrape un poisson précis dans la rive proche, en guise d'introduction à la vie du village."
+          }
+        ]
+      }
+    },
+    {
+      "id": "sentier_lisiere",
+      "name": "Sentier de la Lisière",
+      "type": "wilderness",
+      "position": {
+        "x": 30,
+        "y": 32
+      },
+      "visibility": "visible",
+      "description": "Un sentier de terre battue s'enfonce doucement sous les premiers arbres, la brume dorée s'accrochant aux fougères. On entend au loin le bruissement d'une vie discrète.",
+      "unlock_condition": {
+        "type": "zone",
+        "zone_id": "village_aube",
+        "state": "unlocked"
+      },
+      "hint": "Un chemin couvert de brume part vers les arbres, juste à la sortie du village.",
+      "generation_brief": {
+        "level_range": [
+          1,
+          3
+        ],
+        "difficulty_tier": "entree",
+        "tags": [
+          "transition",
+          "foret",
+          "calme"
+        ],
+        "content_intent": "Petite zone de transition avec faune douce (lapins, oiseaux) et quelques ressources de cueillette basique, pour habituer le joueur au combat léger.",
+        "provides": []
+      }
+    },
+    {
+      "id": "rive_paisible",
+      "name": "Rive Paisible",
+      "type": "water",
+      "position": {
+        "x": 28,
+        "y": 68
+      },
+      "visibility": "visible",
+      "description": "L'eau du lac lèche doucement une rive de galets pâles. Des roseaux ploient sous une brise qui ne semble jamais se lever vraiment, et quelques barques attendent, immobiles.",
+      "unlock_condition": {
+        "type": "quest",
+        "quest_id": "intro_peche",
+        "state": "active"
+      },
+      "hint": "On dit qu'il faut d'abord rendre service à quelqu'un du village pour qu'on vous laisse approcher la rive.",
+      "generation_brief": {
+        "level_range": [
+          1,
+          3
+        ],
+        "difficulty_tier": "entree",
+        "tags": [
+          "peche",
+          "lac",
+          "social"
+        ],
+        "content_intent": "Zone de récolte centrée sur la pêche et les plantes aquatiques, avec PNJ pêcheurs et une quête d'introduction ; danger faible mais une tension diffuse concernant le lac plus loin.",
+        "provides": []
+      }
+    },
+    {
+      "id": "camp_pecheurs",
+      "name": "Camp des Pêcheurs du Soir",
+      "type": "camp",
+      "position": {
+        "x": 45,
+        "y": 78
+      },
+      "visibility": "visible",
+      "description": "Quelques cabanes de bois flotté s'alignent près de l'eau, filets séchant au vent inexistant. Les pêcheurs parlent à voix basse de choses qu'ils préfèrent ne pas nommer.",
+      "unlock_condition": {
+        "type": "level",
+        "min": 3
+      },
+      "hint": "Les pêcheurs n'accueillent que ceux qui ont déjà fait leurs preuves.",
+      "generation_brief": {
+        "level_range": [
+          4,
+          6
+        ],
+        "difficulty_tier": "coeur",
+        "tags": [
+          "camp",
+          "peche",
+          "social",
+          "artisanat"
+        ],
+        "content_intent": "Petit camp de pêcheurs superstitieux, PNJ donnant objets et rumeurs, artisanat léger lié à la pêche, pas de combat significatif.",
+        "provides": [
+          {
+            "type": "item",
+            "id_suggere": "amulette_pecheur",
+            "via": "Un vieux pêcheur superstitieux offre une amulette tressée d'algues séchées à quiconque l'aide à réparer ses filets."
+          }
+        ]
+      }
+    },
+    {
+      "id": "lac_miroir",
+      "name": "Lac-Miroir",
+      "type": "water",
+      "position": {
+        "x": 50,
+        "y": 60
+      },
+      "visibility": "visible",
+      "description": "Plus loin sur l'eau, le lac devient un miroir parfait, presque trop immobile. Quelque chose, sous la surface, semble observer en retour.",
+      "unlock_condition": {
+        "type": "item",
+        "item_id": "amulette_pecheur",
+        "state": "owned"
+      },
+      "hint": "Nul ne s'aventure sur les eaux profondes sans une amulette bénie par les pêcheurs.",
+      "generation_brief": {
+        "level_range": [
+          4,
+          6
+        ],
+        "difficulty_tier": "coeur",
+        "tags": [
+          "lac",
+          "mystere",
+          "peche_avancee",
+          "tension"
+        ],
+        "content_intent": "Récolte avancée (pêche rare, plantes aquatiques rares) et créatures du lac légèrement altérées par l'aube ; ambiance de tension latente, quelque chose d'anormal sous la surface.",
+        "provides": [
+          {
+            "type": "quest",
+            "id_suggere": "chant_du_lac",
+            "via": "Une mélodie sourde monte parfois du fond du lac ; une quête d'enquête permet de la localiser et de la comprendre en partie."
+          }
+        ]
+      }
+    },
+    {
+      "id": "foret_ancienne",
+      "name": "Forêt des Anciens",
+      "type": "wilderness",
+      "position": {
+        "x": 45,
+        "y": 28
+      },
+      "visibility": "visible",
+      "description": "Des arbres aux troncs noueux, plus vieux que mémoire d'homme, forment une voûte où la lumière dorée peine à filtrer. Des pierres moussues, à peine visibles, portent des motifs qui ne ressemblent à aucune écriture connue.",
+      "unlock_condition": {
+        "type": "zone",
+        "zone_id": "sentier_lisiere",
+        "state": "unlocked"
+      },
+      "hint": "Les arbres centenaires se dressent au bout du sentier, silencieux.",
+      "generation_brief": {
+        "level_range": [
+          4,
+          6
+        ],
+        "difficulty_tier": "coeur",
+        "tags": [
+          "foret",
+          "bucheronnage",
+          "herboristerie",
+          "combat"
+        ],
+        "content_intent": "Zone dense mêlant combat contre faune forestière, bûcheronnage et herboristerie ; indices discrets de présence architecte (pierres moussues, symboles à peine visibles).",
+        "provides": [
+          {
+            "type": "quest",
+            "id_suggere": "piste_du_cerf_blanc",
+            "via": "Une piste étrange, laissée par un cerf à la robe trop pâle, peut être suivie à travers la forêt jusqu'à une quête dédiée."
+          }
+        ]
+      }
+    },
+    {
+      "id": "sous_bois_perdu",
+      "name": "Sous-Bois Oublié",
+      "type": "danger",
+      "position": {
+        "x": 60,
+        "y": 22
+      },
+      "visibility": "visible",
+      "description": "Ici, même la lumière éternelle semble hésiter. Les bruits de la forêt changent de nature, et certaines silhouettes bougent d'une façon qui n'appartient à aucune créature naturelle.",
+      "unlock_condition": {
+        "type": "quest",
+        "quest_id": "piste_du_cerf_blanc",
+        "state": "completed"
+      },
+      "hint": "Seuls ceux qui ont suivi la piste du cerf pâle trouvent le chemin du sous-bois perdu.",
+      "generation_brief": {
+        "level_range": [
+          6,
+          9
+        ],
+        "difficulty_tier": "coeur",
+        "tags": [
+          "foret_profonde",
+          "combat",
+          "alteration",
+          "danger"
+        ],
+        "content_intent": "Zone de combat plus intense contre des créatures visiblement altérées par l'aube perpétuelle ; ambiance oppressante malgré la lumière dorée constante.",
+        "provides": []
+      }
+    },
+    {
+      "id": "ruines_architectes",
+      "name": "Ruines d'Orvalt",
+      "type": "ruins",
+      "position": {
+        "x": 65,
+        "y": 48
+      },
+      "visibility": "visible",
+      "description": "Des blocs de pierre taillée, envahis par les racines, émergent du sol comme les os d'un géant enterré. Des runes, usées mais encore actives, luisent faiblement d'une lumière qui n'est pas celle de l'aube.",
+      "unlock_condition": {
+        "type": "group",
+        "mode": "all",
+        "conditions": [
+          {
+            "type": "zone",
+            "zone_id": "lac_miroir",
+            "state": "unlocked"
+          },
+          {
+            "type": "zone",
+            "zone_id": "sous_bois_perdu",
+            "state": "unlocked"
+          }
+        ]
+      },
+      "hint": "On raconte que les ruines n'apparaissent qu'à ceux qui ont arpenté à la fois les eaux et les bois profonds.",
+      "generation_brief": {
+        "level_range": [
+          6,
+          9
+        ],
+        "difficulty_tier": "coeur",
+        "tags": [
+          "ruines",
+          "mine",
+          "archeologie",
+          "runes",
+          "combat"
+        ],
+        "content_intent": "Combat plus difficile contre des constructions animées des Architectes, minage et archéologie au centre du gameplay, runes à découvrir qui posent les bases du lore.",
+        "provides": [
+          {
+            "type": "item",
+            "id_suggere": "fragment_rune_aube",
+            "via": "Lâché par une construction des Architectes qui garde un mur effondré, ou remis en récompense d'une quête d'exploration des ruines : un fragment de rune encore tiède. Ne dépend d'aucun niveau de métier."
+          }
+        ]
+      }
+    },
+    {
+      "id": "veilleurs_oublies",
+      "name": "Clairière des Veilleurs Oubliés",
+      "type": "ruins",
+      "position": {
+        "x": 55,
+        "y": 42
+      },
+      "visibility": "hidden",
+      "description": "Une clairière circulaire, protégée des regards par des arbres qui semblent s'être délibérément refermés sur elle. Au centre, un éclat de pierre gravée bourdonne d'une énergie ancienne, et pour la première fois, l'aube paraît artificielle.",
+      "unlock_condition": {
+        "type": "group",
+        "mode": "all",
+        "conditions": [
+          {
+            "type": "item",
+            "item_id": "fragment_rune_aube",
+            "state": "owned"
+          },
+          {
+            "type": "quest",
+            "quest_id": "chant_du_lac",
+            "state": "completed"
+          }
+        ]
+      },
+      "hint": null,
+      "generation_brief": {
+        "level_range": [
+          6,
+          8
+        ],
+        "difficulty_tier": "coeur",
+        "tags": [
+          "secret",
+          "lore",
+          "aube",
+          "rituel"
+        ],
+        "content_intent": "Zone cachée courte et dense en lore : un fragment de vérité sur le mécanisme de l'aube, peu de combat, principalement exploration et découverte contemplative.",
+        "provides": []
+      }
+    },
+    {
+      "id": "sanctuaire_aube",
+      "name": "Sanctuaire de l'Aube Figée",
+      "type": "ruins",
+      "position": {
+        "x": 80,
+        "y": 48
+      },
+      "visibility": "visible",
+      "description": "Un ensemble de colonnes effondrées entoure une chambre où la lumière dorée s'intensifie de façon presque douloureuse. L'air lui-même semble retenir son souffle, comme avant un événement qui ne s'est jamais produit.",
+      "unlock_condition": {
+        "type": "zone",
+        "zone_id": "ruines_architectes",
+        "state": "unlocked"
+      },
+      "hint": "Au-delà des pierres gravées, une lumière plus dorée encore filtre entre les colonnes.",
+      "generation_brief": {
+        "level_range": [
+          8,
+          10
+        ],
+        "difficulty_tier": "profondeurs",
+        "tags": [
+          "sanctuaire",
+          "ruines",
+          "rituel",
+          "pre-boss"
+        ],
+        "content_intent": "Antichambre du gardien : les monstres normaux les plus durs de l'étage (gardiens et constructions des Architectes), au plus une élite, préparation rituelle, inscriptions plus explicites sur le mécanisme de l'aube sans tout révéler.",
+        "provides": [
+          {
+            "type": "quest",
+            "id_suggere": "cle_des_dormants",
+            "via": "Un rituel partiellement reconstitué à partir des inscriptions du sanctuaire doit être accompli pour obtenir le droit de passage vers le gardien."
+          }
+        ]
+      }
+    },
+    {
+      "id": "chambre_gardien",
+      "name": "Chambre du Gardien",
+      "type": "boss",
+      "position": {
+        "x": 92,
+        "y": 48
+      },
+      "visibility": "visible",
+      "description": "Au cœur du sanctuaire se dresse une silhouette immobile, faite de pierre et de lumière, veillant sur un mécanisme dont la fonction échappe encore à toute compréhension. Elle se redresse lentement à l'approche du Marqué.",
+      "unlock_condition": {
+        "type": "quest",
+        "quest_id": "cle_des_dormants",
+        "state": "completed"
+      },
+      "hint": "Seul celui qui a percé le rituel des ruines peut espérer franchir le seuil du gardien.",
+      "generation_brief": {
+        "level_range": [
+          10,
+          10
+        ],
+        "difficulty_tier": "profondeurs",
+        "tags": [
+          "boss",
+          "architecte",
+          "aube"
+        ],
+        "content_intent": "Combat de boss unique contre le Gardien de l'Aube, construction animée protégeant le mécanisme ; vaincre le gardien fait vaciller la lumière pour la première fois.",
+        "provides": [
+          {
+            "type": "boss",
+            "id_suggere": "gardien_de_l_aube",
+            "via": "Le combat final de la zone oppose le joueur au Gardien de l'Aube, construction animée liée au mécanisme de la lumière éternelle."
+          }
+        ]
+      }
+    },
+    {
+      "id": "passage_etage2",
+      "name": "Faille Montante",
+      "type": "passage",
+      "position": {
+        "x": 100,
+        "y": 48
+      },
+      "visibility": "visible",
+      "description": "Depuis la chute du gardien, la lumière dorée vacille pour la première fois, comme une flamme menacée par un courant d'air. Une faille s'est ouverte dans la pierre, laissant entrevoir un escalier qui monte vers l'inconnu.",
+      "unlock_condition": {
+        "type": "boss",
+        "zone_id": "chambre_gardien",
+        "state": "defeated"
+      },
+      "hint": "Une faille de lumière attend, scellée tant que le gardien veille.",
+      "generation_brief": {
+        "level_range": [
+          10,
+          10
+        ],
+        "difficulty_tier": "profondeurs",
+        "tags": [
+          "passage",
+          "transition"
+        ],
+        "content_intent": "Passage simple vers l'étage suivant, peu ou pas de contenu de jeu, juste une ambiance de seuil et un aperçu de ce qui attend plus haut.",
+        "provides": []
+      }
+    }
+  ],
+  "connections": [
+    [
+      "village_aube",
+      "sentier_lisiere"
+    ],
+    [
+      "village_aube",
+      "rive_paisible"
+    ],
+    [
+      "rive_paisible",
+      "camp_pecheurs"
+    ],
+    [
+      "rive_paisible",
+      "lac_miroir"
+    ],
+    [
+      "sentier_lisiere",
+      "foret_ancienne"
+    ],
+    [
+      "foret_ancienne",
+      "lac_miroir"
+    ],
+    [
+      "foret_ancienne",
+      "sous_bois_perdu"
+    ],
+    [
+      "foret_ancienne",
+      "veilleurs_oublies"
+    ],
+    [
+      "lac_miroir",
+      "veilleurs_oublies"
+    ],
+    [
+      "lac_miroir",
+      "ruines_architectes"
+    ],
+    [
+      "sous_bois_perdu",
+      "ruines_architectes"
+    ],
+    [
+      "ruines_architectes",
+      "sanctuaire_aube"
+    ],
+    [
+      "sanctuaire_aube",
+      "chambre_gardien"
+    ],
+    [
+      "chambre_gardien",
+      "passage_etage2"
+    ]
+  ],
+  "condition_manifest": [
+    {
+      "condition": {
+        "type": "quest",
+        "quest_id": "intro_peche",
+        "state": "active"
+      },
+      "used_by": [
+        "zone:rive_paisible.unlock_condition"
+      ],
+      "resolved_by": "zone:village_aube (un PNJ du village confie une quête de pêche introductive)"
+    },
+    {
+      "condition": {
+        "type": "item",
+        "item_id": "amulette_pecheur",
+        "state": "owned"
+      },
+      "used_by": [
+        "zone:lac_miroir.unlock_condition"
+      ],
+      "resolved_by": "zone:camp_pecheurs (un pêcheur offre l'amulette en échange d'un service)"
+    },
+    {
+      "condition": {
+        "type": "quest",
+        "quest_id": "piste_du_cerf_blanc",
+        "state": "completed"
+      },
+      "used_by": [
+        "zone:sous_bois_perdu.unlock_condition"
+      ],
+      "resolved_by": "zone:foret_ancienne (une quête de traque du cerf pâle se déroule et se conclut dans cette zone)"
+    },
+    {
+      "condition": {
+        "type": "item",
+        "item_id": "fragment_rune_aube",
+        "state": "owned"
+      },
+      "used_by": [
+        "zone:veilleurs_oublies.unlock_condition"
+      ],
+      "resolved_by": "zone:ruines_architectes (le fragment de rune est lâché par une construction des Architectes ou donné par une quête d'exploration, sans niveau de métier requis)"
+    },
+    {
+      "condition": {
+        "type": "quest",
+        "quest_id": "chant_du_lac",
+        "state": "completed"
+      },
+      "used_by": [
+        "zone:veilleurs_oublies.unlock_condition"
+      ],
+      "resolved_by": "zone:lac_miroir (une quête d'enquête sur le chant sous-marin s'y conclut)"
+    },
+    {
+      "condition": {
+        "type": "quest",
+        "quest_id": "cle_des_dormants",
+        "state": "completed"
+      },
+      "used_by": [
+        "zone:chambre_gardien.unlock_condition"
+      ],
+      "resolved_by": "zone:sanctuaire_aube (le rituel reconstitué à partir des inscriptions y est accompli)"
+    },
+    {
+      "condition": {
+        "type": "boss",
+        "zone_id": "chambre_gardien",
+        "state": "defeated"
+      },
+      "used_by": [
+        "zone:passage_etage2.unlock_condition"
+      ],
+      "resolved_by": "zone:chambre_gardien (le combat contre le Gardien de l'Aube s'y déroule et se conclut)"
+    }
+  ]
+}

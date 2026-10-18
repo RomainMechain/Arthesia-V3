@@ -1,0 +1,21 @@
+{
+  "id": "veine_d_or_pale",
+  "name": "Veine d'Or Pâle",
+  "description": "Un filon de métal clair qui court dans le sol de l'antichambre, en lignes parfaitement droites, d'une colonne à l'autre.",
+  "level": 8,
+  "profession_required": {
+    "profession_id": "minage",
+    "min_level": 4,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 5,
+  "yields": [
+    {
+      "item_id": "or_pale",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 10
+    }
+  ]
+}

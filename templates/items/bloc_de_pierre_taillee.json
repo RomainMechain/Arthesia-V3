@@ -1,0 +1,9 @@
+{
+  "id": "bloc_de_pierre_taillee",
+  "name": "Bloc de Pierre Taillée",
+  "description": "Un bloc de pierre aux arêtes parfaitement droites, sans la moindre trace d'outil.",
+  "category": "material",
+  "level": 6,
+  "base_value": 30,
+  "stack_size": 20
+}

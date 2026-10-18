@@ -1,0 +1,9 @@
+{
+  "id": "fibre_de_roseau_dore",
+  "name": "Fibre de Roseau Doré",
+  "description": "Une fibre souple et solide tirée des roseaux de la rive, idéale pour ravauder un filet ou tresser une corde.",
+  "category": "material",
+  "level": 1,
+  "base_value": 5,
+  "stack_size": 20
+}

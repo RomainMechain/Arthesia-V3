@@ -1,0 +1,9 @@
+{
+  "id": "champignon_dore",
+  "name": "Champignon Doré",
+  "description": "Un champignon à la chair orangée, commun à l'orée des bois environnant Val-de-l'Aube, apprécié pour son léger goût sucré.",
+  "category": "material",
+  "level": 1,
+  "base_value": 5,
+  "stack_size": 20
+}

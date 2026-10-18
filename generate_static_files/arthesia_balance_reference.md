@@ -176,9 +176,9 @@ Un étage complet prend environ 6 h de jeu (étage 1), 17 h (étage 5) et 31 h (
 
 - **Écart de niveau** : un monstre plus fort rapporte +10 % par niveau d'écart (au plus +50 %) ; un
   plus faible rapporte −20 % par niveau (au moins 10 %).
-- **Quêtes** (`quest_xp`) : une part du seuil du niveau de la quête. Une petite quête vaut 6 %, une
-  normale 12 %, une majeure 25 %. Il faut donc environ 2,5 quêtes normales par niveau, soit
-  **environ 25 quêtes normales en équivalent XP par étage**, réparties sur ses zones.
+- **Quêtes** (`quest_xp`) : une part du seuil du niveau de la quête. Une petite quête vaut 3 %, une
+  normale 6 %, une majeure 12 %. Ces parts sont faites pour **~30 quêtes par étage** (2 à 4 par zone
+  ordinaire, 4 à 6 en ville, ampleurs mêlées) : l'étage 1 en compte 35, qui apportent 29 % de l'XP.
 
 ### Métiers
 
@@ -224,9 +224,9 @@ d'or en boucle.
 
 | Ampleur | XP | Or | Objectifs (monstres ou récoltes) |
 |---|---|---|---|
-| `small` | 6 % du niveau | 3 × niveau | 3-5 |
-| `normal` | 12 % du niveau | 6 × niveau | 6-10 |
-| `major` | 25 % du niveau | 15 × niveau | 12-20 |
+| `small` | 3 % du niveau | 3 × niveau | 3-5 |
+| `normal` | 6 % du niveau | 6 × niveau | 6-10 |
+| `major` | 12 % du niveau | 15 × niveau | 12-20 |
 
 L'or vient surtout des quêtes et de la revente du butin. L'or se dépense en boutique, à l'Autel des
 Ventes et lors des défaites ; une réinitialisation des points de stat payante est prévue.
@@ -234,6 +234,16 @@ Ventes et lors des défaites ; une réinitialisation des points de stat payante 
 ---
 
 ## Compétences (`content_targets.py`)
+
+Un joueur équipe au plus **4 compétences actives** et 4 passives (`balance.MAX_ACTIVE_SKILL_SLOTS`). Le
+simulateur calibre les monstres avec un kit de 4 compétences (rapide, moyenne, lente, soin). Le mana
+limite déjà le rythme, mais au-delà de 4, les affaiblissements et les compétences en plus rendraient le
+contenu trivial.
+
+**Compétences de départ** (débloquées par le niveau seul, équipées d'office tant qu'il reste un
+emplacement) : Frappe et Trait de Lumière au niveau 1, Premiers Soins au niveau 2, Coup Puissant et
+Éclat d'Aube au niveau 3. Avec la seule attaque de base, un personnage de niveau 1 perd tous ses
+combats.
 
 Une compétence de dégâts vaut **`power ≈ 0,31 × recharge^0,75` × son palier**. C'est le kit sur
 lequel le simulateur a calibré les monstres (1,2 à 6 s, 2,0 à 12 s).

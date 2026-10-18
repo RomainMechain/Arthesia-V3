@@ -1,0 +1,9 @@
+{
+  "id": "sandre_dore",
+  "name": "Sandre Doré",
+  "description": "Un sandre aux reflets d'or pâle, pêché dans les eaux profondes du miroir. Ses yeux restent ouverts longtemps après la prise.",
+  "category": "material",
+  "level": 5,
+  "base_value": 25,
+  "stack_size": 20
+}

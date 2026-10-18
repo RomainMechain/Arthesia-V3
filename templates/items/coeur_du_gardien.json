@@ -1,0 +1,9 @@
+{
+  "id": "coeur_du_gardien",
+  "name": "Cœur du Gardien",
+  "description": "Une sphère de lumière solide, prise dans une cage de pierre. Au moment où le Gardien est tombé, elle a cligné, une seule fois. Depuis, sa lueur n'est plus tout à fait régulière.",
+  "category": "material",
+  "level": 10,
+  "base_value": 50,
+  "stack_size": 1
+}

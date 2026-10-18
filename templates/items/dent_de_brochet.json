@@ -1,0 +1,9 @@
+{
+  "id": "dent_de_brochet",
+  "name": "Dent de Brochet",
+  "description": "Une dent fine et recourbée, coupante comme un éclat de verre.",
+  "category": "material",
+  "level": 5,
+  "base_value": 25,
+  "stack_size": 20
+}

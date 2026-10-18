@@ -1,0 +1,9 @@
+{
+  "id": "barbillon_de_silure",
+  "name": "Barbillon de Silure",
+  "description": "Un long filament de chair souple, arraché à la gueule d'un silure. Il luit encore faiblement, longtemps après la prise.",
+  "category": "material",
+  "level": 6,
+  "base_value": 30,
+  "stack_size": 20
+}

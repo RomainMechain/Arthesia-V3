@@ -1,0 +1,9 @@
+{
+  "id": "engrenage_de_bronze",
+  "name": "Engrenage de Bronze",
+  "description": "Une roue dentée de bronze, aux dents si fines et si régulières qu'aucun forgeron du village ne saurait la refaire.",
+  "category": "material",
+  "level": 7,
+  "base_value": 35,
+  "stack_size": 20
+}

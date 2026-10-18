@@ -1,0 +1,23 @@
+{
+  "id": "intro_peche",
+  "name": "Une Truite pas Comme les Autres",
+  "description": "Garin cherche depuis des années à attraper une truite argentée particulière qui vit dans la rive proche du village. Il vous demande de la lui ramener.",
+  "objectives": [
+    {
+      "type": "deliver_item",
+      "item_id": "truite_argentee_aube",
+      "count": 3
+    }
+  ],
+  "rewards": {
+    "xp": 1,
+    "gold": 5,
+    "items": [
+      {
+        "item_id": "pain_de_miel",
+        "quantity": 1
+      }
+    ]
+  },
+  "repeatable": false
+}

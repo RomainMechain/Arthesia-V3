@@ -1,0 +1,23 @@
+{
+  "id": "carapace_des_galets",
+  "name": "Carapace des Galets",
+  "description": "Comme les crabes de la rive, tu te ramasses sur toi-même et laisses les coups glisser sur une carapace qui n'existe pas.",
+  "kind": "active",
+  "unlock_condition": {
+    "type": "kill_count",
+    "monster_id": "crabe_des_galets",
+    "count": 15
+  },
+  "damage_type": "physical",
+  "cooldown_seconds": 10,
+  "mana_cost": 15,
+  "telegraph_seconds": 0,
+  "avoidable_by": null,
+  "effects": [
+    {
+      "type": "shield",
+      "amount_power": 0.87,
+      "duration_seconds": 8
+    }
+  ]
+}

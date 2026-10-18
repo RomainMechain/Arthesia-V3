@@ -1,0 +1,21 @@
+{
+  "id": "lotus_immobile",
+  "name": "Lotus Immobile",
+  "description": "Une fleur de lotus posée au milieu du miroir, parfaitement immobile. L'eau ne fait aucune ride autour de sa tige, même quand on la cueille.",
+  "level": 6,
+  "profession_required": {
+    "profession_id": "herboristerie",
+    "min_level": 3,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 4,
+  "yields": [
+    {
+      "item_id": "fleur_de_lotus_immobile",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 10
+    }
+  ]
+}

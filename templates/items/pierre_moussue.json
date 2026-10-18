@@ -1,0 +1,9 @@
+{
+  "id": "pierre_moussue",
+  "name": "Pierre Moussue",
+  "description": "Une plaque de pierre arrachée à un colosse, couverte d'une mousse qui pousse en lignes droites.",
+  "category": "material",
+  "level": 8,
+  "base_value": 40,
+  "stack_size": 20
+}

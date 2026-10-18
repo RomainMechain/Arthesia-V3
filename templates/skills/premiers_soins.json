@@ -1,0 +1,21 @@
+{
+  "id": "premiers_soins",
+  "name": "Premiers Soins",
+  "description": "Quelques gestes sûrs pour refermer une plaie et reprendre son souffle au milieu du combat.",
+  "kind": "active",
+  "unlock_condition": {
+    "type": "level",
+    "min": 2
+  },
+  "damage_type": "magical",
+  "cooldown_seconds": 15,
+  "mana_cost": 22,
+  "telegraph_seconds": 0,
+  "avoidable_by": null,
+  "effects": [
+    {
+      "type": "heal",
+      "power": 1.18
+    }
+  ]
+}

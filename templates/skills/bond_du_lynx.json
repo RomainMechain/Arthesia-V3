@@ -1,0 +1,22 @@
+{
+  "id": "bond_du_lynx",
+  "name": "Bond du Lynx",
+  "description": "Le lynx à robe claire ne se montre qu'au moment de frapper. Après en avoir affronté des dizaines, tu sais toi aussi surgir de la lumière.",
+  "kind": "active",
+  "unlock_condition": {
+    "type": "kill_count",
+    "monster_id": "lynx_a_robe_claire",
+    "count": 30
+  },
+  "damage_type": "physical",
+  "cooldown_seconds": 10,
+  "mana_cost": 26,
+  "telegraph_seconds": 0,
+  "avoidable_by": null,
+  "effects": [
+    {
+      "type": "damage",
+      "power": 2.18
+    }
+  ]
+}

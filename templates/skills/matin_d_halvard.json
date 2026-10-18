@@ -1,0 +1,23 @@
+{
+  "id": "matin_d_halvard",
+  "name": "Le Matin d'Halvard",
+  "description": "Halvard n'a jamais compris combien de temps il était resté. Toi, tu as appris de lui qu'on peut tenir encore un instant, et que cet instant peut durer.",
+  "kind": "passive",
+  "unlock_condition": {
+    "type": "quest",
+    "quest_id": "le_matin_d_halvard",
+    "state": "completed"
+  },
+  "trigger": "conditional",
+  "condition": {
+    "type": "hp_below_percent",
+    "value": 30
+  },
+  "effects": [
+    {
+      "type": "shield",
+      "amount_power": 1.48,
+      "duration_seconds": 10
+    }
+  ]
+}

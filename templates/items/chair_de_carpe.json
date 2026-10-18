@@ -1,0 +1,9 @@
+{
+  "id": "chair_de_carpe",
+  "name": "Chair de Carpe",
+  "description": "Une chair blanche et ferme, un peu fade, qui ne se gâte jamais même au soleil.",
+  "category": "material",
+  "level": 4,
+  "base_value": 20,
+  "stack_size": 20
+}

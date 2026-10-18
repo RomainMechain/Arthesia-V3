@@ -42,6 +42,23 @@ liste doit être satisfait par au moins une `entry` de ta réponse (ex. une obli
 implique un monstre avec `X` dans son `loot_table`). Ne les ignore jamais : une obligation non remplie
 rend une autre zone de l'étage inaccessible pour toujours.
 
+### Ce que les autres zones attendent : `floor_pending_dependencies`
+
+Les zones de l'étage sont générées une par une. Une quête déjà générée peut demander de vaincre un
+monstre, de récolter une ressource ou d'apporter un objet qui n'est encore placé dans **aucune** zone.
+`floor_pending_dependencies.missing` liste ces éléments (déjà définis : réutilise leur `id` tel quel,
+ne les recrée pas), et `requested_by` donne les quêtes qui les demandent, avec leur description.
+
+Pour chaque élément dont le thème et le niveau conviennent à cette zone (la description de la quête
+indique souvent où le trouver), place-le ici :
+- un `monster` : une `entry` de type `monster` avec ce `template_id` ;
+- une `resource` : une `entry` de type `resource` avec ce `template_id` ;
+- un `item` : un monstre ou une ressource de cette zone qui le donne (`loot_table` ou `yields` d'un
+  nouveau template, puisque tu ne modifies pas les templates existants).
+
+Laisse les autres pour une zone plus adaptée : une quête sans moyen de la terminer reste bloquée, mais
+un loup des bois placé au bord du lac n'aurait pas de sens.
+
 ## DENSITÉ ET CATÉGORIES SELON LE TYPE DE ZONE
 
 Catégorie affichée déduite du `template_type` de l'entrée :
@@ -187,7 +204,9 @@ Intentions de jeu, pour comprendre ce que produisent ces chiffres :
   - Une attaque plus lente peut frapper plus fort, au même rythme de dégâts :
     `power ≈ slow_move_power_per_second × cooldown_seconds`. Exemples avec une puissance principale
     P : `2P` à 7 s, `1,5P` à 5 s (souvent magique), `3P` à 10 s pour la grosse attaque d'un boss.
-  - Un monstre normal a 1 à 3 attaques, une élite 2 à 4, un boss 3 à 5.
+  - Un monstre normal a 1 ou 2 attaques, une élite 3, un boss 4 (réparties entre ses phases). Chaque
+    attaque en plus s'ajoute au rythme de dégâts calibré : une troisième attaque sur un monstre normal
+    le rend nettement trop dur.
 - **Boss** : 2 ou 3 `phases`. La première restreint le moveset ; la dernière (`hp_above_percent: 0`)
   débloque la grosse attaque. Exemple : `[{"hp_above_percent": 50, "moveset_ids": ["a", "b", "c"]},
   {"hp_above_percent": 0, "moveset_ids": ["a", "b", "c", "furie"]}]`.
@@ -200,7 +219,8 @@ Intentions de jeu, pour comprendre ce que produisent ces chiffres :
 - `base_value` : `levels[niveau].base_value[category]`. Une boutique vend au moins à ce prix.
 - **Équipement** : la somme des `stat_bonuses` en points équivalents
   (`hp/25 + atk/2 + def/2 + agi + int/2 + sag/2`) vaut `equipment_points_per_piece` du niveau de
-  l'objet. Répartis-les sur 1 à 3 stats cohérentes avec l'objet. Exemple au niveau 10 (7 points) :
+  l'objet. Répartis-les sur 1 à 3 stats cohérentes avec l'objet, en **nombres entiers** (arrondis, au
+  moins 1). Exemple au niveau 10 (7 points) :
   `{"atk": 10, "agi": 2}` (5 + 2) ou `{"def": 8, "hp": 75}` (4 + 3). Un outil (`slot: "tool"`) n'a
   pas de `stat_bonuses`.
 - **Consommables** : `consumable.amount` = `consumable_amount.heal` (soin) ou
@@ -212,8 +232,8 @@ Intentions de jeu, pour comprendre ce que produisent ces chiffres :
   `major`. Une quête d'introduction ou de collecte rapide est `small` ; une quête de zone ordinaire est
   `normal` ; une quête de chaîne importante ou qui débloque une zone est `major`.
 - **Objectifs** : `quest_objective_counts[ampleur]` donne le nombre de monstres ou de récoltes demandé.
-- Les quêtes apportent environ 30 % de l'XP du jeu : un étage doit offrir l'équivalent d'environ 25
-  quêtes `normal`. Vise **2 à 4 quêtes par zone ordinaire** et 4 à 6 en ville.
+- Les quêtes apportent environ 30 % de l'XP du jeu. Les récompenses de `quest_rewards` sont calibrées
+  pour **2 à 4 quêtes par zone ordinaire** et 4 à 6 en ville : n'en mets pas davantage.
 
 ### Ressources et matériaux
 
@@ -223,6 +243,22 @@ de métier couvre deux niveaux d'objet.
 - `profession_required.min_level` = `levels[niveau].profession_min_level` du niveau de la ressource.
 - L'XP de métier est calculée par le serveur : mets `xp_reward: 0`.
 - `gather_time_seconds` : 2 à 5 s.
+- **Chaque métier doit pouvoir progresser depuis le niveau 1.** Un métier commence au niveau 1 et ne
+  monte qu'en récoltant ce qu'il peut déjà récolter. Les zones `entree` proposent donc des ressources
+  de `min_level` 1 pour les métiers de leur décor (bois mort pour le bûcheronnage, galets ou roches
+  pour le minage, pierres taillées pour l'archéologie, pistes ou terriers pour la chasse…), et les zones
+  suivantes montent d'un cran à la fois, sans sauter de niveau de métier.
+
+### Rythme d'apparition (entries partagées)
+
+Une entry `shared` est commune à tous les joueurs : son `stock` s'épuise, puis tout revient d'un coup
+après `cooldown_seconds`. Un stock de 1 avec 120 s d'attente fait patienter tout le monde, et rend
+une quête de récolte interminable. Repères :
+- Ressource `common` : `stock` 3 à 5, `cooldown_seconds` 60 à 120. `rare` : `stock` 1 à 2, 180 à 300 s.
+- Monstre `common` : `cooldown_seconds` 30 à 60 ; `rare` : 120 à 240. Un monstre visé par plusieurs
+  quêtes de l'étage peut avoir deux entries dans sa zone.
+- Un objectif `gather_count` ou `kill_count` doit pouvoir se faire en une quinzaine de minutes au plus :
+  ne demande pas 8 récoltes d'une ressource rare.
 
 ## SCHÉMAS DES TEMPLATES (pour `new_templates`)
 
@@ -370,6 +406,8 @@ le bloc non pertinent plutôt que de le laisser vide).
       `new_templates`.
 - [ ] Aucun id de `new_templates` ne collisionne avec un id déjà présent dans la bibliothèque fournie.
 - [ ] Chaque obligation de `manifest_obligations` est honorée par au moins une `entry`.
+- [ ] Les éléments de `floor_pending_dependencies` qui conviennent à cette zone y sont placés, avec
+      leur `id` existant.
 - [ ] Templates réutilisés en priorité ; nouveaux templates seulement si vraiment nécessaire.
 - [ ] Densité cohérente avec le type de zone (pas de zone vide, pas de zone surchargée).
 - [ ] Raretés variées. `group_required` absent par défaut, et si présent : `very_rare` + conditionnel
@@ -393,6 +431,10 @@ le bloc non pertinent plutôt que de le laisser vide).
 
 ## Entrées fournies à chaque appel (à remplacer avant l'envoi)
 
+- `floor` : id, nom, description et `lore_brief` de l'étage. Toutes ses zones sont générées
+  séparément : appuie-toi sur ce fil narratif (ambiance, vérité cachée, mystère) pour que le contenu
+  de cette zone s'accorde avec celui des autres. Le `lore_brief` n'est jamais montré au joueur : laisse
+  seulement entrevoir ce qu'il dit (indices, légendes, dialogues), sans le révéler en clair.
 - `zone` : l'objet zone complet du squelette (id, name, type, description, generation_brief...).
 - `manifest_obligations` : les entrées du `condition_manifest` de l'étage où `resolved_by` pointe vers
   cette zone.
@@ -401,5 +443,7 @@ le bloc non pertinent plutôt que de le laisser vide).
   `reference_player`, `monsters` (stats, `main_move`, `slow_move_power_per_second`, `xp` par rôle),
   `equipment_points_per_piece`, `base_value`, `consumable_amount`, `quest_rewards`,
   `profession_min_level`.
+- `floor_pending_dependencies` : ce que les zones déjà générées demandent sans que l'étage le fournisse
+  encore (`null` s'il n'y a rien), voir plus haut.
 - `template_library_excerpt` : liste allégée (id, name, kind, level, tags, description courte — pas la
   définition mécanique complète) des templates existants jugés pertinents pour cette zone.

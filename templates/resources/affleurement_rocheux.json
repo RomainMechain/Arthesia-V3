@@ -1,0 +1,21 @@
+{
+  "id": "affleurement_rocheux",
+  "name": "Affleurement Rocheux",
+  "description": "Une arête de roche qui perce le sol de la forêt, veinée de reflets dorés.",
+  "level": 5,
+  "profession_required": {
+    "profession_id": "minage",
+    "min_level": 3,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 4,
+  "yields": [
+    {
+      "item_id": "minerai_de_fer_dore",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 10
+    }
+  ]
+}

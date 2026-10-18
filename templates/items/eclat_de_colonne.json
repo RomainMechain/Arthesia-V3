@@ -1,0 +1,9 @@
+{
+  "id": "eclat_de_colonne",
+  "name": "Éclat de Colonne",
+  "description": "Un éclat de pierre blanche détaché d'une colonne du sanctuaire. Il est chaud, et sa face intérieure est lisse comme du verre.",
+  "category": "material",
+  "level": 8,
+  "base_value": 40,
+  "stack_size": 20
+}

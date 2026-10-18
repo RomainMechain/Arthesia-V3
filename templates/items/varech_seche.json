@@ -1,0 +1,9 @@
+{
+  "id": "varech_seche",
+  "name": "Varech Séché",
+  "description": "Des lanières d'algue brune séchées sur les claies, cassantes et odorantes. Les pêcheurs en font des tresses et des infusions.",
+  "category": "material",
+  "level": 5,
+  "base_value": 25,
+  "stack_size": 20
+}

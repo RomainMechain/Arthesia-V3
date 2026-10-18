@@ -1,0 +1,18 @@
+{
+  "id": "anneau_de_verre_d_aube",
+  "name": "Anneau de Verre d'Aube",
+  "description": "Un anneau taillé par Halvard dans une défense de verre. Il en a fait deux. Il garde l'autre pour Yvenne, au cas où.",
+  "category": "equipment",
+  "level": 9,
+  "base_value": 270,
+  "stack_size": 1,
+  "equipment": {
+    "slot": "ring",
+    "level_required": 9,
+    "stat_bonuses": {
+      "int": 6,
+      "sag": 4,
+      "hp": 30
+    }
+  }
+}

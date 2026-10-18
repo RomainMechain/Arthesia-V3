@@ -1,0 +1,18 @@
+{
+  "id": "heaume_runique",
+  "name": "Heaume Runique",
+  "description": "Un casque de bronze lisse, dont la visière porte un unique cercle coupé d'une ligne. Ombeline jure qu'il bourdonne quand on le pose sur une rune.",
+  "category": "equipment",
+  "level": 9,
+  "base_value": 270,
+  "stack_size": 1,
+  "equipment": {
+    "slot": "head",
+    "level_required": 9,
+    "stat_bonuses": {
+      "int": 6,
+      "def": 4,
+      "hp": 30
+    }
+  }
+}

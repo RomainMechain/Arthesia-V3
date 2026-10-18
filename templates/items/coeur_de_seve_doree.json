@@ -1,0 +1,9 @@
+{
+  "id": "coeur_de_seve_doree",
+  "name": "Cœur de Sève Dorée",
+  "description": "Une boule de sève durcie, translucide et dorée, prélevée au centre du Veilleur d'Écorce. Elle pulse faiblement, au même rythme que la lumière de l'aube.",
+  "category": "material",
+  "level": 6,
+  "base_value": 30,
+  "stack_size": 10
+}

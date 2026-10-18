@@ -1,0 +1,50 @@
+{
+  "id": "silure_des_pontons",
+  "name": "Silure des Pontons",
+  "description": "Un poisson-chat long comme une barque, qui remonte des profondeurs pour happer ce qui pend des pontons. Ses barbillons luisent faiblement, d'une lueur dorée qui n'a rien à faire si près du fond.",
+  "level": 6,
+  "role": "normal",
+  "stats": {
+    "hp": 950,
+    "atk": 38,
+    "def": 34,
+    "agi": 11,
+    "int": 41,
+    "sag": 21
+  },
+  "moveset": [
+    {
+      "id": "happement",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.21,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "frisson_dore",
+      "damage_type": "magical",
+      "cooldown_seconds": 5,
+      "power": 0.3,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "barbillon_de_silure",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 10
+    },
+    {
+      "item_id": "pierre_aux_cercles",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 1
+    }
+  ]
+}

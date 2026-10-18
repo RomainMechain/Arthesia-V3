@@ -1,0 +1,9 @@
+{
+  "id": "eclat_de_rune_eteinte",
+  "name": "Éclat de Rune Éteinte",
+  "description": "Un morceau de pierre gravée dont la rune s'est éteinte quand la sentinelle s'est effondrée. Elle se rallume parfois, une seconde, sans raison.",
+  "category": "material",
+  "level": 6,
+  "base_value": 30,
+  "stack_size": 20
+}

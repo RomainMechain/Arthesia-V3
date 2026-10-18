@@ -1,0 +1,50 @@
+{
+  "id": "chouette_sans_ombre",
+  "name": "Chouette sans Ombre",
+  "description": "Une chouette blanche qui ne projette aucune ombre, même sous la lumière la plus crue. Elle chasse sans bruit et pousse, en piquant, un cri qui éblouit plus qu'il ne s'entend.",
+  "level": 7,
+  "role": "normal",
+  "stats": {
+    "hp": 950,
+    "atk": 44,
+    "def": 34,
+    "agi": 17,
+    "int": 48,
+    "sag": 24
+  },
+  "moveset": [
+    {
+      "id": "serres_blanches",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.21,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "cri_lumineux",
+      "damage_type": "magical",
+      "cooldown_seconds": 6,
+      "power": 0.36,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "plume_sans_ombre",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 6
+    },
+    {
+      "item_id": "baie_figee",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 4
+    }
+  ]
+}

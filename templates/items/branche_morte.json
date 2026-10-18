@@ -1,0 +1,9 @@
+{
+  "id": "branche_morte",
+  "name": "Branche Morte",
+  "description": "Une branche sèche et légère, parfaite pour débuter. Elle brûle bien et ne se fend jamais.",
+  "category": "material",
+  "level": 1,
+  "base_value": 5,
+  "stack_size": 20
+}

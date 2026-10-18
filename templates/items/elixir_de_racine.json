@@ -1,0 +1,14 @@
+{
+  "id": "elixir_de_racine",
+  "name": "Élixir de Racine",
+  "description": "Une décoction amère de racines dorées, que les explorateurs des ruines boivent pour tenir debout.",
+  "category": "consumable",
+  "level": 7,
+  "base_value": 105,
+  "stack_size": 10,
+  "consumable": {
+    "effect_type": "heal",
+    "amount": 143,
+    "duration_seconds": 0
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "id": "loup_dore",
+  "name": "Loup Doré",
+  "description": "Un loup à la fourrure teintée d'un éclat doré inhabituel, comme imprégnée par la lumière constante de l'étage. Son regard est trop calme pour un prédateur.",
+  "level": 1,
+  "role": "normal",
+  "stats": {
+    "hp": 294,
+    "atk": 14,
+    "def": 10,
+    "agi": 6,
+    "int": 14,
+    "sag": 8
+  },
+  "moveset": [
+    {
+      "id": "morsure_doree",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.15,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "griffure_luisante",
+      "damage_type": "physical",
+      "cooldown_seconds": 7,
+      "power": 0.3,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "poil_de_loup_dore",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 8
+    },
+    {
+      "item_id": "champignon_dore",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 2
+    }
+  ]
+}

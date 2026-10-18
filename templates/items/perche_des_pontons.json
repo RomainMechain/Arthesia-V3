@@ -1,0 +1,9 @@
+{
+  "id": "perche_des_pontons",
+  "name": "Perche des Pontons",
+  "description": "Une perche rayée de vert et d'or, pêchée sous les pontons du camp. Sa chair est ferme et ne se gâte jamais.",
+  "category": "material",
+  "level": 4,
+  "base_value": 20,
+  "stack_size": 20
+}

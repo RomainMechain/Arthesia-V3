@@ -1,0 +1,9 @@
+{
+  "id": "truite_argentee_aube",
+  "name": "Truite Argentée de l'Aube",
+  "description": "Un poisson aux écailles presque translucides, qui ne semble jamais pâlir ni pourrir, comme figé dans le même instant que le reste de l'étage.",
+  "category": "material",
+  "level": 1,
+  "base_value": 5,
+  "stack_size": 20
+}

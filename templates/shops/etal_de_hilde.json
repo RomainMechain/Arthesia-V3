@@ -1,0 +1,26 @@
+{
+  "id": "etal_de_hilde",
+  "name": "Étal de Hilde",
+  "description": "Une planche posée sur deux tonneaux, à côté de la marmite. Hilde y vend de quoi tenir debout et quelques affaires que les pêcheurs n'utilisent plus.",
+  "currency": "or",
+  "sell_offers": [
+    {
+      "item_id": "brochette_d_ablette",
+      "price": 70,
+      "stock": null,
+      "restock_seconds": null
+    },
+    {
+      "item_id": "infusion_de_varech",
+      "price": 85,
+      "stock": null,
+      "restock_seconds": null
+    },
+    {
+      "item_id": "gants_de_ravaudeur",
+      "price": 170,
+      "stock": null,
+      "restock_seconds": null
+    }
+  ]
+}

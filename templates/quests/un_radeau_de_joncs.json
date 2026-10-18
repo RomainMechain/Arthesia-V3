@@ -1,0 +1,23 @@
+{
+  "id": "un_radeau_de_joncs",
+  "name": "Un Radeau de Joncs",
+  "description": "Le radeau de Taïs prend l'eau. Elle te demande de lui couper des joncs du large pour le consolider avant sa prochaine plongée.",
+  "objectives": [
+    {
+      "type": "gather_count",
+      "resource_id": "joncs_du_large",
+      "count": 4
+    }
+  ],
+  "rewards": {
+    "xp": 3,
+    "gold": 12,
+    "items": [
+      {
+        "item_id": "infusion_de_varech",
+        "quantity": 1
+      }
+    ]
+  },
+  "repeatable": false
+}

@@ -1,0 +1,44 @@
+{
+  "id": "veilleur_fige",
+  "name": "Veilleur Figé",
+  "description": "Une des six autres statues du cercle, couchée dans les herbes et couverte de lierre. Parfois, elle se relève d'un seul coup, comme réveillée en sursaut, et frappe tout ce qui bouge avant de se recoucher.",
+  "level": 8,
+  "role": "normal",
+  "stats": {
+    "hp": 1220,
+    "atk": 50,
+    "def": 46,
+    "agi": 12,
+    "int": 52,
+    "sag": 27
+  },
+  "moveset": [
+    {
+      "id": "coup_de_pierre",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.21,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "rappel_a_l_ordre",
+      "damage_type": "magical",
+      "cooldown_seconds": 7,
+      "power": 0.42,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "fragment_de_cercle",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 10
+    }
+  ]
+}

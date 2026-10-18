@@ -1,0 +1,9 @@
+{
+  "id": "defense_de_verre",
+  "name": "Défense de Verre",
+  "description": "Une défense de sanglier devenue entièrement transparente. La lumière qui la traverse se décompose en cercles dorés.",
+  "category": "material",
+  "level": 9,
+  "base_value": 45,
+  "stack_size": 20
+}

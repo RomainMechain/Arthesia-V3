@@ -1,0 +1,21 @@
+{
+  "id": "pierres_taillees_enfouies",
+  "name": "Pierres Taillées Enfouies",
+  "description": "Des pierres à moitié enterrées le long du sentier, trop régulières pour être naturelles. En grattant la terre, on dégage leurs arêtes droites.",
+  "level": 2,
+  "profession_required": {
+    "profession_id": "archeologie",
+    "min_level": 1,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 4,
+  "yields": [
+    {
+      "item_id": "eclat_de_pierre_taillee",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 10
+    }
+  ]
+}

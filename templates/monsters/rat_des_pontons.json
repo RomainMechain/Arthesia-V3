@@ -1,0 +1,44 @@
+{
+  "id": "rat_des_pontons",
+  "name": "Rat des Pontons",
+  "description": "Un rat gras et trempé qui vit sous les planches du camp et ronge tout ce qui sent le poisson, filets compris.",
+  "level": 4,
+  "role": "normal",
+  "stats": {
+    "hp": 620,
+    "atk": 30,
+    "def": 21,
+    "agi": 12,
+    "int": 30,
+    "sag": 16
+  },
+  "moveset": [
+    {
+      "id": "morsure_crasseuse",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.21,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "rongement",
+      "damage_type": "physical",
+      "cooldown_seconds": 6,
+      "power": 0.36,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "dent_de_rat_des_pontons",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 10
+    }
+  ]
+}

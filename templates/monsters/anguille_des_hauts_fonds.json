@@ -1,0 +1,44 @@
+{
+  "id": "anguille_des_hauts_fonds",
+  "name": "Anguille des Hauts-Fonds",
+  "description": "Une anguille sombre qui remonte des eaux profondes jusqu'aux galets de la rive. Sa peau crépite d'une lueur dorée quand elle s'agite, comme si elle avait nagé trop près de quelque chose, là-bas, sous le lac.",
+  "level": 3,
+  "role": "normal",
+  "stats": {
+    "hp": 539,
+    "atk": 24,
+    "def": 18,
+    "agi": 10,
+    "int": 24,
+    "sag": 13
+  },
+  "moveset": [
+    {
+      "id": "morsure_glissante",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.15,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "decharge_doree",
+      "damage_type": "magical",
+      "cooldown_seconds": 5,
+      "power": 0.21,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "peau_d_anguille",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 10
+    }
+  ]
+}

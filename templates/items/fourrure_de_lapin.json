@@ -1,0 +1,9 @@
+{
+  "id": "fourrure_de_lapin",
+  "name": "Fourrure de Lapin",
+  "description": "Une petite fourrure douce, aux reflets dorés presque imperceptibles.",
+  "category": "material",
+  "level": 1,
+  "base_value": 5,
+  "stack_size": 20
+}

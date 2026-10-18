@@ -1,0 +1,44 @@
+{
+  "id": "sanglier_des_fougeres",
+  "name": "Sanglier des Fougères",
+  "description": "Un sanglier massif au pelage roussi, qui laboure les fougères dorées de ses défenses. Il charge tout ce qui bouge, sans jamais s'essouffler.",
+  "level": 4,
+  "role": "normal",
+  "stats": {
+    "hp": 700,
+    "atk": 29,
+    "def": 25,
+    "agi": 9,
+    "int": 30,
+    "sag": 16
+  },
+  "moveset": [
+    {
+      "id": "coup_de_boutoir",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.21,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "charge_furieuse",
+      "damage_type": "physical",
+      "cooldown_seconds": 7,
+      "power": 0.42,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "defense_de_sanglier_roux",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 10
+    }
+  ]
+}

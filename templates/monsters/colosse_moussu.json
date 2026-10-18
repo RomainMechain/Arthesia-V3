@@ -1,0 +1,44 @@
+{
+  "id": "colosse_moussu",
+  "name": "Colosse Moussu",
+  "description": "Une construction massive que la forêt a presque engloutie : de la mousse dans les articulations, des racines entre les plaques de pierre. Elle bouge encore, lentement, comme si elle finissait un geste commencé il y a des siècles.",
+  "level": 8,
+  "role": "normal",
+  "stats": {
+    "hp": 1220,
+    "atk": 50,
+    "def": 46,
+    "agi": 12,
+    "int": 52,
+    "sag": 27
+  },
+  "moveset": [
+    {
+      "id": "ecrasement",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.21,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "secousse_du_sol",
+      "damage_type": "physical",
+      "cooldown_seconds": 8,
+      "power": 0.48,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "pierre_moussue",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 10
+    }
+  ]
+}

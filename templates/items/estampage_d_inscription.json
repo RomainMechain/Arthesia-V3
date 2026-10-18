@@ -1,0 +1,9 @@
+{
+  "id": "estampage_d_inscription",
+  "name": "Estampage d'Inscription",
+  "description": "Un relevé d'inscription du seuil. On y lit, en partie : « Ici dorment ceux qui tiennent le matin. Que le Gardien ne s'éveille que si le cercle rompt. »",
+  "category": "material",
+  "level": 9,
+  "base_value": 45,
+  "stack_size": 20
+}

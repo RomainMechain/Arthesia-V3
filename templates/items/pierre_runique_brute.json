@@ -1,0 +1,9 @@
+{
+  "id": "pierre_runique_brute",
+  "name": "Pierre Runique Brute",
+  "description": "Un morceau de pierre claire veiné de lignes dorées. Les lignes continuent à l'intérieur quand on la brise.",
+  "category": "material",
+  "level": 7,
+  "base_value": 35,
+  "stack_size": 20
+}

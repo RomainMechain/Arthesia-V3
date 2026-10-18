@@ -1,0 +1,17 @@
+{
+  "id": "gilet_de_cire",
+  "name": "Gilet de Ciré",
+  "description": "Un gilet de toile enduite de cire, raide et imperméable, que les pêcheurs du camp portent par-dessus leur chemise.",
+  "category": "equipment",
+  "level": 5,
+  "base_value": 150,
+  "stack_size": 1,
+  "equipment": {
+    "slot": "chest",
+    "level_required": 5,
+    "stat_bonuses": {
+      "def": 4,
+      "hp": 38
+    }
+  }
+}

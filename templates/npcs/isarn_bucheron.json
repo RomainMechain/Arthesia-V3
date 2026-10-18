@@ -1,0 +1,11 @@
+{
+  "id": "isarn_bucheron",
+  "name": "Isarn",
+  "description": "Un bûcheron taciturne qui a monté son camp au pied des premiers chênes. Il abat les arbres morts, mais refuse de toucher à certains troncs, sans jamais expliquer lesquels ni pourquoi.",
+  "role": "Bûcheron",
+  "dialogues": [
+    "Ce bois ne pourrit pas. Je coupe des arbres tombés il y a cent ans, et ils sont aussi frais qu'hier.",
+    "Il y a des troncs que je ne touche pas. Tu les reconnaîtras : ceux dont l'écorce dessine des cercles.",
+    "Mon grand-père disait que la forêt était plus vieille que l'aube. Je ne sais même pas ce que ça veut dire."
+  ]
+}

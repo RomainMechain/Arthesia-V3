@@ -1,0 +1,25 @@
+{
+  "id": "peau_d_ambre",
+  "name": "Peau d'Ambre",
+  "description": "Les loups d'ambre portent sur eux un instant figé. À force de les combattre, un peu de cette résine semble avoir pris sur toi, et les coups s'y enlisent.",
+  "kind": "passive",
+  "unlock_condition": {
+    "type": "kill_count",
+    "monster_id": "loup_d_ambre",
+    "count": 40
+  },
+  "trigger": "always",
+  "condition": null,
+  "effects": [
+    {
+      "type": "stat_bonus",
+      "stat": "def",
+      "amount": 6
+    },
+    {
+      "type": "stat_bonus",
+      "stat": "hp",
+      "amount": 55
+    }
+  ]
+}

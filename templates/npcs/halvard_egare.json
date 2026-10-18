@@ -1,0 +1,11 @@
+{
+  "id": "halvard_egare",
+  "name": "Halvard",
+  "description": "Un homme en habits de chasseur d'un autre temps, assis contre une souche. Il dit être parti du village ce matin pour suivre un cerf blanc, et ne comprend pas pourquoi personne ne le cherche. Au village, on raconte qu'un Halvard a disparu dans la forêt du temps des grands-parents.",
+  "role": "Chasseur égaré",
+  "dialogues": [
+    "Je suis parti ce matin. Le soleil n'a pas bougé, alors ça ne peut pas faire longtemps, non ?",
+    "Le cerf s'est arrêté là-bas, dans la clairière. Je l'ai regardé longtemps. Je crois. Ensuite les loups sont arrivés.",
+    "Ma femme doit m'attendre au village. Tu pourrais lui dire que j'arrive ? Elle s'appelle Yvenne."
+  ]
+}

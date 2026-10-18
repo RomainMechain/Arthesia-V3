@@ -1,0 +1,50 @@
+{
+  "id": "gardien_de_colonne",
+  "name": "Gardien de Colonne",
+  "description": "Une statue adossée à chaque colonne de l'antichambre, les bras croisés sur la poitrine. Quand on passe trop près, elle décroise les bras.",
+  "level": 8,
+  "role": "normal",
+  "stats": {
+    "hp": 1150,
+    "atk": 51,
+    "def": 44,
+    "agi": 14,
+    "int": 52,
+    "sag": 27
+  },
+  "moveset": [
+    {
+      "id": "poing_de_colonne",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.24,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "onde_de_choc",
+      "damage_type": "physical",
+      "cooldown_seconds": 7,
+      "power": 0.48,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "eclat_de_colonne",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 8
+    },
+    {
+      "item_id": "or_pale",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 2
+    }
+  ]
+}

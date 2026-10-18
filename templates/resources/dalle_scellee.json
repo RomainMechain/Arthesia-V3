@@ -1,0 +1,21 @@
+{
+  "id": "dalle_scellee",
+  "name": "Dalle Scellée",
+  "description": "Une dalle de pierre polie, encastrée dans le sol d'une salle effondrée. Ses bords sont scellés par un métal qui n'a pas rouillé.",
+  "level": 9,
+  "profession_required": {
+    "profession_id": "archeologie",
+    "min_level": 5,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 6,
+  "yields": [
+    {
+      "item_id": "plaque_de_bronze_ancien",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 10
+    }
+  ]
+}

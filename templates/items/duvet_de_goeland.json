@@ -1,0 +1,9 @@
+{
+  "id": "duvet_de_goeland",
+  "name": "Duvet de Goéland",
+  "description": "Un duvet gris et épais, imprégné d'une odeur de sel.",
+  "category": "material",
+  "level": 5,
+  "base_value": 25,
+  "stack_size": 20
+}

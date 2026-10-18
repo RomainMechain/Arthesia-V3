@@ -1,0 +1,21 @@
+{
+  "id": "tronc_grave",
+  "name": "Tronc Gravé",
+  "description": "Un vieux tronc dont l'écorce porte des motifs trop réguliers pour être naturels : des cercles concentriques, des lignes qui se croisent à angle droit. On dirait qu'ils ont poussé avec l'arbre.",
+  "level": 6,
+  "profession_required": {
+    "profession_id": "bucheronnage",
+    "min_level": 3,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 5,
+  "yields": [
+    {
+      "item_id": "ecorce_aux_motifs",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 10
+    }
+  ]
+}

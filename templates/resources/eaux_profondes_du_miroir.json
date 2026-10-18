@@ -1,0 +1,27 @@
+{
+  "id": "eaux_profondes_du_miroir",
+  "name": "Eaux Profondes du Miroir",
+  "description": "Là où le lac devient un miroir, la ligne s'enfonce sans jamais toucher le fond. Ce qui mord vient de très loin en dessous.",
+  "level": 5,
+  "profession_required": {
+    "profession_id": "peche",
+    "min_level": 3,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 5,
+  "yields": [
+    {
+      "item_id": "sandre_dore",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 10
+    },
+    {
+      "item_id": "chair_de_carpe",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 4
+    }
+  ]
+}

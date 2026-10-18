@@ -1,0 +1,21 @@
+{
+  "id": "racine_doree",
+  "name": "Racine Dorée",
+  "description": "Une racine noueuse affleurant sous les fougères, parcourue de fines veines dorées qui pulsent faiblement au même rythme que la lumière de l'étage.",
+  "level": 3,
+  "profession_required": {
+    "profession_id": "herboristerie",
+    "min_level": 2,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 4,
+  "yields": [
+    {
+      "item_id": "racine_doree_recoltee",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 10
+    }
+  ]
+}

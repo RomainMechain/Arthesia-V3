@@ -1,0 +1,9 @@
+{
+  "id": "griffe_d_ours_moussu",
+  "name": "Griffe d'Ours Moussu",
+  "description": "Une griffe noire et épaisse, encore couverte d'une fine couche de mousse verte.",
+  "category": "material",
+  "level": 6,
+  "base_value": 30,
+  "stack_size": 20
+}

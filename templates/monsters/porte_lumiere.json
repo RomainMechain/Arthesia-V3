@@ -1,0 +1,44 @@
+{
+  "id": "porte_lumiere",
+  "name": "Porte-Lumière",
+  "description": "Une construction élancée qui porte à bout de bras un prisme où la lumière de l'aube se concentre jusqu'à brûler. Elle marche lentement, de colonne en colonne, comme si elle rallumait quelque chose.",
+  "level": 10,
+  "role": "normal",
+  "stats": {
+    "hp": 1350,
+    "atk": 62,
+    "def": 48,
+    "agi": 20,
+    "int": 66,
+    "sag": 32
+  },
+  "moveset": [
+    {
+      "id": "coup_de_prisme",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.24,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "rayon_d_aube",
+      "damage_type": "magical",
+      "cooldown_seconds": 7,
+      "power": 0.48,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "prisme_d_aube",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 10
+    }
+  ]
+}

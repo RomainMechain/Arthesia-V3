@@ -1,0 +1,29 @@
+{
+  "id": "toile_doree",
+  "name": "Toile Dorée",
+  "description": "Tu as appris des tisseuses à jeter un fil de lumière qui s'enroule autour de l'ennemi et freine chacun de ses gestes.",
+  "kind": "active",
+  "unlock_condition": {
+    "type": "kill_count",
+    "monster_id": "tisseuse_doree",
+    "count": 12
+  },
+  "damage_type": "magical",
+  "cooldown_seconds": 6,
+  "mana_cost": 21,
+  "telegraph_seconds": 0,
+  "avoidable_by": null,
+  "effects": [
+    {
+      "type": "damage",
+      "power": 0.9
+    },
+    {
+      "type": "debuff",
+      "stat": "agi",
+      "amount_percent": 20,
+      "duration_seconds": 10,
+      "target": "enemy"
+    }
+  ]
+}

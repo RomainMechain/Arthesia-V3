@@ -1,0 +1,56 @@
+{
+  "id": "automate_sans_visage",
+  "name": "Automate sans Visage",
+  "description": "Une silhouette de bronze aux proportions humaines, mais lisse là où devrait se trouver un visage. Il patrouille dans les salles les plus profondes et s'incline devant chaque rune qu'il croise, avant de reprendre sa ronde.",
+  "level": 9,
+  "role": "normal",
+  "stats": {
+    "hp": 1250,
+    "atk": 58,
+    "def": 46,
+    "agi": 18,
+    "int": 58,
+    "sag": 30
+  },
+  "moveset": [
+    {
+      "id": "lame_de_bras",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.21,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "rayon_runique",
+      "damage_type": "magical",
+      "cooldown_seconds": 6,
+      "power": 0.36,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "noyau_d_automate",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 6
+    },
+    {
+      "item_id": "engrenage_de_bronze",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 4
+    },
+    {
+      "item_id": "fragment_rune_aube",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 1
+    }
+  ]
+}

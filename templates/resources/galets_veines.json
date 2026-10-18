@@ -1,0 +1,21 @@
+{
+  "id": "galets_veines",
+  "name": "Galets Veinés",
+  "description": "Des galets pâles roulés sur la rive, striés de veines plus sombres. Certains sont assez durs pour qu'on les taille en outils.",
+  "level": 2,
+  "profession_required": {
+    "profession_id": "minage",
+    "min_level": 1,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 4,
+  "yields": [
+    {
+      "item_id": "galet_veine",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 10
+    }
+  ]
+}

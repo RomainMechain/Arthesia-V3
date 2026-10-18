@@ -1,0 +1,21 @@
+{
+  "id": "frappe",
+  "name": "Frappe",
+  "description": "Un coup franc, porté de toute sa force. Le premier geste que la Tour apprend à ceux qu'elle marque.",
+  "kind": "active",
+  "unlock_condition": {
+    "type": "level",
+    "min": 1
+  },
+  "damage_type": "physical",
+  "cooldown_seconds": 6,
+  "mana_cost": 9,
+  "telegraph_seconds": 0,
+  "avoidable_by": null,
+  "effects": [
+    {
+      "type": "damage",
+      "power": 1.19
+    }
+  ]
+}

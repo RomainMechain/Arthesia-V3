@@ -1,0 +1,59 @@
+{
+  "id": "veilleur_d_ecorce",
+  "name": "Veilleur d'Écorce",
+  "description": "Ce qu'on prenait pour un chêne mort se déplie lentement, dans un craquement de bois sec. Sous l'écorce fendue, des lignes droites et des cercles parfaits luisent d'une lueur dorée, la même que celle de l'aube. Les anciens du village racontent qu'un arbre veille au cœur de la forêt et qu'il se réveille quand on y verse trop de sang. Personne ne sait qui l'a planté là, ni ce qu'il garde. Mais ses racines s'enfoncent bien plus profond que celles d'un arbre, et quand il frappe le sol, on sent la pierre vibrer en dessous.",
+  "level": 6,
+  "role": "elite",
+  "stats": {
+    "hp": 1162,
+    "atk": 45,
+    "def": 39,
+    "agi": 15,
+    "int": 45,
+    "sag": 21
+  },
+  "moveset": [
+    {
+      "id": "branche_fouet",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.27,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "racines_etouffantes",
+      "damage_type": "physical",
+      "cooldown_seconds": 7,
+      "power": 0.54,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "pulsation_runique",
+      "damage_type": "magical",
+      "cooldown_seconds": 5,
+      "power": 0.385,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "ecorce_aux_motifs",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 6
+    },
+    {
+      "item_id": "coeur_de_seve_doree",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 2
+    }
+  ]
+}

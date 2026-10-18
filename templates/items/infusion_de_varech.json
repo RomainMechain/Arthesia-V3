@@ -1,0 +1,14 @@
+{
+  "id": "infusion_de_varech",
+  "name": "Infusion de Varech",
+  "description": "Une infusion verdâtre et salée, amère à boire, qui éclaircit pourtant l'esprit comme une gorgée d'eau froide.",
+  "category": "consumable",
+  "level": 5,
+  "base_value": 75,
+  "stack_size": 10,
+  "consumable": {
+    "effect_type": "restore_mana",
+    "amount": 46,
+    "duration_seconds": 0
+  }
+}

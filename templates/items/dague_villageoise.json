@@ -1,0 +1,16 @@
+{
+  "id": "dague_villageoise",
+  "name": "Dague Villageoise",
+  "description": "Une petite dague simple, forgée par le forgeron local pour la chasse et la défense de base, rien de plus.",
+  "category": "equipment",
+  "level": 1,
+  "base_value": 30,
+  "stack_size": 1,
+  "equipment": {
+    "slot": "weapon",
+    "level_required": 1,
+    "stat_bonuses": {
+      "atk": 1.4
+    }
+  }
+}

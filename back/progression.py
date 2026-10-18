@@ -19,7 +19,7 @@ from firebase_admin import firestore
 try:
     from .config import TEMPLATES_DIR
     from .content_store import find_entry, load_all_floor_skeletons, load_static_zone_content, load_template
-    from .balance import DEFEAT_HP_SHARE, defeat_penalty
+    from .balance import DEFEAT_HP_SHARE, MAX_ACTIVE_SKILL_SLOTS, MAX_PASSIVE_SKILL_SLOTS, defeat_penalty
     from .database import db
     from .game_rules import (
         advance_quest_objectives, apply_player_level_ups, compute_final_stats, compute_kill_xp, defeated_entry_key,
@@ -30,7 +30,7 @@ try:
 except ImportError:
     from config import TEMPLATES_DIR
     from content_store import find_entry, load_all_floor_skeletons, load_static_zone_content, load_template
-    from balance import DEFEAT_HP_SHARE, defeat_penalty
+    from balance import DEFEAT_HP_SHARE, MAX_ACTIVE_SKILL_SLOTS, MAX_PASSIVE_SKILL_SLOTS, defeat_penalty
     from database import db
     from game_rules import (
         advance_quest_objectives, apply_player_level_ups, compute_final_stats, compute_kill_xp, defeated_entry_key,
@@ -96,11 +96,26 @@ def _check_and_apply_unlocks_tx(transaction, player_id: str) -> list[str]:
                 player[player_key]["unlocked"].append(template["id"])
                 player["unlocks"][unlock_key].append(template["id"])
                 newly_unlocked.append(f"{unlock_key[:-1]}:{template['id']}")
+                if folder == "skills":
+                    auto_equip_skill(player, template)
 
     # Une seule écriture est faite après avoir évalué toutes les catégories.
     if newly_unlocked:
         save_player(player_id, player, transaction)
     return newly_unlocked
+
+
+def auto_equip_skill(player: dict, skill: dict) -> None:
+    """Équipe une compétence qui vient d'être débloquée s'il reste un
+    emplacement libre : un nouveau personnage commence ainsi avec ses
+    compétences de départ prêtes à l'emploi. Le joueur garde la main pour
+    changer son kit ensuite."""
+    is_active = skill.get("kind") == "active"
+    key = "equipped_active" if is_active else "equipped_passive"
+    limit = MAX_ACTIVE_SKILL_SLOTS if is_active else MAX_PASSIVE_SKILL_SLOTS
+    equipped = player["skills"][key]
+    if skill["id"] not in equipped and len(equipped) < limit:
+        equipped.append(skill["id"])
 
 
 def apply_monster_kill_rewards(player_id: str, zone_id: str, entry_id: str, player_hp: float | None = None) -> dict:

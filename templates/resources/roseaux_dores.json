@@ -1,0 +1,21 @@
+{
+  "id": "roseaux_dores",
+  "name": "Roseaux Dorés",
+  "description": "De hauts roseaux aux tiges pâles, que la lumière de l'aube teinte d'or jusqu'à la racine. Ils ploient sous une brise que personne ne sent.",
+  "level": 1,
+  "profession_required": {
+    "profession_id": "herboristerie",
+    "min_level": 1,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 3,
+  "yields": [
+    {
+      "item_id": "fibre_de_roseau_dore",
+      "quantity_min": 1,
+      "quantity_max": 3,
+      "weight": 10
+    }
+  ]
+}

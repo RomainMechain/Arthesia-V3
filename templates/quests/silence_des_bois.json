@@ -1,0 +1,23 @@
+{
+  "id": "silence_des_bois",
+  "name": "Le Silence des Bois",
+  "description": "Mère Yvenne s'inquiète d'un calme anormal dans la forêt voisine, où rôdent des loups à la fourrure étrangement dorée. Elle vous demande d'en réduire le nombre.",
+  "objectives": [
+    {
+      "type": "kill_count",
+      "monster_id": "loup_dore",
+      "count": 6
+    }
+  ],
+  "rewards": {
+    "xp": 3,
+    "gold": 6,
+    "items": [
+      {
+        "item_id": "poil_de_loup_dore",
+        "quantity": 1
+      }
+    ]
+  },
+  "repeatable": false
+}

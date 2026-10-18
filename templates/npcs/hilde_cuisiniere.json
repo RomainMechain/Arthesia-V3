@@ -1,0 +1,11 @@
+{
+  "id": "hilde_cuisiniere",
+  "name": "Hilde",
+  "description": "La cuisinière du camp, qui fait tourner une marmite fumante devant la plus grande cabane. Elle nourrit tout le monde et écoute tout ce qui se dit autour du feu.",
+  "role": "Cuisinière du camp",
+  "dialogues": [
+    "Mange d'abord, tu poseras tes questions après. Ici, on ne parle pas du lac le ventre vide.",
+    "Le poisson ne se gâte jamais, dans ce camp. Je devrais m'en réjouir. Ça me met mal à l'aise.",
+    "Si tu croises Sorne, dis-lui de dormir un peu. Il guette l'eau comme si elle allait lui répondre."
+  ]
+}

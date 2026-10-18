@@ -1,0 +1,11 @@
+{
+  "id": "vesna_traqueuse",
+  "name": "Vesna",
+  "description": "Une traqueuse aux yeux perçants, vêtue de cuir couleur de feuilles mortes. Elle chasse dans la forêt depuis des années et suit depuis peu une piste qu'elle ne parvient pas à rattraper.",
+  "role": "Traqueuse",
+  "dialogues": [
+    "Un cerf blanc. Trop blanc. Ses traces ne s'enfoncent pas dans la boue comme celles d'une vraie bête.",
+    "Toutes les pistes de cette forêt finissent par tourner en rond. La sienne, elle, va tout droit.",
+    "Les ours ne gardaient pas les sentiers, avant. Maintenant, ils se postent tous du même côté de la forêt."
+  ]
+}

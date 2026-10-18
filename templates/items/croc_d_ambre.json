@@ -1,0 +1,9 @@
+{
+  "id": "croc_d_ambre",
+  "name": "Croc d'Ambre",
+  "description": "Un croc de loup pris dans une gangue d'ambre translucide. Il est tiède, comme s'il venait d'être arraché.",
+  "category": "material",
+  "level": 6,
+  "base_value": 30,
+  "stack_size": 20
+}

@@ -1,0 +1,28 @@
+{
+  "id": "les_filets_d_ober",
+  "name": "Les Filets d'Ober",
+  "description": "Ober ne laisse personne approcher l'eau du milieu sans une amulette tressée de sa main. Mais ses filets sont rongés par les rats des pontons, et il lui faut de la fibre de roseau doré pour les réparer. Aide-le, et il te fera une amulette.",
+  "objectives": [
+    {
+      "type": "kill_count",
+      "monster_id": "rat_des_pontons",
+      "count": 12
+    },
+    {
+      "type": "deliver_item",
+      "item_id": "fibre_de_roseau_dore",
+      "count": 6
+    }
+  ],
+  "rewards": {
+    "xp": 12,
+    "gold": 60,
+    "items": [
+      {
+        "item_id": "amulette_pecheur",
+        "quantity": 1
+      }
+    ]
+  },
+  "repeatable": false
+}

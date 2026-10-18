@@ -1,0 +1,11 @@
+{
+  "id": "yvenne_ancienne",
+  "name": "Mère Yvenne",
+  "description": "La doyenne du village, assise presque toujours au même endroit près du puits central. Ses yeux pâles semblent parfois fixer un point au-delà des toits, comme si elle écoutait quelque chose que personne d'autre n'entend.",
+  "role": "Ancienne du village",
+  "dialogues": [
+    "L'aube a toujours été ainsi, enfant. Depuis ma naissance, depuis celle de ma mère. On ne questionne pas une bénédiction.",
+    "Parfois le silence de la forêt me pèse plus que le froid ne m'a jamais pesé ailleurs.",
+    "Il y a des motifs, sous l'écorce des vieux arbres, qui ne ressemblent à rien de naturel. Mais qui suis-je pour m'en inquiéter."
+  ]
+}

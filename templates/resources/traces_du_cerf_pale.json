@@ -1,0 +1,21 @@
+{
+  "id": "traces_du_cerf_pale",
+  "name": "Traces du Cerf Pâle",
+  "description": "Des empreintes nettes dans la mousse, et quelques poils blancs accrochés aux ronces. Elles mènent toujours plus loin sous les arbres, mais ne reviennent jamais. N'importe qui peut les suivre.",
+  "level": 2,
+  "profession_required": {
+    "profession_id": "chasse",
+    "min_level": 1,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 3,
+  "yields": [
+    {
+      "item_id": "poil_de_cerf_pale",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 10
+    }
+  ]
+}

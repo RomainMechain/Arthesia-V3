@@ -1,0 +1,266 @@
+{
+  "id": "sous_bois_perdu",
+  "name": "Sous-Bois Oublié",
+  "type": "danger",
+  "position": {
+    "x": 60,
+    "y": 22
+  },
+  "visibility": "visible",
+  "description": "Ici, même la lumière éternelle semble hésiter. Les bruits de la forêt changent de nature, et certaines silhouettes bougent d'une façon qui n'appartient à aucune créature naturelle.",
+  "unlock_condition": {
+    "type": "quest",
+    "quest_id": "piste_du_cerf_blanc",
+    "state": "completed"
+  },
+  "hint": "Seuls ceux qui ont suivi la piste du cerf pâle trouvent le chemin du sous-bois perdu.",
+  "generation_brief": {
+    "level_range": [
+      6,
+      9
+    ],
+    "difficulty_tier": "coeur",
+    "tags": [
+      "foret_profonde",
+      "combat",
+      "alteration",
+      "danger"
+    ],
+    "content_intent": "Zone de combat plus intense contre des créatures visiblement altérées par l'aube perpétuelle ; ambiance oppressante malgré la lumière dorée constante.",
+    "provides": []
+  },
+  "entries": [
+    {
+      "id": "loup_ambre_spawn",
+      "template_type": "monster",
+      "template_id": "loup_d_ambre",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 45,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "loup_ambre_spawn_2",
+      "template_type": "monster",
+      "template_id": "loup_d_ambre",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 45,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "chouette_spawn",
+      "template_type": "monster",
+      "template_id": "chouette_sans_ombre",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 60,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "tisseuse_spawn",
+      "template_type": "monster",
+      "template_id": "tisseuse_doree",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 60,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "sanglier_verre_spawn",
+      "template_type": "monster",
+      "template_id": "sanglier_aux_defenses_de_verre",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 60,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "cerf_pale_spawn",
+      "template_type": "monster",
+      "template_id": "cerf_pale",
+      "state_scope": "shared",
+      "rarity": "very_rare",
+      "group_required": true,
+      "spawn": {
+        "mode": "conditional",
+        "cooldown_seconds": 600,
+        "stock": null,
+        "condition": {
+          "type": "kill_count",
+          "monster_id": "loup_d_ambre",
+          "count": 40
+        },
+        "visibility_when_locked": "hinted",
+        "hint": "Entre les troncs, une silhouette blanche passe parfois, trop loin pour qu'on l'atteigne. Les loups d'ambre semblent la garder."
+      }
+    },
+    {
+      "id": "ronces_noeud",
+      "template_type": "resource",
+      "template_id": "ronces_dorees",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 90,
+        "stock": 4,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "if_noeud",
+      "template_type": "resource",
+      "template_id": "if_millenaire",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 90,
+        "stock": 4,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "ambre_noeud",
+      "template_type": "resource",
+      "template_id": "coulee_d_ambre",
+      "state_scope": "shared",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 240,
+        "stock": 2,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "halvard_presence",
+      "template_type": "npc",
+      "template_id": "halvard_egare",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_loups_ambre",
+      "template_type": "quest_giver",
+      "template_id": "les_loups_d_ambre",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_tisseuses",
+      "template_type": "quest_giver",
+      "template_id": "les_fils_de_lumiere",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_halvard",
+      "template_type": "quest_giver",
+      "template_id": "le_matin_d_halvard",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_defenses_verre",
+      "template_type": "quest_giver",
+      "template_id": "des_defenses_de_verre",
+      "state_scope": "per_player",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "conditional",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": {
+          "type": "quest",
+          "quest_id": "le_matin_d_halvard",
+          "state": "completed"
+        },
+        "visibility_when_locked": "hinted",
+        "hint": "Halvard a encore quelque chose à demander, mais il ne le fera qu'à quelqu'un qui l'a déjà aidé."
+      }
+    }
+  ]
+}

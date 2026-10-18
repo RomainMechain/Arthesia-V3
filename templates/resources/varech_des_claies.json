@@ -1,0 +1,21 @@
+{
+  "id": "varech_des_claies",
+  "name": "Varech des Claies",
+  "description": "Des algues brunes remontées dans les filets et mises à sécher sur des claies. Une fois sèches, elles gardent une odeur de pierre mouillée.",
+  "level": 5,
+  "profession_required": {
+    "profession_id": "herboristerie",
+    "min_level": 3,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 3,
+  "yields": [
+    {
+      "item_id": "varech_seche",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 10
+    }
+  ]
+}

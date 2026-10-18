@@ -1,0 +1,21 @@
+{
+  "id": "terriers_de_lapins",
+  "name": "Terriers de Lapins",
+  "description": "Des terriers creusés sous les fougères, où les lapins dorés se réfugient. Avec un peu de patience, on y pose un collet.",
+  "level": 1,
+  "profession_required": {
+    "profession_id": "chasse",
+    "min_level": 1,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 4,
+  "yields": [
+    {
+      "item_id": "fourrure_de_lapin",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 10
+    }
+  ]
+}

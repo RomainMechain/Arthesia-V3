@@ -1,0 +1,23 @@
+{
+  "id": "marche_equitable",
+  "name": "Un Marché Équitable",
+  "description": "Aldric manque de champignons dorés pour ses plats. Il vous demande de lui en rapporter quelques-uns, cueillis près de l'orée de la forêt.",
+  "objectives": [
+    {
+      "type": "deliver_item",
+      "item_id": "champignon_dore",
+      "count": 4
+    }
+  ],
+  "rewards": {
+    "xp": 1,
+    "gold": 5,
+    "items": [
+      {
+        "item_id": "tisane_apaisante",
+        "quantity": 1
+      }
+    ]
+  },
+  "repeatable": false
+}

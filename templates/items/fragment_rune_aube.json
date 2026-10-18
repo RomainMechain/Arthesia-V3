@@ -1,0 +1,9 @@
+{
+  "id": "fragment_rune_aube",
+  "name": "Fragment de Rune de l'Aube",
+  "description": "Un éclat de pierre gravé d'un cercle coupé par une ligne droite. Il est encore tiède, et sa lueur grandit quand on le tourne vers l'est.",
+  "category": "material",
+  "level": 7,
+  "base_value": 35,
+  "stack_size": 10
+}

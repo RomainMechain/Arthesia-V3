@@ -1,0 +1,9 @@
+{
+  "id": "poil_de_cerf_pale",
+  "name": "Poil de Cerf Pâle",
+  "description": "Quelques poils blancs accrochés aux ronces, d'une blancheur trop pure pour une bête de la forêt.",
+  "category": "material",
+  "level": 2,
+  "base_value": 10,
+  "stack_size": 20
+}

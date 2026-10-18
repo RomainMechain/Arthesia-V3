@@ -1,0 +1,44 @@
+{
+  "id": "brochet_miroir",
+  "name": "Brochet Miroir",
+  "description": "Un brochet aux flancs si lisses qu'ils reflètent le ciel doré. On ne le voit qu'au dernier moment, quand le reflet se brise et que les dents apparaissent.",
+  "level": 5,
+  "role": "normal",
+  "stats": {
+    "hp": 740,
+    "atk": 36,
+    "def": 26,
+    "agi": 14,
+    "int": 35,
+    "sag": 19
+  },
+  "moveset": [
+    {
+      "id": "morsure_effilee",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.21,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "eclat_de_reflet",
+      "damage_type": "magical",
+      "cooldown_seconds": 6,
+      "power": 0.36,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "dent_de_brochet",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 10
+    }
+  ]
+}

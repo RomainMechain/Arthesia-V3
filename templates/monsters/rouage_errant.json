@@ -1,0 +1,44 @@
+{
+  "id": "rouage_errant",
+  "name": "Rouage Errant",
+  "description": "Une grande roue de bronze qui roule seule entre les colonnes, suivant toujours le même tracé. Quand quelque chose se met en travers, elle s'arrête, pivote, et libère un éclair doré.",
+  "level": 7,
+  "role": "normal",
+  "stats": {
+    "hp": 980,
+    "atk": 47,
+    "def": 36,
+    "agi": 16,
+    "int": 47,
+    "sag": 24
+  },
+  "moveset": [
+    {
+      "id": "tranchant_de_bronze",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.21,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "decharge_doree",
+      "damage_type": "magical",
+      "cooldown_seconds": 5,
+      "power": 0.3,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "engrenage_de_bronze",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 10
+    }
+  ]
+}

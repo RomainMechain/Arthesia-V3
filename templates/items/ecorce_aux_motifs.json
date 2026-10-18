@@ -1,0 +1,9 @@
+{
+  "id": "ecorce_aux_motifs",
+  "name": "Écorce aux Motifs",
+  "description": "Un morceau d'écorce gravé de cercles et de lignes droites. Les motifs sont tièdes au toucher et continuent sous l'écorce, jusque dans le bois.",
+  "category": "material",
+  "level": 6,
+  "base_value": 30,
+  "stack_size": 20
+}

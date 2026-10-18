@@ -1,0 +1,23 @@
+{
+  "id": "pinces_sur_les_galets",
+  "name": "Des Pinces sur les Galets",
+  "description": "Les crabes des galets se sont multipliés sur la rive et attaquent les barques amarrées. Maëlis te demande d'en chasser assez pour que les pêcheurs puissent de nouveau mettre pied à terre.",
+  "objectives": [
+    {
+      "type": "kill_count",
+      "monster_id": "crabe_des_galets",
+      "count": 8
+    }
+  ],
+  "rewards": {
+    "xp": 4,
+    "gold": 12,
+    "items": [
+      {
+        "item_id": "soupe_de_crabe",
+        "quantity": 2
+      }
+    ]
+  },
+  "repeatable": false
+}

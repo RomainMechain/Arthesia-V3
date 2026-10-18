@@ -1,0 +1,9 @@
+{
+  "id": "ablette_doree",
+  "name": "Ablette Dorée",
+  "description": "Un petit poisson aux reflets dorés, pêché par dizaines dans l'anse. Il a toujours la même taille, quelle que soit la saison.",
+  "category": "material",
+  "level": 1,
+  "base_value": 5,
+  "stack_size": 20
+}

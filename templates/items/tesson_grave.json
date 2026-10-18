@@ -1,0 +1,9 @@
+{
+  "id": "tesson_grave",
+  "name": "Tesson Gravé",
+  "description": "Un fragment de céramique ou de pierre couvert de signes réguliers. Pris seul, il ne veut rien dire.",
+  "category": "material",
+  "level": 6,
+  "base_value": 30,
+  "stack_size": 20
+}

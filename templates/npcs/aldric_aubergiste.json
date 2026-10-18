@@ -1,0 +1,11 @@
+{
+  "id": "aldric_aubergiste",
+  "name": "Aldric",
+  "description": "Le tenancier de l'unique auberge de Val-de-l'Aube, un homme rond aux mains calleuses, toujours occupé à essuyer des chopes qui ne se salissent jamais bien vite dans ce village si tranquille.",
+  "role": "Aubergiste",
+  "dialogues": [
+    "Entrez, entrez ! La lumière ne faiblira pas, autant profiter d'un bon repas.",
+    "On dit que certains Marqués montent plus haut dans la Tour. Moi, je ne quitterais cette aube dorée pour rien au monde.",
+    "Si vous croisez Garin près de la rive, dites-lui que son ragoût lui manque à la taverne."
+  ]
+}

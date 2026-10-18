@@ -1,0 +1,9 @@
+{
+  "id": "larme_d_aube",
+  "name": "Larme d'Aube",
+  "description": "Une goutte de lumière solidifiée, prélevée sur le Cerf Pâle. Elle ne refroidit jamais, et dans le noir, elle éclaire exactement comme l'aube de l'étage.",
+  "category": "material",
+  "level": 9,
+  "base_value": 45,
+  "stack_size": 10
+}

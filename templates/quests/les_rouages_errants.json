@@ -1,0 +1,23 @@
+{
+  "id": "les_rouages_errants",
+  "name": "Les Rouages Errants",
+  "description": "Les rouages de bronze roulent sans fin entre les colonnes, et leurs éclairs empêchent Ombeline d'approcher les inscriptions. Arrête-en quelques-uns.",
+  "objectives": [
+    {
+      "type": "kill_count",
+      "monster_id": "rouage_errant",
+      "count": 8
+    }
+  ],
+  "rewards": {
+    "xp": 11,
+    "gold": 42,
+    "items": [
+      {
+        "item_id": "elixir_de_racine",
+        "quantity": 2
+      }
+    ]
+  },
+  "repeatable": false
+}

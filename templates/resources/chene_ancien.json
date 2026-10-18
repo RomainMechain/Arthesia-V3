@@ -1,0 +1,21 @@
+{
+  "id": "chene_ancien",
+  "name": "Chêne Ancien",
+  "description": "Un chêne au tronc si large que trois hommes ne suffiraient pas à l'entourer. Son bois est dense, presque dur comme de la pierre.",
+  "level": 4,
+  "profession_required": {
+    "profession_id": "bucheronnage",
+    "min_level": 2,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 5,
+  "yields": [
+    {
+      "item_id": "bois_de_chene_ancien",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 10
+    }
+  ]
+}

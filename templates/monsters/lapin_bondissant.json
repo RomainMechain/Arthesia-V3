@@ -1,0 +1,44 @@
+{
+  "id": "lapin_bondissant",
+  "name": "Lapin Bondissant",
+  "description": "Un lapin aux yeux clairs qui détale au moindre bruit, sa fourrure teintée d'un reflet doré presque imperceptible sous la brume du sentier.",
+  "level": 1,
+  "role": "normal",
+  "stats": {
+    "hp": 270,
+    "atk": 12,
+    "def": 9,
+    "agi": 6,
+    "int": 12,
+    "sag": 7
+  },
+  "moveset": [
+    {
+      "id": "coup_de_patte",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.15,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "ruade_apeuree",
+      "damage_type": "physical",
+      "cooldown_seconds": 7,
+      "power": 0.29,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "patte_de_lapin",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 10
+    }
+  ]
+}

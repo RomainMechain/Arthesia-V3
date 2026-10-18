@@ -374,7 +374,8 @@ def quest_progress_view(quest_def: dict, progress: dict, player: dict) -> dict:
     """Progression lisible d'une quête : objectifs (actuel / requis) et ``ready``.
 
     Les objectifs ``kill_count`` et ``gather_count`` utilisent les compteurs de
-    la quête ; ``deliver_item`` compte les objets présents dans l'inventaire.
+    la quête ; ``deliver_item`` compte les objets présents dans l'inventaire ;
+    ``level`` et ``zone`` se lisent sur l'état du joueur.
     ``ready`` vaut vrai quand la quête active peut être rendue.
     """
     counters = progress.get("objectives_progress", [])
@@ -383,6 +384,11 @@ def quest_progress_view(quest_def: dict, progress: dict, player: dict) -> dict:
         required = objective.get("count", 1)
         if objective["type"] == "deliver_item":
             current = player["inventory"].get(objective["item_id"], 0)
+        elif objective["type"] == "level":
+            required = objective.get("min", 1)
+            current = player.get("level", 1)
+        elif objective["type"] == "zone":
+            current = 1 if objective.get("zone_id") in player["unlocks"]["zones"] else 0
         else:
             current = counters[index]["current_count"] if index < len(counters) else 0
         objectives.append({"current": min(current, required), "count": required, "done": current >= required})

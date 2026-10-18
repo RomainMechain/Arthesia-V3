@@ -1,0 +1,50 @@
+{
+  "id": "carpe_aux_yeux_vides",
+  "name": "Carpe aux Yeux Vides",
+  "description": "Une carpe énorme aux écailles ternes, dont les yeux blancs ne suivent rien. Les carpes du miroir nagent toutes dans le même sens, en cercles lents, et n'en sortent que pour attaquer.",
+  "level": 4,
+  "role": "normal",
+  "stats": {
+    "hp": 680,
+    "atk": 29,
+    "def": 24,
+    "agi": 9,
+    "int": 30,
+    "sag": 16
+  },
+  "moveset": [
+    {
+      "id": "happement_sourd",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.21,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "remous_circulaire",
+      "damage_type": "physical",
+      "cooldown_seconds": 7,
+      "power": 0.42,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "ecaille_vibrante",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 6
+    },
+    {
+      "item_id": "chair_de_carpe",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 4
+    }
+  ]
+}

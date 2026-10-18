@@ -1,0 +1,241 @@
+{
+  "id": "sentier_lisiere",
+  "name": "Sentier de la Lisière",
+  "type": "wilderness",
+  "position": {
+    "x": 30,
+    "y": 32
+  },
+  "visibility": "visible",
+  "description": "Un sentier de terre battue s'enfonce doucement sous les premiers arbres, la brume dorée s'accrochant aux fougères. On entend au loin le bruissement d'une vie discrète.",
+  "unlock_condition": {
+    "type": "zone",
+    "zone_id": "village_aube",
+    "state": "unlocked"
+  },
+  "hint": "Un chemin couvert de brume part vers les arbres, juste à la sortie du village.",
+  "generation_brief": {
+    "level_range": [
+      1,
+      3
+    ],
+    "difficulty_tier": "entree",
+    "tags": [
+      "transition",
+      "foret",
+      "calme"
+    ],
+    "content_intent": "Petite zone de transition avec faune douce (lapins, oiseaux) et quelques ressources de cueillette basique, pour habituer le joueur au combat léger.",
+    "provides": []
+  },
+  "entries": [
+    {
+      "id": "lapin_spawn",
+      "template_type": "monster",
+      "template_id": "lapin_bondissant",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 45,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "oiseau_spawn",
+      "template_type": "monster",
+      "template_id": "oiseau_chanteur",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 45,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "loup_dore_spawn",
+      "template_type": "monster",
+      "template_id": "loup_dore",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 60,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "loup_dore_spawn_2",
+      "template_type": "monster",
+      "template_id": "loup_dore",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 60,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "renardeau_spawn",
+      "template_type": "monster",
+      "template_id": "renardeau_curieux",
+      "state_scope": "shared",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 150,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "mousse_noeud",
+      "template_type": "resource",
+      "template_id": "mousse_lumineuse",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 90,
+        "stock": 4,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "champignons_noeud",
+      "template_type": "resource",
+      "template_id": "champignons_lisiere",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 90,
+        "stock": 4,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "racine_noeud",
+      "template_type": "resource",
+      "template_id": "racine_doree",
+      "state_scope": "shared",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 300,
+        "stock": 1,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "aurin_presence",
+      "template_type": "npc",
+      "template_id": "aurin_ermite",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "aurin_quete",
+      "template_type": "quest_giver",
+      "template_id": "veille_silencieuse",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "bois_mort_de_lisiere_noeud",
+      "template_type": "resource",
+      "template_id": "bois_mort_de_lisiere",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 90,
+        "stock": 4,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "pierres_taillees_enfouies_noeud",
+      "template_type": "resource",
+      "template_id": "pierres_taillees_enfouies",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 90,
+        "stock": 4,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "terriers_de_lapins_noeud",
+      "template_type": "resource",
+      "template_id": "terriers_de_lapins",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 90,
+        "stock": 4,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    }
+  ]
+}

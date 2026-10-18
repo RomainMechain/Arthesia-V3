@@ -1,0 +1,28 @@
+{
+  "id": "le_mur_effondre",
+  "name": "Le Mur Effondré",
+  "description": "Derrière un mur effondré, Ombeline a aperçu une salle dont les runes brillent encore. Mais les sentinelles de pierre en gardent l'accès. Abats-les, et rapporte-lui les éclats de rune qu'elles portent : elle pense pouvoir s'en servir pour ouvrir la salle.",
+  "objectives": [
+    {
+      "type": "kill_count",
+      "monster_id": "sentinelle_de_pierre",
+      "count": 8
+    },
+    {
+      "type": "deliver_item",
+      "item_id": "eclat_de_rune_eteinte",
+      "count": 3
+    }
+  ],
+  "rewards": {
+    "xp": 22,
+    "gold": 105,
+    "items": [
+      {
+        "item_id": "fragment_rune_aube",
+        "quantity": 1
+      }
+    ]
+  },
+  "repeatable": false
+}

@@ -1,0 +1,18 @@
+{
+  "id": "capuche_de_traqueuse",
+  "name": "Capuche de Traqueuse",
+  "description": "Une capuche de cuir couleur de feuilles mortes, comme celle que porte Vesna. Elle étouffe les bruits et cache le regard.",
+  "category": "equipment",
+  "level": 6,
+  "base_value": 180,
+  "stack_size": 1,
+  "equipment": {
+    "slot": "head",
+    "level_required": 6,
+    "stat_bonuses": {
+      "agi": 2,
+      "def": 4,
+      "hp": 10
+    }
+  }
+}

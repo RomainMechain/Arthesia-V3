@@ -1,0 +1,21 @@
+{
+  "id": "nenuphar_pale",
+  "name": "Nénuphar Pâle",
+  "description": "Une fleur blanche posée sur l'eau, un peu plus loin que les autres. Ses pétales restent ouverts en permanence, tournés vers le lac comme vers un soleil qui ne monte jamais.",
+  "level": 3,
+  "profession_required": {
+    "profession_id": "herboristerie",
+    "min_level": 2,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 4,
+  "yields": [
+    {
+      "item_id": "petale_de_nenuphar_pale",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 10
+    }
+  ]
+}

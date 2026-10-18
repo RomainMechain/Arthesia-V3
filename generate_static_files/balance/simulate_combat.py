@@ -80,9 +80,10 @@ def reference_mana(level: int) -> float:
 
 
 def reference_kit(level: int, build: str) -> dict[str, dict]:
-    """Trois compétences actives : une simple, une difficile, un soin. Leur
-    coût en mana est une part du mana du joueur de référence du niveau. Un
-    build qui mise autant sur ATK que sur INT a une compétence de chaque type."""
+    """Quatre compétences actives (balance.MAX_ACTIVE_SKILL_SLOTS) : une
+    rapide, une moyenne, une lente et un soin. Leur coût en mana est une part
+    du mana du joueur de référence du niveau. Un build qui mise autant sur ATK
+    que sur INT a des compétences des deux types."""
     weights = BUILDS[build]
     main_type = "physical" if weights["atk"] >= weights["int"] else "magical"
     second_type = "magical" if weights["atk"] == weights["int"] else main_type
@@ -92,6 +93,8 @@ def reference_kit(level: int, build: str) -> dict[str, dict]:
                    "cooldown_seconds": 6, "effects": [{"type": "damage", "power": 1.2}]},
         "technique": {"id": "technique", "damage_type": second_type, "mana_cost": round(0.22 * mana),
                       "cooldown_seconds": 12, "effects": [{"type": "damage", "power": 2.0}]},
+        "assaut": {"id": "assaut", "damage_type": main_type, "mana_cost": round(0.20 * mana),
+                   "cooldown_seconds": 10, "effects": [{"type": "damage", "power": 1.74}]},
         "soin": {"id": "soin", "damage_type": "magical", "mana_cost": round(0.20 * mana),
                  "cooldown_seconds": 15, "effects": [{"type": "heal", "power": 1.0}]},
     }

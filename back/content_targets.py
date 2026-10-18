@@ -230,6 +230,8 @@ def zone_difficulty_tier(skeleton: dict, zone_id: str) -> str:
 
 # Écart toléré avant de signaler une valeur (0.35 : ±35 % de la cible).
 TOLERANCE = 0.35
+# Nombre d'attaques du moveset de référence de chaque rôle (simulate_combat.reference_monster).
+MAX_MOVES = {"normal": 2, "elite": 3, "boss": 4}
 EQUIPMENT_POINTS_MAX_MULTIPLIER = RARE_CRAFT_MULTIPLIER[1]
 
 
@@ -258,6 +260,9 @@ def check_template(template: dict, tier: str = "coeur") -> list[str]:
         for stat in ("hp", "atk", "def"):
             if _off(stats.get(stat, 0), target["stats"][stat]):
                 warnings.append(f"{name} : {stat} {stats.get(stat, 0)} (cible {target['stats'][stat]})")
+        moves = template.get("moveset", [])
+        if len(moves) > MAX_MOVES[role]:
+            warnings.append(f"{name} : {len(moves)} attaques (au plus {MAX_MOVES[role]} pour un {role})")
         main_power = target["main_move"]["power"]
         for move in template.get("moveset", []):
             if "power" not in move:
@@ -283,6 +288,32 @@ def check_template(template: dict, tier: str = "coeur") -> list[str]:
         if category == "consumable" and effect in CONSUMABLE_SHARE and _off(consumable.get("amount", 0), consumable_amount(level, effect), 0.5):
             warnings.append(f"{name} : {effect} {consumable.get('amount')} (cible {consumable_amount(level, effect)})")
 
+    return warnings
+
+
+def check_skill(skill: dict) -> list[str]:
+    """Écarts d'une compétence générée : puissance au-delà du palier
+    exceptionnel pour sa recharge, ou bonus de passif hors des bornes."""
+    name = skill.get("id", "?")
+    # Un passif n'a pas de recharge : son bouclier ne part qu'une fois par
+    # combat, on le compare à la recharge la plus longue.
+    cooldown = skill.get("cooldown_seconds") or (20 if skill.get("kind") == "passive" else 6)
+    warnings = []
+    for effect in skill.get("effects", []):
+        kind = effect.get("type")
+        if kind == "damage":
+            top = skill_power(cooldown, "exceptionnelle")
+            if effect.get("power", 0) > top * (1 + TOLERANCE / 2):
+                warnings.append(f"{name} : power {effect.get('power')} (au plus ≈ {top} à {cooldown} s)")
+        elif kind in ("heal", "shield"):
+            value = effect.get("power", effect.get("amount_power", 0))
+            top = skill_power(cooldown, "exceptionnelle", support=True)
+            if value > top * (1 + TOLERANCE / 2):
+                warnings.append(f"{name} : {kind} {value} (au plus ≈ {top} à {cooldown} s)")
+        elif kind in ("buff", "debuff") and not 5 <= effect.get("amount_percent", 0) <= 35:
+            warnings.append(f"{name} : {kind} de {effect.get('amount_percent')} % (10 à 30 % attendus)")
+        elif kind == "stat_bonus_percent" and effect.get("amount_percent", 0) > PASSIVE_PERCENT["exceptionnelle"][1]:
+            warnings.append(f"{name} : bonus de {effect.get('amount_percent')} % (au plus 20 %)")
     return warnings
 
 

@@ -1,0 +1,18 @@
+{
+  "id": "amulette_pecheur",
+  "name": "Amulette du Pêcheur",
+  "description": "Une amulette d'algues séchées tressées par Ober, nouée d'un fil de roseau doré. Elle ne protège sans doute de rien, mais aucun pêcheur ne s'aventure au milieu du lac sans elle.",
+  "category": "equipment",
+  "level": 4,
+  "base_value": 120,
+  "stack_size": 1,
+  "equipment": {
+    "slot": "amulet",
+    "level_required": 4,
+    "stat_bonuses": {
+      "sag": 2,
+      "def": 2,
+      "hp": 25
+    }
+  }
+}

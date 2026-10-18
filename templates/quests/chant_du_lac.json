@@ -1,0 +1,28 @@
+{
+  "id": "chant_du_lac",
+  "name": "Le Chant du Lac",
+  "description": "Taïs entend chanter sous le miroir, une vibration sourde qui monte du fond. Les carpes aux yeux vides tournent toutes autour du même point, et leurs écailles vibrent quand le chant s'élève. Chasse-les et rapporte-lui de ces écailles : en les comparant, elle pense pouvoir retrouver d'où vient le chant.",
+  "objectives": [
+    {
+      "type": "kill_count",
+      "monster_id": "carpe_aux_yeux_vides",
+      "count": 10
+    },
+    {
+      "type": "deliver_item",
+      "item_id": "ecaille_vibrante",
+      "count": 4
+    }
+  ],
+  "rewards": {
+    "xp": 15,
+    "gold": 75,
+    "items": [
+      {
+        "item_id": "anneau_d_ecaille_vibrante",
+        "quantity": 1
+      }
+    ]
+  },
+  "repeatable": false
+}

@@ -1,0 +1,9 @@
+{
+  "id": "feuille_de_lierre_dore",
+  "name": "Feuille de Lierre Doré",
+  "description": "Une feuille de lierre couleur d'aube, dont les nervures dessinent des lignes droites.",
+  "category": "material",
+  "level": 10,
+  "base_value": 50,
+  "stack_size": 20
+}

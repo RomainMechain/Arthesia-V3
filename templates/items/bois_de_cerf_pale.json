@@ -1,0 +1,9 @@
+{
+  "id": "bois_de_cerf_pale",
+  "name": "Bois de Cerf Pâle",
+  "description": "Un fragment de bois de cerf d'un blanc parfait, trouvé au bout de la piste. Il est lisse comme de la pierre polie et ne porte aucune trace d'usure.",
+  "category": "material",
+  "level": 6,
+  "base_value": 30,
+  "stack_size": 10
+}

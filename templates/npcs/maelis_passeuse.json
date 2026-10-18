@@ -1,0 +1,11 @@
+{
+  "id": "maelis_passeuse",
+  "name": "Maëlis",
+  "description": "Une jeune passeuse qui garde sa barque amarrée aux roseaux. Elle connaît chaque courant de la rive, mais refuse de ramer jusqu'au milieu du lac, sans jamais dire pourquoi.",
+  "role": "Passeuse",
+  "dialogues": [
+    "Je fais traverser jusqu'aux roseaux, pas plus loin. Le milieu du lac est trop calme, ça ne me plaît pas.",
+    "Ma grand-mère disait qu'on entendait chanter sous l'eau, certains matins. Elle disait aussi que tous les matins se ressemblent.",
+    "Les anguilles remontent de plus en plus près. Elles ont la peau qui brille, maintenant. Avant, non."
+  ]
+}

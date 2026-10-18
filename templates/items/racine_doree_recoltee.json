@@ -1,0 +1,9 @@
+{
+  "id": "racine_doree_recoltee",
+  "name": "Racine Dorée Récoltée",
+  "description": "Une racine aux veines dorées encore tièdes, arrachée au sol de la forêt. Son usage reste à découvrir.",
+  "category": "material",
+  "level": 3,
+  "base_value": 15,
+  "stack_size": 20
+}

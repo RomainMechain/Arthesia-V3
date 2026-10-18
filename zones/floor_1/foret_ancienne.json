@@ -1,0 +1,320 @@
+{
+  "id": "foret_ancienne",
+  "name": "Forêt des Anciens",
+  "type": "wilderness",
+  "position": {
+    "x": 45,
+    "y": 28
+  },
+  "visibility": "visible",
+  "description": "Des arbres aux troncs noueux, plus vieux que mémoire d'homme, forment une voûte où la lumière dorée peine à filtrer. Des pierres moussues, à peine visibles, portent des motifs qui ne ressemblent à aucune écriture connue.",
+  "unlock_condition": {
+    "type": "zone",
+    "zone_id": "sentier_lisiere",
+    "state": "unlocked"
+  },
+  "hint": "Les arbres centenaires se dressent au bout du sentier, silencieux.",
+  "generation_brief": {
+    "level_range": [
+      4,
+      6
+    ],
+    "difficulty_tier": "coeur",
+    "tags": [
+      "foret",
+      "bucheronnage",
+      "herboristerie",
+      "combat"
+    ],
+    "content_intent": "Zone dense mêlant combat contre faune forestière, bûcheronnage et herboristerie ; indices discrets de présence architecte (pierres moussues, symboles à peine visibles).",
+    "provides": [
+      {
+        "type": "quest",
+        "id_suggere": "piste_du_cerf_blanc",
+        "via": "Une piste étrange, laissée par un cerf à la robe trop pâle, peut être suivie à travers la forêt jusqu'à une quête dédiée."
+      }
+    ]
+  },
+  "entries": [
+    {
+      "id": "sanglier_spawn",
+      "template_type": "monster",
+      "template_id": "sanglier_des_fougeres",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 45,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "sanglier_spawn_2",
+      "template_type": "monster",
+      "template_id": "sanglier_des_fougeres",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 45,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "lynx_spawn",
+      "template_type": "monster",
+      "template_id": "lynx_a_robe_claire",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 60,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "ours_spawn",
+      "template_type": "monster",
+      "template_id": "ours_moussu",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 60,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "veilleur_spawn",
+      "template_type": "monster",
+      "template_id": "veilleur_d_ecorce",
+      "state_scope": "shared",
+      "rarity": "very_rare",
+      "group_required": true,
+      "spawn": {
+        "mode": "conditional",
+        "cooldown_seconds": 600,
+        "stock": null,
+        "condition": {
+          "type": "kill_count",
+          "monster_id": "sanglier_des_fougeres",
+          "count": 40
+        },
+        "visibility_when_locked": "hinted",
+        "hint": "Au cœur de la forêt, un arbre semble se tourner lentement vers ceux qui versent trop de sang sous ses branches."
+      }
+    },
+    {
+      "id": "chene_noeud",
+      "template_type": "resource",
+      "template_id": "chene_ancien",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 90,
+        "stock": 4,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "fougere_noeud",
+      "template_type": "resource",
+      "template_id": "fougeres_dorees",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 90,
+        "stock": 4,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "ecorce_noeud",
+      "template_type": "resource",
+      "template_id": "tronc_grave",
+      "state_scope": "shared",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 240,
+        "stock": 2,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "traces_noeud",
+      "template_type": "resource",
+      "template_id": "traces_du_cerf_pale",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 60,
+        "stock": 3,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "isarn_presence",
+      "template_type": "npc",
+      "template_id": "isarn_bucheron",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "vesna_presence",
+      "template_type": "npc",
+      "template_id": "vesna_traqueuse",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_cerf",
+      "template_type": "quest_giver",
+      "template_id": "piste_du_cerf_blanc",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_bois",
+      "template_type": "quest_giver",
+      "template_id": "le_bois_qui_ne_vieillit_pas",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_sangliers",
+      "template_type": "quest_giver",
+      "template_id": "sangliers_des_fougeres",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_motifs",
+      "template_type": "quest_giver",
+      "template_id": "les_motifs_sous_l_ecorce",
+      "state_scope": "per_player",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "conditional",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": {
+          "type": "quest",
+          "quest_id": "le_bois_qui_ne_vieillit_pas",
+          "state": "completed"
+        },
+        "visibility_when_locked": "hinted",
+        "hint": "Isarn évite de regarder certains troncs, comme s'il y avait vu quelque chose qu'il préférerait oublier."
+      }
+    },
+    {
+      "id": "pierres_moussues_gravees_noeud",
+      "template_type": "resource",
+      "template_id": "pierres_moussues_gravees",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 90,
+        "stock": 4,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "affleurement_rocheux_noeud",
+      "template_type": "resource",
+      "template_id": "affleurement_rocheux",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 90,
+        "stock": 4,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    }
+  ]
+}

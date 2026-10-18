@@ -1,0 +1,18 @@
+{
+  "id": "veille_silencieuse",
+  "name": "La Veille Silencieuse",
+  "description": "Aurin s'inquiète du nombre croissant de loups dorés rôdant près du sentier. Il vous demande d'en abattre quelques-uns pour calmer ses craintes.",
+  "objectives": [
+    {
+      "type": "kill_count",
+      "monster_id": "loup_dore",
+      "count": 4
+    }
+  ],
+  "rewards": {
+    "xp": 1,
+    "gold": 5,
+    "items": []
+  },
+  "repeatable": false
+}

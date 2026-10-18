@@ -1,0 +1,14 @@
+{
+  "id": "tisane_apaisante",
+  "name": "Tisane Apaisante",
+  "description": "Une infusion d'herbes locales, servie tiède, qui apaise l'esprit et restaure la concentration.",
+  "category": "consumable",
+  "level": 1,
+  "base_value": 15,
+  "stack_size": 10,
+  "consumable": {
+    "effect_type": "restore_mana",
+    "amount": 26,
+    "duration_seconds": 0
+  }
+}

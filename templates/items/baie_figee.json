@@ -1,0 +1,9 @@
+{
+  "id": "baie_figee",
+  "name": "Baie Figée",
+  "description": "Une baie dorée, ferme et sucrée, qui reste exactement comme elle a été cueillie, quel que soit le temps qui passe.",
+  "category": "material",
+  "level": 7,
+  "base_value": 35,
+  "stack_size": 20
+}

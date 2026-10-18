@@ -1,0 +1,9 @@
+{
+  "id": "patte_de_lapin",
+  "name": "Patte de Lapin",
+  "description": "Une petite patte arrière, encore chaude, qu'on dit porter chance aux voyageurs crédules.",
+  "category": "material",
+  "level": 1,
+  "base_value": 5,
+  "stack_size": 20
+}

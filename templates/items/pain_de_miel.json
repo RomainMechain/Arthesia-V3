@@ -1,0 +1,14 @@
+{
+  "id": "pain_de_miel",
+  "name": "Pain de Miel",
+  "description": "Un pain doré cuit dans les fours du village, moelleux et sucré, réputé pour redonner des forces rapidement.",
+  "category": "consumable",
+  "level": 1,
+  "base_value": 15,
+  "stack_size": 10,
+  "consumable": {
+    "effect_type": "heal",
+    "amount": 41,
+    "duration_seconds": 0
+  }
+}

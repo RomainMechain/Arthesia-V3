@@ -24,7 +24,7 @@ try:
         build_recipe_key, generate_craft_item_via_ai, get_cached_craft,
         save_craft_cache, save_new_craft_item,
     )
-    from .balance import max_item_level_for, profession_action_xp, profession_level_for, profession_xp_to_next_level
+    from .balance import MAX_ACTIVE_SKILL_SLOTS, MAX_PASSIVE_SKILL_SLOTS, max_item_level_for, profession_action_xp, profession_level_for, profession_xp_to_next_level
     from .database import db
     from .game_rules import (
         advance_quest_objectives, apply_player_level_ups, apply_profession_level_ups, deplete_entry_state,
@@ -42,7 +42,7 @@ except ImportError:
         build_recipe_key, generate_craft_item_via_ai, get_cached_craft,
         save_craft_cache, save_new_craft_item,
     )
-    from balance import max_item_level_for, profession_action_xp, profession_level_for, profession_xp_to_next_level
+    from balance import MAX_ACTIVE_SKILL_SLOTS, MAX_PASSIVE_SKILL_SLOTS, max_item_level_for, profession_action_xp, profession_level_for, profession_xp_to_next_level
     from database import db
     from game_rules import (
         advance_quest_objectives, apply_player_level_ups, apply_profession_level_ups, deplete_entry_state,
@@ -62,8 +62,6 @@ router = APIRouter(dependencies=[Depends(require_player)])
 K_SELL = 0.35
 VALID_STATS = {"hp", "atk", "def", "agi", "int", "sag"}
 VALID_SLOTS = {"weapon", "head", "chest", "gloves", "boots", "ring", "amulet", "tool"}
-MAX_ACTIVE_SKILL_SLOTS = 8
-MAX_PASSIVE_SKILL_SLOTS = 4
 
 
 # -----------------------------------------------------------------------------
@@ -275,7 +273,11 @@ def start_quest(req: StartQuestRequest):
     givers = find_quest_givers(req.quest_id)
     if not givers:
         raise HTTPException(404, "Aucun personnage ne propose cette quête")
-    return _start_quest_tx(db.transaction(), req, quest_def, givers)
+    result = _start_quest_tx(db.transaction(), req, quest_def, givers)
+    # Une zone peut s'ouvrir quand une quête est active : le déblocage est
+    # enregistré tout de suite, sinon il disparaîtrait une fois la quête rendue.
+    result["newly_unlocked"] = check_and_apply_unlocks(req.player_id)
+    return result
 
 
 @firestore.transactional
@@ -376,43 +378,6 @@ def _turn_in_quest_tx(transaction, req: TurnInQuestRequest, quest_def: dict, giv
 # -----------------------------------------------------------------------------
 # Craft et progression des statistiques
 # -----------------------------------------------------------------------------
-
-@router.post("/actions/turn_in_quest")
-def turn_in_quest(req: TurnInQuestRequest):
-    """Valide les objectifs d'une quête, consomme les livraisons et distribue les récompenses."""
-    # La remise relit le template et l'état joueur pour vérifier la progression
-    # réelle, plutôt que de faire confiance aux données envoyées par le client.
-    quest_def = load_template("quest", req.quest_id)
-    player = get_player(req.player_id)
-    progress = player["quests"].get(req.quest_id)
-    if not progress or progress.get("state") != "active":
-        raise HTTPException(409, "Quête non active pour ce joueur")
-    for i, obj in enumerate(quest_def["objectives"]):
-        p = progress["objectives_progress"][i]
-        # Les objectifs de collecte et de combat utilisent leur compteur dédié;
-        # les livraisons vérifient directement la quantité présente en inventaire.
-        if obj["type"] in ("kill_count", "gather_count") and p["current_count"] < obj["count"]:
-            raise HTTPException(400, f"Objectif {i} non rempli")
-        if obj["type"] == "deliver_item" and player["inventory"].get(obj["item_id"], 0) < obj["count"]:
-            raise HTTPException(400, f"Objets manquants pour l'objectif {i} (deliver_item)")
-    for obj in quest_def["objectives"]:
-        if obj["type"] == "deliver_item":
-            # Les items livrés sont retirés uniquement après que tous les
-            # objectifs ont été validés, évitant une consommation partielle.
-            player["inventory"][obj["item_id"]] -= obj["count"]
-            player["lifetime_counters"]["deliveries"][obj["item_id"]] = player["lifetime_counters"]["deliveries"].get(obj["item_id"], 0) + obj["count"]
-    # Les récompenses sont appliquées au même état joueur que les consommations.
-    rewards = quest_def.get("rewards", {})
-    player["xp"] += rewards.get("xp", 0)
-    levels_gained = apply_player_level_ups(player)
-    player["currency"]["or"] = player["currency"].get("or", 0) + rewards.get("gold", 0)
-    for item in rewards.get("items", []):
-        player["inventory"][item["item_id"]] = player["inventory"].get(item["item_id"], 0) + item["quantity"]
-    progress["state"] = "completed"
-    save_player(req.player_id, player)
-    newly_unlocked = check_and_apply_unlocks(req.player_id)
-    return {"quest_completed": req.quest_id, "rewards_given": rewards, "levels_gained": levels_gained, "player_level": player["level"], "player_xp_total": player["xp"], "player_stat_points": player["stat_points"], "player_currency": player["currency"], "newly_unlocked": newly_unlocked}
-
 
 # Nombre maximal d'ingrédients différents dans un craft.
 MAX_CRAFT_INPUTS = 4

@@ -1,0 +1,9 @@
+{
+  "id": "peau_d_anguille",
+  "name": "Peau d'Anguille",
+  "description": "Une peau sombre et souple, parcourue de minces lignes dorées qui ne s'éteignent pas tout à fait, même sèche.",
+  "category": "material",
+  "level": 3,
+  "base_value": 15,
+  "stack_size": 20
+}

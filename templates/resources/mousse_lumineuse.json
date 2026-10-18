@@ -1,0 +1,21 @@
+{
+  "id": "mousse_lumineuse",
+  "name": "Mousse Lumineuse",
+  "description": "Une mousse douce qui semble capter et retenir un peu de la lumière dorée ambiante, même une fois cueillie.",
+  "level": 1,
+  "profession_required": {
+    "profession_id": "herboristerie",
+    "min_level": 1,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 3,
+  "yields": [
+    {
+      "item_id": "mousse_lumineuse_aube",
+      "quantity_min": 1,
+      "quantity_max": 3,
+      "weight": 10
+    }
+  ]
+}

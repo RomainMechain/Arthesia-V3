@@ -1,0 +1,23 @@
+{
+  "id": "la_lumiere_qui_brule",
+  "name": "La Lumière qui Brûle",
+  "description": "Les porte-lumière rallument une à une les colonnes du fond, et la lumière y devient insoutenable. Aubin, pour la première fois, a l'air inquiet. Arrête-les.",
+  "objectives": [
+    {
+      "type": "kill_count",
+      "monster_id": "porte_lumiere",
+      "count": 6
+    }
+  ],
+  "rewards": {
+    "xp": 18,
+    "gold": 60,
+    "items": [
+      {
+        "item_id": "cuirasse_d_or_pale",
+        "quantity": 1
+      }
+    ]
+  },
+  "repeatable": false
+}

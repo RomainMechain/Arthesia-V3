@@ -1,0 +1,28 @@
+{
+  "id": "les_carapaces_gravees",
+  "name": "Les Carapaces Gravées",
+  "description": "Depuis que le chant a été localisé, Taïs est sûre d'une chose : les tortues qui remontent du fond portent les mêmes cercles que les pierres d'en bas. Rapporte-lui des plaques de leur carapace, pour qu'elle les compare à ce qu'elle a vu.",
+  "objectives": [
+    {
+      "type": "kill_count",
+      "monster_id": "tortue_a_carapace_gravee",
+      "count": 5
+    },
+    {
+      "type": "deliver_item",
+      "item_id": "plaque_de_carapace_gravee",
+      "count": 3
+    }
+  ],
+  "rewards": {
+    "xp": 9,
+    "gold": 36,
+    "items": [
+      {
+        "item_id": "plastron_d_ecailles",
+        "quantity": 1
+      }
+    ]
+  },
+  "repeatable": false
+}

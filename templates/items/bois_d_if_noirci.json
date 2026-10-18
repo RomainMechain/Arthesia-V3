@@ -1,0 +1,9 @@
+{
+  "id": "bois_d_if_noirci",
+  "name": "Bois d'If Noirci",
+  "description": "Une pièce de bois d'if noir, dense et lourde, qui sonne comme du métal quand on la frappe.",
+  "category": "material",
+  "level": 8,
+  "base_value": 40,
+  "stack_size": 20
+}

@@ -1,0 +1,23 @@
+{
+  "id": "les_motifs_sous_l_ecorce",
+  "name": "Les Motifs sous l'Écorce",
+  "description": "Isarn a fini par en parler : certains troncs portent des motifs qui ne sont l'œuvre d'aucun homme. Il veut que quelqu'un en rapporte des morceaux à Mère Yvenne, au village, pour qu'elle les compare à ce que racontaient les anciens. Lui ne s'en approchera pas.",
+  "objectives": [
+    {
+      "type": "deliver_item",
+      "item_id": "ecorce_aux_motifs",
+      "count": 3
+    }
+  ],
+  "rewards": {
+    "xp": 9,
+    "gold": 36,
+    "items": [
+      {
+        "item_id": "capuche_de_traqueuse",
+        "quantity": 1
+      }
+    ]
+  },
+  "repeatable": false
+}

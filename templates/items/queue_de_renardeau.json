@@ -1,0 +1,9 @@
+{
+  "id": "queue_de_renardeau",
+  "name": "Queue de Renardeau",
+  "description": "Une queue touffue, encore souple, prisée par certains artisans du village pour ses poils fins.",
+  "category": "material",
+  "level": 2,
+  "base_value": 10,
+  "stack_size": 20
+}

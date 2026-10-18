@@ -1,0 +1,14 @@
+{
+  "id": "ragout_chaud",
+  "name": "Ragoût Chaud",
+  "description": "Un ragoût épais préparé par Aldric, qui tient au corps bien plus longtemps que sa simple odeur ne le laisse croire.",
+  "category": "consumable",
+  "level": 2,
+  "base_value": 30,
+  "stack_size": 10,
+  "consumable": {
+    "effect_type": "heal",
+    "amount": 58,
+    "duration_seconds": 0
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "id": "les_veilleurs_oublies",
+  "name": "Les Veilleurs Oubliés",
+  "description": "La statue répète que le cercle doit tenir. Mais les éclats qui tournent autour d'elle se sont détachés et frappent à l'aveugle, et le bourdonnement faiblit. Abats les éclats errants et rapporte leur poussière de lumière au pied de la statue : peut-être dira-t-elle ce qu'elle garde.",
+  "objectives": [
+    {
+      "type": "kill_count",
+      "monster_id": "eclat_errant",
+      "count": 8
+    },
+    {
+      "type": "deliver_item",
+      "item_id": "poussiere_de_lumiere",
+      "count": 4
+    }
+  ],
+  "rewards": {
+    "xp": 22,
+    "gold": 105,
+    "items": [
+      {
+        "item_id": "pendentif_du_veilleur",
+        "quantity": 1
+      }
+    ]
+  },
+  "repeatable": false
+}

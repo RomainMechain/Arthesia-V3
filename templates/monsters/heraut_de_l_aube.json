@@ -1,0 +1,59 @@
+{
+  "id": "heraut_de_l_aube",
+  "name": "Le Héraut de l'Aube",
+  "description": "Au fond de l'antichambre, une colonne se fend, et il en sort. Il ressemble aux dormants, mais ses yeux sont ouverts : deux disques dorés où tourne lentement un cercle coupé d'une ligne. Il porte un voile de lumière tissée qui flotte sans le moindre souffle d'air. On dit qu'il était chargé d'annoncer au Gardien que le cercle tenait toujours, et qu'il l'annonce encore, chaque matin, au même instant, depuis que le matin ne finit plus. Quand trop de dormants tombent, il se lève pour savoir pourquoi. Il ne parle pas. Il juge.",
+  "level": 10,
+  "role": "elite",
+  "stats": {
+    "hp": 1830,
+    "atk": 69,
+    "def": 61,
+    "agi": 20,
+    "int": 69,
+    "sag": 32
+  },
+  "moveset": [
+    {
+      "id": "verdict",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.27,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "annonce_eclatante",
+      "damage_type": "physical",
+      "cooldown_seconds": 7,
+      "power": 0.54,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "cercle_brulant",
+      "damage_type": "magical",
+      "cooldown_seconds": 5,
+      "power": 0.385,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "prisme_d_aube",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 4
+    },
+    {
+      "item_id": "voile_du_heraut",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 2
+    }
+  ]
+}

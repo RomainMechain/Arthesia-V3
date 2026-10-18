@@ -1,0 +1,44 @@
+{
+  "id": "tisseuse_doree",
+  "name": "Tisseuse Dorée",
+  "description": "Une araignée grosse comme un chien, qui tend entre les troncs des toiles faites d'une soie lumineuse. Ses toiles ne dessinent pas des spirales, mais des cercles concentriques parfaits.",
+  "level": 8,
+  "role": "normal",
+  "stats": {
+    "hp": 1100,
+    "atk": 50,
+    "def": 43,
+    "agi": 16,
+    "int": 52,
+    "sag": 27
+  },
+  "moveset": [
+    {
+      "id": "morsure_venimeuse",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.21,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "toile_de_lumiere",
+      "damage_type": "magical",
+      "cooldown_seconds": 7,
+      "power": 0.42,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "soie_doree",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 10
+    }
+  ]
+}

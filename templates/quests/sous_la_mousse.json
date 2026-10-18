@@ -1,0 +1,23 @@
+{
+  "id": "sous_la_mousse",
+  "name": "Sous la Mousse",
+  "description": "Les colosses moussus bloquent les galeries du fond. Ombeline voudrait savoir ce que la forêt a recouvert : abats-en assez pour dégager le passage.",
+  "objectives": [
+    {
+      "type": "kill_count",
+      "monster_id": "colosse_moussu",
+      "count": 6
+    }
+  ],
+  "rewards": {
+    "xp": 13,
+    "gold": 48,
+    "items": [
+      {
+        "item_id": "gantelets_de_pierre",
+        "quantity": 1
+      }
+    ]
+  },
+  "repeatable": false
+}

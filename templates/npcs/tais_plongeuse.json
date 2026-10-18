@@ -1,0 +1,11 @@
+{
+  "id": "tais_plongeuse",
+  "name": "Taïs",
+  "description": "Une plongeuse aux cheveux toujours mouillés, qui vit sur un radeau ancré au bord du miroir. Elle est la seule du camp à oser descendre sous la surface, et elle remonte chaque fois un peu plus silencieuse.",
+  "role": "Plongeuse",
+  "dialogues": [
+    "Sous la surface, l'eau ne bouge pas non plus. Même au fond. Comme si on avait arrêté le lac en même temps que le soleil.",
+    "Le chant, je l'entends avec les os, pas avec les oreilles. Il vient du fond, toujours du même endroit.",
+    "Il y a des pierres en bas. Rangées en cercle. Personne ne les a posées là, et pourtant elles sont posées."
+  ]
+}

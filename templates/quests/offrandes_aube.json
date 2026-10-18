@@ -1,0 +1,23 @@
+{
+  "id": "offrandes_aube",
+  "name": "Offrandes à l'Aube",
+  "description": "Une mousse lumineuse, que l'on dit née de la lumière elle-même, pousse en silence sous les frondaisons. Mère Yvenne souhaite en recueillir pour un rituel discret du village.",
+  "objectives": [
+    {
+      "type": "gather_count",
+      "resource_id": "mousse_lumineuse",
+      "count": 8
+    }
+  ],
+  "rewards": {
+    "xp": 4,
+    "gold": 12,
+    "items": [
+      {
+        "item_id": "ragout_chaud",
+        "quantity": 1
+      }
+    ]
+  },
+  "repeatable": false
+}

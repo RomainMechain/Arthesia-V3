@@ -1,0 +1,272 @@
+{
+  "id": "sanctuaire_aube",
+  "name": "Sanctuaire de l'Aube Figée",
+  "type": "ruins",
+  "position": {
+    "x": 80,
+    "y": 48
+  },
+  "visibility": "visible",
+  "description": "Un ensemble de colonnes effondrées entoure une chambre où la lumière dorée s'intensifie de façon presque douloureuse. L'air lui-même semble retenir son souffle, comme avant un événement qui ne s'est jamais produit.",
+  "unlock_condition": {
+    "type": "zone",
+    "zone_id": "ruines_architectes",
+    "state": "unlocked"
+  },
+  "hint": "Au-delà des pierres gravées, une lumière plus dorée encore filtre entre les colonnes.",
+  "generation_brief": {
+    "level_range": [
+      8,
+      10
+    ],
+    "difficulty_tier": "profondeurs",
+    "tags": [
+      "sanctuaire",
+      "ruines",
+      "rituel",
+      "pre-boss"
+    ],
+    "content_intent": "Antichambre du gardien : les monstres normaux les plus durs de l'étage (gardiens et constructions des Architectes), au plus une élite, préparation rituelle, inscriptions plus explicites sur le mécanisme de l'aube sans tout révéler.",
+    "provides": [
+      {
+        "type": "quest",
+        "id_suggere": "cle_des_dormants",
+        "via": "Un rituel partiellement reconstitué à partir des inscriptions du sanctuaire doit être accompli pour obtenir le droit de passage vers le gardien."
+      }
+    ]
+  },
+  "entries": [
+    {
+      "id": "gardien_colonne_spawn",
+      "template_type": "monster",
+      "template_id": "gardien_de_colonne",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 45,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "gardien_colonne_spawn_2",
+      "template_type": "monster",
+      "template_id": "gardien_de_colonne",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 45,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "dormant_spawn",
+      "template_type": "monster",
+      "template_id": "dormant_de_bronze",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 45,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "dormant_spawn_2",
+      "template_type": "monster",
+      "template_id": "dormant_de_bronze",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 45,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "porte_lumiere_spawn",
+      "template_type": "monster",
+      "template_id": "porte_lumiere",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 60,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "heraut_spawn",
+      "template_type": "monster",
+      "template_id": "heraut_de_l_aube",
+      "state_scope": "shared",
+      "rarity": "very_rare",
+      "group_required": true,
+      "spawn": {
+        "mode": "conditional",
+        "cooldown_seconds": 600,
+        "stock": null,
+        "condition": {
+          "type": "kill_count",
+          "monster_id": "dormant_de_bronze",
+          "count": 40
+        },
+        "visibility_when_locked": "hinted",
+        "hint": "Chaque dormant abattu fait vibrer une colonne au fond de l'antichambre. On dirait que quelque chose compte."
+      }
+    },
+    {
+      "id": "veine_noeud",
+      "template_type": "resource",
+      "template_id": "veine_d_or_pale",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 90,
+        "stock": 4,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "lierre_noeud",
+      "template_type": "resource",
+      "template_id": "lierre_dore",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 90,
+        "stock": 4,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "inscriptions_noeud",
+      "template_type": "resource",
+      "template_id": "inscriptions_du_seuil",
+      "state_scope": "shared",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 240,
+        "stock": 2,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "aubin_presence",
+      "template_type": "npc",
+      "template_id": "aubin_pelerin",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_cle",
+      "template_type": "quest_giver",
+      "template_id": "cle_des_dormants",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_colonnes",
+      "template_type": "quest_giver",
+      "template_id": "les_colonnes_qui_veillent",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_offrande",
+      "template_type": "quest_giver",
+      "template_id": "l_offrande_d_aubin",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "quete_lumiere",
+      "template_type": "quest_giver",
+      "template_id": "la_lumiere_qui_brule",
+      "state_scope": "per_player",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "conditional",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": {
+          "type": "quest",
+          "quest_id": "les_colonnes_qui_veillent",
+          "state": "completed"
+        },
+        "visibility_when_locked": "hinted",
+        "hint": "Plus loin, entre les dernières colonnes, la lumière devient si forte qu'Aubin n'ose plus avancer."
+      }
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "id": "trait_de_lumiere",
+  "name": "Trait de Lumière",
+  "description": "Un éclat de lumière dorée, tiré de l'aube elle-même et lancé d'un geste de la main.",
+  "kind": "active",
+  "unlock_condition": {
+    "type": "level",
+    "min": 1
+  },
+  "damage_type": "magical",
+  "cooldown_seconds": 6,
+  "mana_cost": 9,
+  "telegraph_seconds": 0,
+  "avoidable_by": null,
+  "effects": [
+    {
+      "type": "damage",
+      "power": 1.19
+    }
+  ]
+}

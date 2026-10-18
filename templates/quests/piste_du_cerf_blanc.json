@@ -1,0 +1,28 @@
+{
+  "id": "piste_du_cerf_blanc",
+  "name": "La Piste du Cerf Blanc",
+  "description": "Vesna suit depuis des semaines les traces d'un cerf à la robe trop pâle, qui mènent toujours vers le même coin de la forêt. Relève ses traces, puis écarte les ours moussus qui gardent ce sentier : Vesna est sûre que la piste continue au-delà, dans un sous-bois où personne ne va.",
+  "objectives": [
+    {
+      "type": "gather_count",
+      "resource_id": "traces_du_cerf_pale",
+      "count": 6
+    },
+    {
+      "type": "kill_count",
+      "monster_id": "ours_moussu",
+      "count": 6
+    }
+  ],
+  "rewards": {
+    "xp": 15,
+    "gold": 75,
+    "items": [
+      {
+        "item_id": "bois_de_cerf_pale",
+        "quantity": 1
+      }
+    ]
+  },
+  "repeatable": false
+}

@@ -1,0 +1,21 @@
+{
+  "id": "ronces_dorees",
+  "name": "Ronces Dorées",
+  "description": "Des ronces aux épines dorées, chargées de baies qui ne mûrissent ni ne pourrissent. Elles sont exactement comme elles étaient hier.",
+  "level": 7,
+  "profession_required": {
+    "profession_id": "herboristerie",
+    "min_level": 4,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 3,
+  "yields": [
+    {
+      "item_id": "baie_figee",
+      "quantity_min": 1,
+      "quantity_max": 3,
+      "weight": 10
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "id": "mousse_lumineuse_aube",
+  "name": "Mousse Lumineuse Cueillie",
+  "description": "Une poignée de mousse lumineuse, encore tiède d'une clarté qui ne lui appartient pas vraiment.",
+  "category": "material",
+  "level": 1,
+  "base_value": 5,
+  "stack_size": 20
+}

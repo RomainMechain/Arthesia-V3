@@ -1,0 +1,9 @@
+{
+  "id": "jonc_tressable",
+  "name": "Jonc Tressable",
+  "description": "Une tige de jonc longue et souple, parfaite pour tresser des cordes et des nattes.",
+  "category": "material",
+  "level": 4,
+  "base_value": 20,
+  "stack_size": 20
+}

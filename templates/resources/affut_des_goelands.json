@@ -1,0 +1,21 @@
+{
+  "id": "affut_des_goelands",
+  "name": "Affût des Goélands",
+  "description": "Un perchoir de bois flotté où les goélands viennent se poser entre deux pillages. Il faut être rapide et silencieux.",
+  "level": 5,
+  "profession_required": {
+    "profession_id": "chasse",
+    "min_level": 3,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 4,
+  "yields": [
+    {
+      "item_id": "duvet_de_goeland",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 10
+    }
+  ]
+}

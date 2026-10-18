@@ -1,0 +1,21 @@
+{
+  "id": "joncs_du_large",
+  "name": "Joncs du Large",
+  "description": "Des joncs épais qui poussent en îlots flottants au milieu de l'eau immobile. Leurs tiges sont si droites qu'on les dirait plantées au cordeau.",
+  "level": 4,
+  "profession_required": {
+    "profession_id": "herboristerie",
+    "min_level": 2,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 3,
+  "yields": [
+    {
+      "item_id": "jonc_tressable",
+      "quantity_min": 1,
+      "quantity_max": 3,
+      "weight": 10
+    }
+  ]
+}

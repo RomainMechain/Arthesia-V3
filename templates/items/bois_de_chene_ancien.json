@@ -1,0 +1,9 @@
+{
+  "id": "bois_de_chene_ancien",
+  "name": "Bois de Chêne Ancien",
+  "description": "Une bûche de chêne dense et lourde, au grain serré. Elle ne sèche pas et ne pourrit pas.",
+  "category": "material",
+  "level": 4,
+  "base_value": 20,
+  "stack_size": 20
+}

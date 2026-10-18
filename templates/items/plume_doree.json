@@ -1,0 +1,9 @@
+{
+  "id": "plume_doree",
+  "name": "Plume Dorée",
+  "description": "Une plume légère teintée d'un reflet doré, qui ne perd jamais tout à fait son éclat.",
+  "category": "material",
+  "level": 1,
+  "base_value": 5,
+  "stack_size": 20
+}

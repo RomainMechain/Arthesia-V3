@@ -1,0 +1,9 @@
+{
+  "id": "defense_de_sanglier_roux",
+  "name": "Défense de Sanglier Roux",
+  "description": "Une défense courbe et jaunie, polie par des années à fouiller la terre de la forêt.",
+  "category": "material",
+  "level": 4,
+  "base_value": 20,
+  "stack_size": 20
+}

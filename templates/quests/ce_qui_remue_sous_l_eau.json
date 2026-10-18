@@ -1,0 +1,28 @@
+{
+  "id": "ce_qui_remue_sous_l_eau",
+  "name": "Ce qui Remue sous l'Eau",
+  "description": "Maëlis a vu des anguilles à la peau dorée remonter des hauts-fonds, là où elles n'auraient jamais dû venir. Elle te demande d'en abattre quelques-unes et de lui rapporter des pétales de nénuphar pâle, la seule fleur qui pousse aussi loin sur l'eau, pour comprendre ce qui les attire.",
+  "objectives": [
+    {
+      "type": "kill_count",
+      "monster_id": "anguille_des_hauts_fonds",
+      "count": 6
+    },
+    {
+      "type": "deliver_item",
+      "item_id": "petale_de_nenuphar_pale",
+      "count": 2
+    }
+  ],
+  "rewards": {
+    "xp": 5,
+    "gold": 18,
+    "items": [
+      {
+        "item_id": "bottes_de_passeuse",
+        "quantity": 1
+      }
+    ]
+  },
+  "repeatable": false
+}

@@ -1,0 +1,9 @@
+{
+  "id": "plaque_de_carapace_gravee",
+  "name": "Plaque de Carapace Gravée",
+  "description": "Une plaque de carapace couverte de cercles concentriques. Les lignes ne sont pas gravées en surface : elles traversent toute l'épaisseur.",
+  "category": "material",
+  "level": 6,
+  "base_value": 30,
+  "stack_size": 20
+}

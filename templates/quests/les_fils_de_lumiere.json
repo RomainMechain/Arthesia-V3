@@ -1,0 +1,23 @@
+{
+  "id": "les_fils_de_lumiere",
+  "name": "Les Fils de Lumière",
+  "description": "Les tisseuses dorées ont tendu leurs toiles en travers du seul chemin du retour. Halvard jure qu'hier encore, il n'y en avait pas. Abats-en assez pour ouvrir un passage.",
+  "objectives": [
+    {
+      "type": "kill_count",
+      "monster_id": "tisseuse_doree",
+      "count": 8
+    }
+  ],
+  "rewards": {
+    "xp": 13,
+    "gold": 48,
+    "items": [
+      {
+        "item_id": "bottes_de_ronce",
+        "quantity": 1
+      }
+    ]
+  },
+  "repeatable": false
+}

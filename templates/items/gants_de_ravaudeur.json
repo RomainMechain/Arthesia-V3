@@ -1,0 +1,17 @@
+{
+  "id": "gants_de_ravaudeur",
+  "name": "Gants de Ravaudeur",
+  "description": "Des gants de cuir mince aux doigts coupés, usés par des années de nœuds et de fil tiré. Ils laissent la main libre et rapide.",
+  "category": "equipment",
+  "level": 5,
+  "base_value": 150,
+  "stack_size": 1,
+  "equipment": {
+    "slot": "gloves",
+    "level_required": 5,
+    "stat_bonuses": {
+      "atk": 5,
+      "agi": 1
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "id": "pierre_aux_cercles",
+  "name": "Pierre aux Cercles",
+  "description": "Une pierre lisse recrachée par un silure, gravée de cercles concentriques parfaitement réguliers. Aucun outil du village ne saurait tailler une ligne aussi nette.",
+  "category": "material",
+  "level": 6,
+  "base_value": 30,
+  "stack_size": 10
+}

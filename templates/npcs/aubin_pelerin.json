@@ -1,0 +1,11 @@
+{
+  "id": "aubin_pelerin",
+  "name": "Aubin",
+  "description": "Un pèlerin du village venu prier la lumière au plus près de sa source. Il a recopié, avec l'aide des notes d'Ombeline, le rituel gravé sur les murs, sans en comprendre la moitié. Il est le seul à ne pas avoir peur, et c'est peut-être le plus inquiétant.",
+  "role": "Pèlerin",
+  "dialogues": [
+    "Tu sens comme la lumière est plus forte, ici ? C'est le cœur de la bénédiction. Je l'ai toujours su.",
+    "Les inscriptions disent : « Ici dorment ceux qui tiennent le matin. » N'est-ce pas magnifique ? Quelqu'un tient le matin pour nous.",
+    "La dernière ligne, je n'arrive pas à la lire. Ombeline l'a lue, elle. Elle n'a plus voulu remettre les pieds ici."
+  ]
+}

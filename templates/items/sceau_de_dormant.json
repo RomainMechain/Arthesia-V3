@@ -1,0 +1,9 @@
+{
+  "id": "sceau_de_dormant",
+  "name": "Sceau de Dormant",
+  "description": "Un disque de bronze que les dormants tiennent sous la main. Il porte un cercle coupé d'une ligne, et au revers, un nombre que personne ne sait lire.",
+  "category": "material",
+  "level": 9,
+  "base_value": 45,
+  "stack_size": 20
+}

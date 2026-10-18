@@ -1,0 +1,14 @@
+{
+  "id": "civet_de_sanglier",
+  "name": "Civet de Sanglier",
+  "description": "Un civet épais mijoté au bois de chêne, qui tient au corps toute une journée de traque.",
+  "category": "consumable",
+  "level": 5,
+  "base_value": 75,
+  "stack_size": 10,
+  "consumable": {
+    "effect_type": "heal",
+    "amount": 109,
+    "duration_seconds": 0
+  }
+}

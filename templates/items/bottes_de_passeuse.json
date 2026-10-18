@@ -1,0 +1,17 @@
+{
+  "id": "bottes_de_passeuse",
+  "name": "Bottes de Passeuse",
+  "description": "Des bottes de cuir huilé, montantes et imperméables, comme en portent ceux qui vivent les pieds dans l'eau. Maëlis jure qu'elles ont appartenu à sa grand-mère.",
+  "category": "equipment",
+  "level": 3,
+  "base_value": 90,
+  "stack_size": 1,
+  "equipment": {
+    "slot": "boots",
+    "level_required": 3,
+    "stat_bonuses": {
+      "def": 2,
+      "hp": 25
+    }
+  }
+}

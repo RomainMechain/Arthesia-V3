@@ -1,0 +1,18 @@
+{
+  "id": "lance_du_seuil",
+  "name": "Lance du Seuil",
+  "description": "Une lance de bronze trouvée dans l'alcôve d'un dormant. Sa pointe porte le cercle coupé d'une ligne, et elle ne rouille pas.",
+  "category": "equipment",
+  "level": 9,
+  "base_value": 270,
+  "stack_size": 1,
+  "equipment": {
+    "slot": "weapon",
+    "level_required": 9,
+    "stat_bonuses": {
+      "atk": 10,
+      "agi": 1,
+      "hp": 12
+    }
+  }
+}

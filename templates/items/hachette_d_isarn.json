@@ -1,0 +1,17 @@
+{
+  "id": "hachette_d_isarn",
+  "name": "Hachette d'Isarn",
+  "description": "La hachette de rechange d'Isarn, au manche patiné par les années. Elle coupe aussi bien le bois que ce qui en sort.",
+  "category": "equipment",
+  "level": 4,
+  "base_value": 120,
+  "stack_size": 1,
+  "equipment": {
+    "slot": "weapon",
+    "level_required": 4,
+    "stat_bonuses": {
+      "atk": 5,
+      "hp": 10
+    }
+  }
+}

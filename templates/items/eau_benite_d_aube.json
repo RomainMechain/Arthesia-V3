@@ -1,0 +1,14 @@
+{
+  "id": "eau_benite_d_aube",
+  "name": "Eau Bénite d'Aube",
+  "description": "Une eau qu'Aubin a laissée toute une prière au pied des colonnes. Elle est tiède et brille faiblement.",
+  "category": "consumable",
+  "level": 9,
+  "base_value": 135,
+  "stack_size": 10,
+  "consumable": {
+    "effect_type": "restore_mana",
+    "amount": 65,
+    "duration_seconds": 0
+  }
+}

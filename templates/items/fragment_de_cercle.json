@@ -1,0 +1,9 @@
+{
+  "id": "fragment_de_cercle",
+  "name": "Fragment de Cercle",
+  "description": "Un arc de pierre gravée, morceau d'un cercle bien plus grand. La courbe est parfaite, au point qu'on pourrait en déduire toute la taille du cercle.",
+  "category": "material",
+  "level": 8,
+  "base_value": 40,
+  "stack_size": 20
+}

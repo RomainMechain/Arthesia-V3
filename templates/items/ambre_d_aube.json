@@ -1,0 +1,9 @@
+{
+  "id": "ambre_d_aube",
+  "name": "Ambre d'Aube",
+  "description": "Un morceau d'ambre doré où la lumière semble prise au piège. On y distingue parfois un minuscule cercle parfait, en son centre.",
+  "category": "material",
+  "level": 9,
+  "base_value": 45,
+  "stack_size": 20
+}

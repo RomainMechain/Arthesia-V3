@@ -1,0 +1,23 @@
+{
+  "id": "les_brochets_du_miroir",
+  "name": "Les Brochets du Miroir",
+  "description": "Les brochets du miroir attaquent Taïs chaque fois qu'elle remonte. Éclaircis leurs rangs pour qu'elle puisse plonger en paix.",
+  "objectives": [
+    {
+      "type": "kill_count",
+      "monster_id": "brochet_miroir",
+      "count": 8
+    }
+  ],
+  "rewards": {
+    "xp": 7,
+    "gold": 30,
+    "items": [
+      {
+        "item_id": "sandre_grille",
+        "quantity": 2
+      }
+    ]
+  },
+  "repeatable": false
+}

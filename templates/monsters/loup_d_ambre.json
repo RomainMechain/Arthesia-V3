@@ -1,0 +1,44 @@
+{
+  "id": "loup_d_ambre",
+  "name": "Loup d'Ambre",
+  "description": "Un loup dont la fourrure s'est figée par plaques en une sorte d'ambre translucide. Sous la résine, on devine ses poils, immobiles, comme pris dans un instant qui ne passe plus.",
+  "level": 6,
+  "role": "normal",
+  "stats": {
+    "hp": 880,
+    "atk": 42,
+    "def": 31,
+    "agi": 15,
+    "int": 41,
+    "sag": 21
+  },
+  "moveset": [
+    {
+      "id": "morsure_figee",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.21,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "eclat_d_ambre",
+      "damage_type": "magical",
+      "cooldown_seconds": 5,
+      "power": 0.3,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "croc_d_ambre",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 10
+    }
+  ]
+}

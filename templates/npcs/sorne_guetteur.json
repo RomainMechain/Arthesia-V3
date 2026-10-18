@@ -1,0 +1,11 @@
+{
+  "id": "sorne_guetteur",
+  "name": "Sorne",
+  "description": "Un homme maigre posté jour et nuit sur une tour de guet de bois flotté, les yeux rivés sur le milieu du lac. Il tient un carnet couvert de dessins de cercles et de lignes droites.",
+  "role": "Guetteur",
+  "dialogues": [
+    "Il y a des formes sous l'eau, au milieu. Des cercles parfaits. La nature ne trace pas de cercles parfaits.",
+    "J'ai entendu chanter, une fois. Pas une voix. Plutôt comme une pierre qui vibre.",
+    "Ne raconte pas à Ober ce que je dessine. Il a assez d'amulettes comme ça."
+  ]
+}

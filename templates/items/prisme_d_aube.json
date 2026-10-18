@@ -1,0 +1,9 @@
+{
+  "id": "prisme_d_aube",
+  "name": "Prisme d'Aube",
+  "description": "Un prisme de cristal où la lumière de l'étage se concentre. Tenu trop longtemps, il chauffe jusqu'à brûler.",
+  "category": "material",
+  "level": 10,
+  "base_value": 50,
+  "stack_size": 20
+}

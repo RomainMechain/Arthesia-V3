@@ -1,0 +1,9 @@
+{
+  "id": "galet_veine",
+  "name": "Galet Veiné",
+  "description": "Un galet dur et lisse, traversé d'une veine minérale. Les veines sont toutes parallèles.",
+  "category": "material",
+  "level": 2,
+  "base_value": 10,
+  "stack_size": 20
+}

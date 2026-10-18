@@ -1,0 +1,14 @@
+{
+  "id": "brochette_d_ablette",
+  "name": "Brochette d'Ablette",
+  "description": "Des ablettes dorées grillées sur une baguette de saule, croustillantes et brûlantes. Hilde en fait cuire toute la journée.",
+  "category": "consumable",
+  "level": 4,
+  "base_value": 60,
+  "stack_size": 10,
+  "consumable": {
+    "effect_type": "heal",
+    "amount": 92,
+    "duration_seconds": 0
+  }
+}

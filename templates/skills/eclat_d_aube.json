@@ -1,0 +1,21 @@
+{
+  "id": "eclat_d_aube",
+  "name": "Éclat d'Aube",
+  "description": "La lumière se concentre un instant dans la paume, puis éclate contre l'ennemi.",
+  "kind": "active",
+  "unlock_condition": {
+    "type": "level",
+    "min": 3
+  },
+  "damage_type": "magical",
+  "cooldown_seconds": 12,
+  "mana_cost": 25,
+  "telegraph_seconds": 0,
+  "avoidable_by": null,
+  "effects": [
+    {
+      "type": "damage",
+      "power": 2.0
+    }
+  ]
+}

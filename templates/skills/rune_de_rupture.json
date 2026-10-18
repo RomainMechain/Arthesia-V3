@@ -1,0 +1,29 @@
+{
+  "id": "rune_de_rupture",
+  "name": "Rune de Rupture",
+  "description": "Le mur effondré t'a livré une rune qui ne sert pas à tenir, mais à défaire. Tracée sur l'ennemi, elle fend ses défenses comme une pierre trop vieille.",
+  "kind": "active",
+  "unlock_condition": {
+    "type": "quest",
+    "quest_id": "le_mur_effondre",
+    "state": "completed"
+  },
+  "damage_type": "magical",
+  "cooldown_seconds": 10,
+  "mana_cost": 31,
+  "telegraph_seconds": 0,
+  "avoidable_by": null,
+  "effects": [
+    {
+      "type": "damage",
+      "power": 1.6
+    },
+    {
+      "type": "debuff",
+      "stat": "def",
+      "amount_percent": 20,
+      "duration_seconds": 12,
+      "target": "enemy"
+    }
+  ]
+}

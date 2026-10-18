@@ -1,0 +1,28 @@
+{
+  "id": "ce_que_disent_les_runes",
+  "name": "Ce que Disent les Runes",
+  "description": "Le fragment de rune encore tiède a confirmé ce que craignait Ombeline. Pour en être sûre, elle veut comparer ses relevés aux noyaux des automates sans visage, qui semblent porter les mêmes signes. Rapporte-lui-en.",
+  "objectives": [
+    {
+      "type": "kill_count",
+      "monster_id": "automate_sans_visage",
+      "count": 6
+    },
+    {
+      "type": "deliver_item",
+      "item_id": "noyau_d_automate",
+      "count": 3
+    }
+  ],
+  "rewards": {
+    "xp": 15,
+    "gold": 54,
+    "items": [
+      {
+        "item_id": "heaume_runique",
+        "quantity": 1
+      }
+    ]
+  },
+  "repeatable": false
+}

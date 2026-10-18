@@ -1,0 +1,9 @@
+{
+  "id": "carte_des_cercles",
+  "name": "Carte des Cercles",
+  "description": "Un relevé fait de tes propres mains, où les cercles du camp, du lac et de la forêt s'emboîtent parfaitement. Tous convergent vers un même point, au-delà des ruines, là où se dresse le sanctuaire.",
+  "category": "material",
+  "level": 8,
+  "base_value": 40,
+  "stack_size": 1
+}
