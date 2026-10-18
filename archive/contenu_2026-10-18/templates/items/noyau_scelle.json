@@ -1,0 +1,9 @@
+{
+  "id": "noyau_scelle",
+  "name": "Noyau Scellé",
+  "description": "Une petite masse dure, froide au toucher même en plein soleil, gravée de lignes qui semblent bouger quand on ne les regarde pas directement.",
+  "category": "material",
+  "level": 3,
+  "base_value": 15,
+  "stack_size": 10
+}

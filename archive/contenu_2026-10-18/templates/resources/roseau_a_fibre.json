@@ -1,0 +1,21 @@
+{
+  "id": "roseau_a_fibre",
+  "name": "Roseau à Fibre",
+  "description": "Une tige haute et souple, dont l'écorce intérieure se détache en longs rubans fibreux. Yolenne les tresse en cordes et en paniers.",
+  "level": 1,
+  "profession_required": {
+    "profession_id": "herboristerie",
+    "min_level": 1,
+    "xp_reward": 0
+  },
+  "tool_required": null,
+  "gather_time_seconds": 3,
+  "yields": [
+    {
+      "item_id": "fibre_de_roseau",
+      "quantity_min": 1,
+      "quantity_max": 3,
+      "weight": 10
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "id": "queue_de_rat_des_roseaux",
+  "name": "Queue de Rat des Roseaux",
+  "description": "Une petite queue nerveuse, encore raide. Sans grande valeur, mais certains artisans l'utilisent pour des tresses décoratives.",
+  "category": "material",
+  "level": 1,
+  "base_value": 5,
+  "stack_size": 20
+}

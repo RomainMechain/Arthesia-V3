@@ -652,5 +652,77 @@
     "tags": [],
     "description": "Un fragment lumineux capturé dans un instant suspendu. Brisé entre les mains, il libère une chaleur apaisante qui referme les blessures les plus vives.",
     "base_value": 120
+  },
+  {
+    "id": "matrone_des_roseaux",
+    "name": "Matrone des Roseaux",
+    "kind": "monster",
+    "level": 3,
+    "tags": [],
+    "description": "Elle est plus grande que n'importe quel rat du sentier ne devrait l'être, le poil hérissé de reflets presque métalliques, comme si quelque chose dans la terre gorgée d'eau avait nourri sa croissance au-delà du raisonnable. Les voyageurs qui s'enfoncent trop longtemps dans les roseaux racontent l'avoir entraperçue près des pierres taillées, immobile, les yeux tournés vers le sol comme si elle en écoutait un murmure que personne d'autre n'entend. Ceux qui l'ont affrontée disent qu'elle ne fuit jamais, contrairement aux siens — comme si fuir n'avait plus de sens pour elle depuis longtemps.",
+    "base_value": null
+  },
+  {
+    "id": "roseau_a_fibre",
+    "name": "Roseau à Fibre",
+    "kind": "resource",
+    "level": 1,
+    "tags": [],
+    "description": "Une tige haute et souple, dont l'écorce intérieure se détache en longs rubans fibreux. Yolenne les tresse en cordes et en paniers.",
+    "base_value": null
+  },
+  {
+    "id": "fenn_chasseur",
+    "name": "Fenn",
+    "kind": "npc",
+    "level": null,
+    "tags": [],
+    "description": "Un chasseur solitaire qui pose ses pièges à l'orée du sentier, là où les roseaux s'épaississent. Il parle peu, surveille beaucoup, et n'aime pas que les sangliers s'approchent trop de son campement.",
+    "base_value": null
+  },
+  {
+    "id": "appel_des_pierres",
+    "name": "L'Appel des Pierres",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Yolenne s'inquiète des fragments de pierre taillée qui affleurent dans la boue. Elle te demande de lui en rapporter plusieurs, pour les examiner de plus près.",
+    "base_value": null
+  },
+  {
+    "id": "fleau_des_roseaux",
+    "name": "Le Fléau des Roseaux",
+    "kind": "quest",
+    "level": null,
+    "tags": [],
+    "description": "Fenn en a assez de voir ses pièges saccagés par les sangliers. Il te demande d'en abattre quelques-uns pour calmer la zone.",
+    "base_value": null
+  },
+  {
+    "id": "queue_de_rat_des_roseaux",
+    "name": "Queue de Rat des Roseaux",
+    "kind": "item",
+    "level": 1,
+    "tags": [],
+    "description": "Une petite queue nerveuse, encore raide. Sans grande valeur, mais certains artisans l'utilisent pour des tresses décoratives.",
+    "base_value": 5
+  },
+  {
+    "id": "fibre_de_roseau",
+    "name": "Fibre de Roseau",
+    "kind": "item",
+    "level": 1,
+    "tags": [],
+    "description": "Un ruban fibreux et résistant, détaché de l'écorce intérieure d'un roseau. Idéal pour le tressage.",
+    "base_value": 5
+  },
+  {
+    "id": "noyau_scelle",
+    "name": "Noyau Scellé",
+    "kind": "item",
+    "level": 3,
+    "tags": [],
+    "description": "Une petite masse dure, froide au toucher même en plein soleil, gravée de lignes qui semblent bouger quand on ne les regarde pas directement.",
+    "base_value": 15
   }
 ]

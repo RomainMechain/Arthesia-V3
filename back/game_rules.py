@@ -17,16 +17,18 @@ from fastapi import HTTPException
 try:
     from .content_store import load_ordered_floors, load_static_zone_content, load_template
     from .player_store import get_zone_dynamic_state
+    from .balance import (
+        BASE_STATS, HP_REGEN_FULL_SECONDS, POINT_VALUE, STAT_POINTS_PER_LEVEL, TOWN_REGEN_MULTIPLIER, kill_xp,
+        level_gap_xp_multiplier, profession_xp_to_next_level, xp_to_next_level,
+    )
 except ImportError:
     from content_store import load_ordered_floors, load_static_zone_content, load_template
     from player_store import get_zone_dynamic_state
+    from balance import (
+        BASE_STATS, HP_REGEN_FULL_SECONDS, POINT_VALUE, STAT_POINTS_PER_LEVEL, TOWN_REGEN_MULTIPLIER, kill_xp,
+        level_gap_xp_multiplier, profession_xp_to_next_level, xp_to_next_level,
+    )
 
-# Statistiques de départ d'un joueur niveau 1.
-BASE_STATS = {"hp": 80, "atk": 8, "def": 5, "agi": 5, "int": 6, "sag": 5}
-
-# Valeur d'un point de statistique dépensé. Le nombre de points disponibles est
-# géré par l'état joueur ; ce mapping ne fait que convertir les points en bonus.
-POINT_VALUE = {"hp": 25, "atk": 2, "def": 2, "agi": 1, "int": 2, "sag": 1}
 
 
 def roll_loot_table(loot_table: list[dict]) -> tuple[str, int] | None:
@@ -120,23 +122,11 @@ def respawn_cooldown_seconds(entry: dict) -> float:
     return entry.get("spawn", {}).get("cooldown_seconds") or DEFAULT_RESPAWN_SECONDS
 
 
-def compute_kill_xp(monster_level: int, role: str) -> int:
-    """Calcule l'XP accordée par un monstre selon son niveau et son rôle.
-
-    Les boss utilisent le multiplicateur le plus élevé, les élites un niveau
-    intermédiaire et tout rôle inconnu retombe sur le comportement normal.
-    """
-    multiplier = {"normal": 10, "elite": 30, "boss": 100}.get(role, 10)
-    return monster_level * multiplier
-
-
-def xp_to_next_level(level: int) -> int:
-    """Retourne le seuil d'XP nécessaire pour le niveau courant.
-
-    La formule commune aux joueurs et professions est ``50 × niveau``. Le
-    ``max`` protège le calcul contre un niveau nul ou négatif mal formé.
-    """
-    return 50 * max(level, 1)
+def compute_kill_xp(monster_level: int, role: str, player_level: int) -> int:
+    """XP d'un monstre : son niveau et son rôle (``balance.kill_xp``), puis
+    l'écart de niveau avec le joueur (moins d'XP pour un monstre plus faible,
+    plus pour un monstre plus fort)."""
+    return max(1, round(kill_xp(monster_level, role) * level_gap_xp_multiplier(monster_level, player_level)))
 
 
 def apply_profession_level_ups(profession: dict) -> None:
@@ -146,8 +136,8 @@ def apply_profession_level_ups(profession: dict) -> None:
     plusieurs seuils en une seule action. L'XP restante est conservée après
     chaque montée de niveau.
     """
-    while profession["xp"] >= xp_to_next_level(profession["level"]):
-        profession["xp"] -= xp_to_next_level(profession["level"])
+    while profession["xp"] >= profession_xp_to_next_level(profession["level"]):
+        profession["xp"] -= profession_xp_to_next_level(profession["level"])
         profession["level"] += 1
 
 
@@ -161,9 +151,71 @@ def apply_player_level_ups(player: dict) -> int:
     while player["xp"] >= xp_to_next_level(player["level"]):
         player["xp"] -= xp_to_next_level(player["level"])
         player["level"] += 1
-        player["stat_points"]["available"] += 6
+        player["stat_points"]["available"] += STAT_POINTS_PER_LEVEL
         levels_gained += 1
     return levels_gained
+
+
+# -----------------------------------------------------------------------------
+# Points de vie hors combat
+#
+# Les PV perdus en combat sont conservés et remontent avec le temps.
+# ``player["health"]`` vaut {"current": PV, "at": horodatage} ; absent ou
+# ``current`` à None, le joueur est en pleine forme. La valeur courante est
+# calculée à la lecture (comme le respawn des entries) : rien n'est écrit
+# pendant la régénération.
+# -----------------------------------------------------------------------------
+
+def zone_type(zone_id: str | None) -> str | None:
+    for floor in load_ordered_floors():
+        for zone in floor.get("zones", []):
+            if zone["id"] == zone_id:
+                return zone.get("type")
+    return None
+
+
+def hp_regen_per_second(player: dict, max_hp: float) -> float:
+    rate = max_hp / HP_REGEN_FULL_SECONDS
+    return rate * TOWN_REGEN_MULTIPLIER if zone_type(player.get("current_zone_id")) == "town" else rate
+
+
+def current_hp(player: dict, max_hp: float, now: datetime | None = None) -> float:
+    """PV actuels hors combat, régénération depuis la dernière mise à jour
+    comprise. Le taux est celui de la zone actuelle : changer de zone fige
+    d'abord les PV (``settle_hp``)."""
+    health = player.get("health") or {}
+    if health.get("current") is None:
+        return float(max_hp)
+    now = now or datetime.now(timezone.utc)
+    elapsed = max(0.0, (now - health["at"]).total_seconds()) if health.get("at") else 0.0
+    return round(min(float(max_hp), health["current"] + elapsed * hp_regen_per_second(player, max_hp)), 1)
+
+
+def set_hp(player: dict, hp: float, max_hp: float) -> None:
+    """Enregistre les PV actuels ; à PV pleins, l'état redevient « en forme »."""
+    if hp >= max_hp:
+        player["health"] = {"current": None, "at": None}
+    else:
+        player["health"] = {"current": round(max(hp, 0.0), 1), "at": datetime.now(timezone.utc)}
+
+
+def settle_hp(player: dict) -> None:
+    """Fige la régénération acquise, avant un changement de taux (voyage)."""
+    max_hp = compute_final_stats(player)["hp"]
+    set_hp(player, current_hp(player, max_hp), max_hp)
+
+
+def health_view(player: dict) -> dict:
+    """PV pour le client : actuels, max et vitesse de régénération."""
+    max_hp = compute_final_stats(player)["hp"]
+    hp = current_hp(player, max_hp)
+    regen = hp_regen_per_second(player, max_hp)
+    return {
+        "current": hp,
+        "max": max_hp,
+        "regen_per_second": round(regen, 3),
+        "full_in_seconds": round((max_hp - hp) / regen) if regen > 0 and hp < max_hp else 0,
+    }
 
 
 def is_floor_boss(zone_id: str, monster: dict) -> bool:

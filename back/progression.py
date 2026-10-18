@@ -19,19 +19,23 @@ from firebase_admin import firestore
 try:
     from .config import TEMPLATES_DIR
     from .content_store import find_entry, load_all_floor_skeletons, load_static_zone_content, load_template
+    from .balance import DEFEAT_HP_SHARE, defeat_penalty
     from .database import db
     from .game_rules import (
-        advance_quest_objectives, apply_player_level_ups, compute_kill_xp, defeated_entry_key, evaluate_condition,
-        has_defeated_entry, is_one_time_per_player, is_shared_entry, respawn_cooldown_seconds, roll_loot_table,
+        advance_quest_objectives, apply_player_level_ups, compute_final_stats, compute_kill_xp, defeated_entry_key,
+        evaluate_condition, has_defeated_entry, is_one_time_per_player, is_shared_entry, respawn_cooldown_seconds,
+        roll_loot_table, set_hp,
     )
     from .player_store import get_player, get_zone_dynamic_state, save_player, save_zone_dynamic_state
 except ImportError:
     from config import TEMPLATES_DIR
     from content_store import find_entry, load_all_floor_skeletons, load_static_zone_content, load_template
+    from balance import DEFEAT_HP_SHARE, defeat_penalty
     from database import db
     from game_rules import (
-        advance_quest_objectives, apply_player_level_ups, compute_kill_xp, defeated_entry_key, evaluate_condition,
-        has_defeated_entry, is_one_time_per_player, is_shared_entry, respawn_cooldown_seconds, roll_loot_table,
+        advance_quest_objectives, apply_player_level_ups, compute_final_stats, compute_kill_xp, defeated_entry_key,
+        evaluate_condition, has_defeated_entry, is_one_time_per_player, is_shared_entry, respawn_cooldown_seconds,
+        roll_loot_table, set_hp,
     )
     from player_store import get_player, get_zone_dynamic_state, save_player, save_zone_dynamic_state
 
@@ -99,7 +103,7 @@ def _check_and_apply_unlocks_tx(transaction, player_id: str) -> list[str]:
     return newly_unlocked
 
 
-def apply_monster_kill_rewards(player_id: str, zone_id: str, entry_id: str) -> dict:
+def apply_monster_kill_rewards(player_id: str, zone_id: str, entry_id: str, player_hp: float | None = None) -> dict:
     """Valide une victoire et applique toutes ses conséquences persistantes.
 
     Le traitement suit cet ordre :
@@ -112,6 +116,9 @@ def apply_monster_kill_rewards(player_id: str, zone_id: str, entry_id: str) -> d
 
     Pour un monstre normal, l'entry passe en respawn. Pour un boss, elle passe
     en état ``defeated`` et ne redevient pas disponible automatiquement.
+
+    ``player_hp`` (PV en fin de combat) est enregistré ; une montée de niveau
+    remet le joueur en pleine forme.
     """
     # La zone et l'entry proviennent du contenu statique local. Cela permet de
     # vérifier que le client n'a pas envoyé un identifiant inventé.
@@ -124,13 +131,14 @@ def apply_monster_kill_rewards(player_id: str, zone_id: str, entry_id: str) -> d
     # La réservation du spawn et les récompenses sont écrites dans la même
     # transaction : si deux victoires arrivent en même temps, Firestore rejoue
     # la seconde, qui voit alors le spawn déjà épuisé.
-    result = _apply_monster_kill_rewards_tx(db.transaction(), player_id, zone_id, entry_id, entry, monster)
+    result = _apply_monster_kill_rewards_tx(db.transaction(), player_id, zone_id, entry_id, entry, monster, player_hp)
     result["newly_unlocked"] = check_and_apply_unlocks(player_id)
     return result
 
 
 @firestore.transactional
-def _apply_monster_kill_rewards_tx(transaction, player_id: str, zone_id: str, entry_id: str, entry: dict, monster: dict) -> dict:
+def _apply_monster_kill_rewards_tx(transaction, player_id: str, zone_id: str, entry_id: str, entry: dict, monster: dict,
+                                   player_hp: float | None = None) -> dict:
     # Firestore impose de faire toutes les lectures avant la première écriture.
     shared = is_shared_entry(zone_id, entry, monster)
     zone_state = get_zone_dynamic_state(zone_id, transaction) if shared else None
@@ -176,10 +184,12 @@ def _apply_monster_kill_rewards_tx(transaction, player_id: str, zone_id: str, en
         item_id, quantity = loot
         player["inventory"][item_id] = player["inventory"].get(item_id, 0) + quantity
 
-    xp_gained = compute_kill_xp(monster["level"], monster.get("role", "normal"))
+    xp_gained = compute_kill_xp(monster["level"], monster.get("role", "normal"), player["level"])
     player["xp"] += xp_gained
     # La montée de niveau peut augmenter les points de statistiques disponibles.
     levels_gained = apply_player_level_ups(player)
+    max_hp = compute_final_stats(player)["hp"]
+    set_hp(player, max_hp if levels_gained or player_hp is None else player_hp, max_hp)
     player["lifetime_counters"]["kills"][entry["template_id"]] = player["lifetime_counters"]["kills"].get(entry["template_id"], 0) + 1
 
     # Seules les quêtes actives avancent ; les autres restent inchangées.
@@ -198,4 +208,36 @@ def _apply_monster_kill_rewards_tx(transaction, player_id: str, zone_id: str, en
         "player_stat_points": player["stat_points"],
         "player_inventory": player["inventory"],
         "quest_progress": quest_progress,
+        "health": player["health"]["current"],
     }
+
+
+def record_combat_hp(player_id: str, player_hp: float) -> None:
+    """Enregistre les PV d'un combat interrompu (abandon, déconnexion) ou
+    gagné sans récompense."""
+    _record_combat_hp_tx(db.transaction(), player_id, player_hp)
+
+
+@firestore.transactional
+def _record_combat_hp_tx(transaction, player_id: str, player_hp: float) -> None:
+    player = get_player(player_id, transaction)
+    set_hp(player, player_hp, compute_final_stats(player)["hp"])
+    save_player(player_id, player, transaction)
+
+
+def apply_defeat(player_id: str) -> dict:
+    """Défaite : perte d'une part de l'XP du niveau (sans perdre de niveau) et
+    de l'or (``balance.defeat_penalty``), retour à DEFEAT_HP_SHARE des PV."""
+    return _apply_defeat_tx(db.transaction(), player_id)
+
+
+@firestore.transactional
+def _apply_defeat_tx(transaction, player_id: str) -> dict:
+    player = get_player(player_id, transaction)
+    penalty = defeat_penalty(player["level"], player["xp"], player["currency"].get("or", 0))
+    player["xp"] -= penalty["xp_lost"]
+    player["currency"]["or"] = player["currency"].get("or", 0) - penalty["gold_lost"]
+    max_hp = compute_final_stats(player)["hp"]
+    set_hp(player, max_hp * DEFEAT_HP_SHARE, max_hp)
+    save_player(player_id, player, transaction)
+    return penalty

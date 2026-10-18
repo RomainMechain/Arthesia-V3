@@ -67,6 +67,9 @@ d'**aucun**, et il ne faut jamais le mettre par réflexe ou par habitude de vari
 monstre qui se démarque nettement du reste du bestiaire de la zone (un mini-boss local, une anomalie,
 un vétéran, un chef de meute légendaire) — jamais à une variante un peu plus forte d'un monstre commun.
 Concrètement :
+- Son template a `role: "elite"` (stats et attaques de `monsters.elite` dans `balance_targets`), et
+  une élite a toujours `group_required: true`. Le jeu en groupe n'existe pas encore : pour l'instant
+  on l'affronte seul, et elle est calibrée pour être très dure.
 - Toujours `rarity: "very_rare"` et `spawn.mode: "conditional"` — jamais `common`/`rare`, jamais sans
   condition.
 - **La condition ne doit jamais être un simple `level`.** Un palier de niveau ne représente aucun
@@ -156,42 +159,70 @@ strictement égal, jamais en dessous.
   bas) — mets `visibility_when_locked: "hinted"` + un `hint` si ça doit rester visible-mais-verrouillé
   avec indice, sinon laisse les deux à `null` pour un secret totalement invisible.
 
-## ÉQUILIBRAGE : ancrage chiffré (monstres et équipement)
+## ÉQUILIBRAGE : prends les chiffres dans `balance_targets`
 
-Les joueurs gagnent **6 points de stat par niveau**, valeur par point : `hp +25`, `atk +2`, `def +2`,
-`agi +1`, `int +2`, `sag +1`. Stats de base (niveau "0") : `hp:80, atk:8, def:5, agi:5, int:6, sag:5`.
-Un joueur généraliste (répartition égale) suit cette courbe de référence :
+Les chiffres ont été calibrés par simulation de combats. Tu ne les calcules pas : le bloc
+`balance_targets` fourni avec la zone donne, **pour chaque niveau de la zone**, les valeurs exactes à
+utiliser. Choisis le niveau de chaque monstre ou objet dans le `level_range` de la zone, puis recopie
+les valeurs de ce niveau. Tu peux t'en écarter de ±15 % pour donner du caractère (un monstre plus
+résistant mais qui frappe moins fort, par exemple), jamais plus.
 
-| Niveau | HP | ATK | DEF | AGI | INT | SAG |
-|---|---|---|---|---|---|---|
-| 1 | 105 | 10 | 7 | 6 | 8 | 6 |
-| 3 | 155 | 14 | 11 | 8 | 12 | 8 |
-| 5 | 205 | 18 | 15 | 10 | 16 | 10 |
-| 7 | 255 | 22 | 19 | 12 | 20 | 12 |
-| 10 | 330 | 28 | 25 | 15 | 26 | 15 |
+Intentions de jeu, pour comprendre ce que produisent ces chiffres :
+- Un étage couvre environ 10 niveaux. Un combat contre un monstre normal dure environ une minute et
+  coûte près de la moitié des PV : on peut perdre, et les PV ne remontent pas tout seuls entre deux
+  combats (ils se régénèrent en 10 minutes, plus vite en ville). La nourriture et les potions comptent.
+- La difficulté monte quand on s'enfonce dans l'étage : `balance_targets.difficulty_tier` (`entree`,
+  `coeur`, `profondeurs`) est déjà appliqué à la puissance des attaques des monstres normaux.
+- Une élite dure 1 à 2 minutes et un boss 3 à 5 minutes. Ils sont très durs : tout le monde ne les bat
+  pas, même à niveau égal.
 
-**Stats d'un `monster`** = stats du joueur généraliste au même niveau × multiplicateur selon `role` :
+### Monstres
 
-| `role` | HP × | ATK × | DEF × |
-|---|---|---|---|
-| `normal` | 1.5 – 2.2 | 0.9 – 1.7 | 0.8 – 1.3 |
-| `elite` | 5 – 9 | 1.5 – 2.2 | 1.2 – 1.8 |
-| `boss` | 15 – 25 | 2 – 3 | 1.3 – 2.2 |
+- `stats` : recopie `levels[niveau].monsters[role].stats` (les 6 clés). `int` compte pour les attaques
+  magiques ; un monstre qui n'en a pas peut garder la valeur donnée.
+- **Attaques en `power`, jamais en dégâts fixes.** Une attaque inflige `power × ATK` du monstre
+  (`× INT` si `damage_type: "magical"`), comme les compétences des joueurs.
+  - L'attaque principale reprend `main_move.power` et `main_move.cooldown_seconds` (2,5 s), avec le
+    plus gros `weight`.
+  - Une attaque plus lente peut frapper plus fort, au même rythme de dégâts :
+    `power ≈ slow_move_power_per_second × cooldown_seconds`. Exemples avec une puissance principale
+    P : `2P` à 7 s, `1,5P` à 5 s (souvent magique), `3P` à 10 s pour la grosse attaque d'un boss.
+  - Un monstre normal a 1 à 3 attaques, une élite 2 à 4, un boss 3 à 5.
+- **Boss** : 2 ou 3 `phases`. La première restreint le moveset ; la dernière (`hp_above_percent: 0`)
+  débloque la grosse attaque. Exemple : `[{"hp_above_percent": 50, "moveset_ids": ["a", "b", "c"]},
+  {"hp_above_percent": 0, "moveset_ids": ["a", "b", "c", "furie"]}]`.
+- L'XP d'un monstre est calculée par le serveur (`monsters[role].xp`, pour information) : n'écris pas
+  de champ d'XP sur un monstre.
+- `telegraph_seconds: 0` et `avoidable_by: null` sur toutes les attaques (pas encore en jeu).
 
-Exemple : niveau 4 (HP joueur 180, ATK 17) → un `normal` de ce niveau tourne autour de `hp: 300-400,
-atk: 15-29`.
+### Objets
 
-**`stat_bonuses` d'un `item` équipement**, exprimé en "points équivalents" (même barème de valeur par
-point que les stats joueur ci-dessus — ne jamais raisonner en chiffres bruts mélangés entre stats) :
-`points = hp/25 + atk/2 + def/2 + agi/1 + int/2 + sag/1`. Budget : ≈ 6 points (1 niveau d'équivalent)
-pour un équipement normal de ce niveau. Ne jamais dépasser ~18 points (3 niveaux), réservé à un objet
-vraiment exceptionnel.
+- `base_value` : `levels[niveau].base_value[category]`. Une boutique vend au moins à ce prix.
+- **Équipement** : la somme des `stat_bonuses` en points équivalents
+  (`hp/25 + atk/2 + def/2 + agi + int/2 + sag/2`) vaut `equipment_points_per_piece` du niveau de
+  l'objet. Répartis-les sur 1 à 3 stats cohérentes avec l'objet. Exemple au niveau 10 (7 points) :
+  `{"atk": 10, "agi": 2}` (5 + 2) ou `{"def": 8, "hp": 75}` (4 + 3). Un outil (`slot: "tool"`) n'a
+  pas de `stat_bonuses`.
+- **Consommables** : `consumable.amount` = `consumable_amount.heal` (soin) ou
+  `consumable_amount.restore_mana` (mana) du niveau. Un `buff_stat` donne 10 à 20 % pendant 30 à 60 s.
 
-**`base_value` indicatif** : `material ≈ 5 × niveau`, `consumable ≈ 15 × niveau`,
-`equipment ≈ 30 × niveau`.
+### Quêtes
 
-Ces plages sont un point de départ à calibrer en testant, pas des bornes strictes — mais un écart de
-plus de x2-3 dans un sens ou l'autre est presque toujours un signe d'erreur, pas une intention.
+- **Récompenses** : `levels[niveau].quest_rewards[ampleur]`, où l'ampleur est `small`, `normal` ou
+  `major`. Une quête d'introduction ou de collecte rapide est `small` ; une quête de zone ordinaire est
+  `normal` ; une quête de chaîne importante ou qui débloque une zone est `major`.
+- **Objectifs** : `quest_objective_counts[ampleur]` donne le nombre de monstres ou de récoltes demandé.
+- Les quêtes apportent environ 30 % de l'XP du jeu : un étage doit offrir l'équivalent d'environ 25
+  quêtes `normal`. Vise **2 à 4 quêtes par zone ordinaire** et 4 à 6 en ville.
+
+### Ressources et matériaux
+
+Les ressources et les objets ont un niveau à l'échelle du personnage, comme les monstres : le niveau
+de la zone où on les trouve. Les métiers montent plus lentement et ont leur propre échelle : un niveau
+de métier couvre deux niveaux d'objet.
+- `profession_required.min_level` = `levels[niveau].profession_min_level` du niveau de la ressource.
+- L'XP de métier est calculée par le serveur : mets `xp_reward: 0`.
+- `gather_time_seconds` : 2 à 5 s.
 
 ## SCHÉMAS DES TEMPLATES (pour `new_templates`)
 
@@ -210,11 +241,12 @@ Chaque élément de `new_templates` porte un champ `kind` qui indique lequel de 
   "id": "loup_alpha",
   "name": "Loup Alpha",
   "description": "Texte de lore/flavor.",
-  "level": 4,
+  "level": 5,
   "role": "normal | elite | boss",
-  "stats": { "hp": 340, "atk": 28, "def": 12, "agi": 14, "int": 0, "sag": 0 },
+  "stats": { "hp": 783, "atk": 35, "def": 28, "agi": 12, "int": 35, "sag": 19 },
   "moveset": [
-    { "id": "morsure", "damage_type": "physical", "cooldown_seconds": 2, "damage": 18, "weight": 3, "telegraph_seconds": 0, "avoidable_by": null }
+    { "id": "morsure", "damage_type": "physical", "cooldown_seconds": 2.5, "power": 0.21, "weight": 3, "telegraph_seconds": 0, "avoidable_by": null },
+    { "id": "curee", "damage_type": "physical", "cooldown_seconds": 7, "power": 0.42, "weight": 1, "telegraph_seconds": 0, "avoidable_by": null }
   ],
   "phases": null,
   "loot_table": [
@@ -222,7 +254,9 @@ Chaque élément de `new_templates` porte un champ `kind` qui indique lequel de 
   ]
 }
 ```
-`phases` uniquement pour `role: "boss"` : `[{ "hp_above_percent": 50, "moveset_ids": [...] }, ...]`.
+Les valeurs de l'exemple sont celles d'un monstre normal de niveau 5 en profondeur `coeur` : prends
+toujours les tiennes dans `balance_targets`. `phases` uniquement pour `role: "boss"` :
+`[{ "hp_above_percent": 50, "moveset_ids": [...] }, { "hp_above_percent": 0, "moveset_ids": [...] }]`.
 
 ### `kind: "resource"`
 ```json
@@ -232,7 +266,7 @@ Chaque élément de `new_templates` porte un champ `kind` qui indique lequel de 
   "name": "Bois de Chêne Runique",
   "description": "...",
   "level": 3,
-  "profession_required": { "profession_id": "bucheronnage", "min_level": 2, "xp_reward": 15 },
+  "profession_required": { "profession_id": "bucheronnage", "min_level": 2, "xp_reward": 0 },
   "tool_required": null,
   "gather_time_seconds": 3,
   "yields": [ { "item_id": "id_d_un_item", "quantity_min": 1, "quantity_max": 3, "weight": 10 } ]
@@ -264,13 +298,14 @@ Chaque élément de `new_templates` porte un champ `kind` qui indique lequel de 
     { "type": "kill_count", "monster_id": "loup_alpha", "count": 5 },
     { "type": "deliver_item", "item_id": "id_d_un_item", "count": 3 }
   ],
-  "rewards": { "xp": 200, "gold": 50, "items": [ { "item_id": "id_d_un_item", "quantity": 1 } ] },
+  "rewards": { "xp": 15, "gold": 30, "items": [ { "item_id": "id_d_un_item", "quantity": 1 } ] },
   "repeatable": false
 }
 ```
 Types d'objectifs disponibles : `kill_count` (`monster_id`, `count`), `gather_count` (`resource_id`,
 `count`), `deliver_item` (`item_id`, `count`), `level` (`min`), `zone` (`zone_id`, `state: "unlocked"`).
-Toutes les conditions d'une quête sont requises (ET implicite) en V1.
+Toutes les conditions d'une quête sont requises (ET implicite) en V1. Les `rewards` de l'exemple sont
+ceux d'une quête `normal` de niveau 5 (`quest_rewards.normal`).
 
 ### `kind: "shop"`
 ```json
@@ -345,8 +380,12 @@ le bloc non pertinent plutôt que de le laisser vide).
 - [ ] Zone `town` : 4-6 `quest_giver` minimum, au moins une partie `conditional` (chaîne de progression).
 - [ ] Aucun `npc` réutilisé dans une zone où sa description ne le justifie pas.
 - [ ] Aucun `sell_offers.price` en dessous du `base_value` de l'item vendu.
-- [ ] Stats des monstres et `stat_bonuses`/`base_value` des items dans les fourchettes de la section
-      ÉQUILIBRAGE (écart x2-3 maximum, sauf cas explicitement exceptionnel).
+- [ ] Stats des monstres, `power` des attaques, `stat_bonuses`, `base_value`, montants des
+      consommables et récompenses de quête repris de `balance_targets` au niveau de chaque template
+      (±15 % au plus).
+- [ ] Attaques des monstres en `power`, jamais en `damage` fixe ; 2-3 `phases` pour un boss.
+- [ ] `xp_reward: 0` sur les ressources, `min_level` = `profession_min_level`.
+- [ ] 2 à 4 quêtes par zone ordinaire, ampleur (`small`/`normal`/`major`) cohérente avec la récompense.
 - [ ] Aucune entry `discovery`, aucun `Skill`/`Title` généré ici.
 - [ ] JSON strictement valide, aucun texte hors du JSON.
 
@@ -357,5 +396,10 @@ le bloc non pertinent plutôt que de le laisser vide).
 - `zone` : l'objet zone complet du squelette (id, name, type, description, generation_brief...).
 - `manifest_obligations` : les entrées du `condition_manifest` de l'étage où `resolved_by` pointe vers
   cette zone.
+- `balance_targets` : les chiffres cibles calculés pour cette zone (voir ÉQUILIBRAGE) :
+  `difficulty_tier`, `quest_objective_counts`, et pour chaque niveau du `level_range` :
+  `reference_player`, `monsters` (stats, `main_move`, `slow_move_power_per_second`, `xp` par rôle),
+  `equipment_points_per_piece`, `base_value`, `consumable_amount`, `quest_rewards`,
+  `profession_min_level`.
 - `template_library_excerpt` : liste allégée (id, name, kind, level, tags, description courte — pas la
   définition mécanique complète) des templates existants jugés pertinents pour cette zone.

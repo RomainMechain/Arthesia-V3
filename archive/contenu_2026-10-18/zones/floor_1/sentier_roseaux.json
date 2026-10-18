@@ -29,91 +29,11 @@
   },
   "entries": [
     {
-      "id": "entry_rat_roseaux_01",
+      "id": "e_rat",
       "template_type": "monster",
       "template_id": "rat_des_roseaux",
       "state_scope": "shared",
       "rarity": "common",
-      "group_required": false,
-      "spawn": {
-        "mode": "respawn_timer",
-        "cooldown_seconds": 25,
-        "stock": null,
-        "condition": null,
-        "visibility_when_locked": null,
-        "hint": null
-      }
-    },
-    {
-      "id": "entry_sanglier_roseaux_01",
-      "template_type": "monster",
-      "template_id": "sanglier_roseaux",
-      "state_scope": "shared",
-      "rarity": "rare",
-      "group_required": false,
-      "spawn": {
-        "mode": "respawn_timer",
-        "cooldown_seconds": 9,
-        "stock": null,
-        "condition": null,
-        "visibility_when_locked": null,
-        "hint": null
-      }
-    },
-    {
-      "id": "entry_libellule_geante_01",
-      "template_type": "monster",
-      "template_id": "libellule_geante",
-      "state_scope": "shared",
-      "rarity": "rare",
-      "group_required": false,
-      "spawn": {
-        "mode": "respawn_timer",
-        "cooldown_seconds": 120,
-        "stock": null,
-        "condition": null,
-        "visibility_when_locked": null,
-        "hint": null
-      }
-    },
-    {
-      "id": "entry_fibre_roseau_01",
-      "template_type": "resource",
-      "template_id": "fibre_roseau",
-      "state_scope": "shared",
-      "rarity": "common",
-      "group_required": false,
-      "spawn": {
-        "mode": "respawn_timer",
-        "cooldown_seconds": 20,
-        "stock": null,
-        "condition": null,
-        "visibility_when_locked": null,
-        "hint": null
-      }
-    },
-    {
-      "id": "entry_argile_humide_01",
-      "template_type": "resource",
-      "template_id": "argile_humide",
-      "state_scope": "shared",
-      "rarity": "common",
-      "group_required": false,
-      "spawn": {
-        "mode": "respawn_timer",
-        "cooldown_seconds": 25,
-        "stock": null,
-        "condition": null,
-        "visibility_when_locked": null,
-        "hint": null
-      }
-    },
-    {
-      "id": "entry_fragment_pierre_01",
-      "template_type": "resource",
-      "template_id": "fragment_pierre_taillee",
-      "state_scope": "shared",
-      "rarity": "rare",
       "group_required": false,
       "spawn": {
         "mode": "respawn_timer",
@@ -125,9 +45,109 @@
       }
     },
     {
-      "id": "entry_yolenne_npc_01",
+      "id": "e_sanglier",
+      "template_type": "monster",
+      "template_id": "sanglier_roseaux",
+      "state_scope": "shared",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 150,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "e_matrone",
+      "template_type": "monster",
+      "template_id": "matrone_des_roseaux",
+      "state_scope": "shared",
+      "rarity": "very_rare",
+      "group_required": true,
+      "spawn": {
+        "mode": "conditional",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": {
+          "type": "kill_count",
+          "monster_id": "rat_des_roseaux",
+          "count": 50
+        },
+        "visibility_when_locked": "hinted",
+        "hint": "Les roseaux frémissent différemment là où tant de rats sont tombés... quelque chose semble attendre son heure."
+      }
+    },
+    {
+      "id": "e_roseau_fibre",
+      "template_type": "resource",
+      "template_id": "roseau_a_fibre",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 30,
+        "stock": 3,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "e_fragment",
+      "template_type": "resource",
+      "template_id": "fragment_pierre_taillee",
+      "state_scope": "shared",
+      "rarity": "rare",
+      "group_required": false,
+      "spawn": {
+        "mode": "respawn_timer",
+        "cooldown_seconds": 90,
+        "stock": 1,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "e_yolenne",
       "template_type": "npc",
       "template_id": "yolenne_tresseuse",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "e_fenn",
+      "template_type": "npc",
+      "template_id": "fenn_chasseur",
+      "state_scope": "shared",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "permanent",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": null,
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "e_q_premiers_pas",
+      "template_type": "quest_giver",
+      "template_id": "premiers_pas_roseaux",
       "state_scope": "per_player",
       "rarity": "common",
       "group_required": false,
@@ -141,9 +161,29 @@
       }
     },
     {
-      "id": "entry_yolenne_quest_01",
+      "id": "e_q_appel_pierres",
       "template_type": "quest_giver",
-      "template_id": "premiers_pas_roseaux",
+      "template_id": "appel_des_pierres",
+      "state_scope": "per_player",
+      "rarity": "common",
+      "group_required": false,
+      "spawn": {
+        "mode": "conditional",
+        "cooldown_seconds": null,
+        "stock": null,
+        "condition": {
+          "type": "quest",
+          "quest_id": "premiers_pas_roseaux",
+          "state": "completed"
+        },
+        "visibility_when_locked": null,
+        "hint": null
+      }
+    },
+    {
+      "id": "e_q_fleau",
+      "template_type": "quest_giver",
+      "template_id": "fleau_des_roseaux",
       "state_scope": "per_player",
       "rarity": "common",
       "group_required": false,

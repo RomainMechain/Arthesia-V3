@@ -289,7 +289,7 @@ Valeur d'un point selon la stat (`hp` vaut plus qu'un point d'`agi`, par exemple
 | `def` | +2 |
 | `agi` | +1 |
 | `int` | +2 |
-| `sag` | +1 |
+| `sag` | +2 |
 
 Stats de base (niveau "0", avant tout point dépensé) : `hp:80, atk:8, def:5, agi:5, int:6, sag:5`.
 
@@ -300,20 +300,12 @@ répartition des points elle-même est de l'**état par joueur** (comme les slot
 pas du contenu généré — hors périmètre de ce document.
 
 Chaque compétence (active joueur ou entrée de `moveset` monstre) porte un `damage_type`
-(`"physical"` ou `"magical"`) qui détermine si elle scale sur `atk` ou `int`.
+(`"physical"` ou `"magical"`) qui détermine si elle scale sur `atk` ou `int`. Les soins scalent sur
+`sag`, les boucliers sur `sag` (`atk` si la compétence est physique).
 
-Formules de départ, avec les constantes `K_*` calibrées une première fois (voir
-`arthesia_balance_reference.md` pour le détail et les vérifications croisées — première passe,
-pas encore éprouvée en jeu réel) :
-
-```
-mitigation = def / (def + K_def)          K_def = 20
-final_damage = raw_damage × (1 − mitigation)
-
-max_mana = base_mana + int × K_int        base_mana = 50, K_int = 4
-mana_regen_per_second = base_regen + sag × K_sag   base_regen = 1, K_sag = 0.15
-basic_attack_cooldown = base_cooldown / (1 + agi × K_agi)   base_cooldown = 2.0s, K_agi = 0.03
-```
+Les formules de combat (réduction des dégâts, mana, vitesse d'attaque, critiques et esquive) sont
+relatives au niveau et calibrées par simulation : elles sont décrites dans
+`arthesia_balance_reference.md` et font foi dans `back/combat_engine.py`.
 
 ---
 
@@ -376,8 +368,8 @@ touchant tout le monde.
     {
       "id": "morsure",
       "damage_type": "physical",
-      "cooldown_seconds": 2,
-      "damage": 18,
+      "cooldown_seconds": 2.5,
+      "power": 0.21,
       "weight": 3,
       "telegraph_seconds": 0,
       "avoidable_by": null
@@ -386,7 +378,7 @@ touchant tout le monde.
       "id": "charge_feroce",
       "damage_type": "physical",
       "cooldown_seconds": 8,
-      "damage": 55,
+      "power": 0.48,
       "weight": 1,
       "telegraph_seconds": 1.2,
       "avoidable_by": null
@@ -408,9 +400,9 @@ Boss avec phases (avec une attaque magique pour l'exemple) :
   "role": "boss",
   "stats": { "hp": 4200, "atk": 60, "def": 25, "agi": 10, "int": 40, "sag": 0 },
   "moveset": [
-    { "id": "griffe", "damage_type": "physical", "cooldown_seconds": 3, "damage": 40, "weight": 3, "telegraph_seconds": 0.6, "avoidable_by": null },
-    { "id": "charge_feroce", "damage_type": "physical", "cooldown_seconds": 10, "damage": 90, "weight": 1, "telegraph_seconds": 1.2, "avoidable_by": null },
-    { "id": "onde_de_choc", "damage_type": "magical", "cooldown_seconds": 14, "damage": 70, "weight": 1, "telegraph_seconds": 1.8, "avoidable_by": null }
+    { "id": "griffe", "damage_type": "physical", "cooldown_seconds": 2.5, "power": 0.14, "weight": 3, "telegraph_seconds": 0, "avoidable_by": null },
+    { "id": "charge_feroce", "damage_type": "physical", "cooldown_seconds": 10, "power": 0.4, "weight": 1, "telegraph_seconds": 0, "avoidable_by": null },
+    { "id": "onde_de_choc", "damage_type": "magical", "cooldown_seconds": 14, "power": 0.57, "weight": 1, "telegraph_seconds": 0, "avoidable_by": null }
   ],
   "phases": [
     { "hp_above_percent": 50, "moveset_ids": ["griffe", "charge_feroce"] },
@@ -691,8 +683,8 @@ Comme `Condition`, un objet générique `{ "type": ..., ... }`. Utilisé dans `S
 | `type` | Usage | Champs |
 |---|---|---|
 | `damage` | Dégâts — scale sur ATK ou INT du lanceur selon `damage_type` du skill parent | `power` (coefficient, ex. `1.8` = 180% du stat) |
-| `heal` | Soin — scale sur INT du lanceur | `power` |
-| `shield` | Absorbe des dégâts pendant une durée | `amount_power`, `duration_seconds` |
+| `heal` | Soin — scale sur SAG du lanceur | `power` |
+| `shield` | Absorbe des dégâts pendant une durée — scale sur SAG (ATK si le skill est physique) | `amount_power`, `duration_seconds` |
 | `buff` | Augmente une stat temporairement | `stat`, `amount_percent`, `duration_seconds`, `target` |
 | `debuff` | Réduit une stat d'une cible temporairement | `stat`, `amount_percent`, `duration_seconds`, `target` |
 | `stat_bonus` | Bonus de stat permanent (**passif uniquement**) | `stat`, `amount` |
@@ -786,9 +778,9 @@ Comme `Condition`, un objet générique `{ "type": ..., ... }`. Utilisé dans `S
   et `telegraph_seconds`/`avoidable_by` — repris tels quels du moveset monstre, non fonctionnels en V1
   (placeholders V2 pour l'esquive/parade), pour rester symétrique.
 - `unlock_condition` réutilise `Condition` sans rien ajouter — cohérent avec zones/entrées/quêtes.
-- **Différence assumée avec les monstres** : leurs compétences ont des dégâts **fixes** (`damage`), un
-  monstre ne changeant pas d'équipement. Les compétences joueur scalent via `power` sur `atk`/`int`,
-  pour progresser avec le niveau et l'équipement.
+- Les attaques des monstres utilisent aussi `power` (× leur `atk`, ou `int` si magique), comme les
+  compétences joueur : un debuff de stat les affecte de la même façon. Les anciens templates à dégâts
+  fixes (`damage`) restent lus.
 - Slots (4 à 8 actifs équipables, cf. section Combat) et emplacements de passifs équipés : c'est de la
   configuration de personnage (état par joueur), pas du contenu — hors périmètre ici.
 
@@ -989,17 +981,10 @@ manifeste — elles ne dépendent d'aucun contenu à créer quelque part.
   — le template Item existe, reste à remplir les tables avec de vrais objets.
 - Où et comment le cache de craft est stocké/interrogé côté serveur (base de recettes globale) — posé
   côté design, pas côté infra.
-- Calibrage des constantes (`K_def`, `K_int`, `K_sag`, `K_agi`, `K_sell`...) — posées comme structure,
-  valeurs à tester.
-- Système de progression des métiers (courbe d'XP, paliers, ce que chaque niveau débloque) — la liste
-  des métiers est posée, pas leur leveling.
 - Mécanisme d'XP pour `chasse` (lié au combat/loot, pas à une `resource`) — à préciser avec `loot_table`.
-- Stats secondaires éventuelles (crit, esquive passive, etc.) au-delà des 6 stats de base — à voir si besoin.
 - Système de compétences joueur : contenu réel de l'arbre/pool de sélection (quelles compétences existent
   précisément, courbe de puissance par niveau) — la structure `Skill`/`Effects` est posée, reste à
   remplir. Nombre exact de slots actifs (4 à 8) à trancher en testant.
-- Formules de dégâts/soin détaillées à partir de `power` (ex. `damage = power × atk × (1 − mitigation)`)
-  — posées en intention, pas encore vérifiées en jeu.
 - Esquive / parade — **V2**, schéma déjà prévu (`telegraph_seconds`, `avoidable_by`) mais non actif en V1.
 - Système d'aggro/ciblage pour les combats de groupe — absent en V1, à envisager si besoin plus tard.
 - État dynamique côté serveur (comment `shared` vs `per_player` est réellement stocké/synchronisé,

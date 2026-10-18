@@ -27,11 +27,16 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent.parent
 SKELETONS_DIR = PROJECT_ROOT / "zone_skeletons"
 
+# Chiffres cibles d'équilibrage, calculés par le serveur (back/content_targets.py).
+sys.path.insert(0, str(PROJECT_ROOT))
+from back import content_targets  # noqa: E402
+
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 if not ANTHROPIC_API_KEY:
     sys.exit("❌ Variable d'environnement ANTHROPIC_API_KEY absente.")
 
 MODEL = "claude-sonnet-5"
+MAX_TOKENS = 32000
 PROMPT_FILE = SCRIPT_DIR / "arthesia_floor_skeleton_prompt.md"
 
 
@@ -47,6 +52,7 @@ def build_user_message(floor_number: int, theme_brief: str, zone_count: int,
     lines = [
         "Génère le squelette de cet étage avec les paramètres suivants :",
         f"- floor_number: {floor_number}",
+        f"- floor_level_range: {content_targets.floor_level_range(floor_number)}",
         f"- theme_brief: {theme_brief}",
         f"- zone_count_target: {zone_count}",
     ]
@@ -72,12 +78,20 @@ def generate_floor_skeleton(floor_number: int, theme_brief: str, zone_count: int
     user_message = build_user_message(floor_number, theme_brief, zone_count, previous_summary)
 
     print(f"🌐 Appel à {MODEL}...")
-    response = client.messages.create(
+    # Streaming : le SDK refuse un appel non streamé au-delà d'environ 21 000
+    # tokens de limite. La réflexion du modèle compte dans cette limite.
+    with client.messages.stream(
         model=MODEL,
-        max_tokens=10000,
+        max_tokens=MAX_TOKENS,
         system=system_prompt,
         messages=[{"role": "user", "content": user_message}],
-    )
+    ) as stream:
+        response = stream.get_final_message()
+
+    # Une réponse coupée donne un JSON inutilisable : on s'arrête sans rien écrire.
+    if response.stop_reason == "max_tokens":
+        sys.exit(f"❌ Réponse coupée à {MAX_TOKENS} tokens : rien n'est sauvegardé. "
+                 f"Augmente MAX_TOKENS ou relance.")
 
     raw_text = "".join(block.text for block in response.content if block.type == "text")
 

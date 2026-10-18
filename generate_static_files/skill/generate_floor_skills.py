@@ -28,11 +28,16 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent.parent
 SKELETONS_DIR = PROJECT_ROOT / "zone_skeletons"
 
+# Chiffres cibles d'équilibrage, calculés par le serveur (back/content_targets.py).
+sys.path.insert(0, str(PROJECT_ROOT))
+from back import content_targets  # noqa: E402
+
 API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 if not API_KEY:
     sys.exit("❌ Variable d'environnement ANTHROPIC_API_KEY absente.")
 
 MODEL = "claude-sonnet-5"
+MAX_TOKENS = 32000
 PROMPT_FILE = SCRIPT_DIR / "arthesia_floor_skills_prompt.md"
 TEMPLATES_DIR = PROJECT_ROOT / "templates"
 ZONES_DIR = PROJECT_ROOT / "zones"
@@ -150,10 +155,11 @@ def load_system_prompt() -> str:
     return PROMPT_FILE.read_text(encoding="utf-8")
 
 
-def build_user_message(floor_info: dict, inventory: list[dict], count: int) -> str:
+def build_user_message(floor_info: dict, inventory: list[dict], count: int, targets: dict) -> str:
     return (
         "Génère les compétences de cet étage avec les paramètres suivants :\n\n"
         f"floor:\n{json.dumps(floor_info, ensure_ascii=False, indent=2)}\n\n"
+        f"balance_targets:\n{json.dumps(targets, ensure_ascii=False)}\n\n"
         f"floor_content_inventory:\n{json.dumps(inventory, ensure_ascii=False, indent=2)}\n\n"
         f"skill_count_target: {count}\n\n"
         "Réponds uniquement avec le JSON demandé, sans aucun texte avant ou après."
@@ -167,19 +173,27 @@ def extract_json(text: str) -> dict:
     return json.loads(cleaned)
 
 
-def generate_skills(floor_info: dict, inventory: list[dict], count: int) -> list[dict]:
+def generate_skills(floor_info: dict, inventory: list[dict], count: int, targets: dict) -> list[dict]:
     client = anthropic.Anthropic(api_key=API_KEY)
 
     system_prompt = load_system_prompt()
-    user_message = build_user_message(floor_info, inventory, count)
+    user_message = build_user_message(floor_info, inventory, count, targets)
 
     print(f"🌐 Appel à {MODEL} pour générer {count} compétences...")
-    response = client.messages.create(
+    # Streaming : le SDK refuse un appel non streamé au-delà d'environ 21 000
+    # tokens de limite. La réflexion du modèle compte dans cette limite.
+    with client.messages.stream(
         model=MODEL,
-        max_tokens=8000,
+        max_tokens=MAX_TOKENS,
         system=system_prompt,
         messages=[{"role": "user", "content": user_message}],
-    )
+    ) as stream:
+        response = stream.get_final_message()
+
+    # Une réponse coupée donne un JSON inutilisable : on s'arrête sans rien écrire.
+    if response.stop_reason == "max_tokens":
+        sys.exit(f"❌ Réponse coupée à {MAX_TOKENS} tokens : rien n'est sauvegardé. "
+                 f"Augmente MAX_TOKENS ou relance.")
 
     raw_text = "".join(block.text for block in response.content if block.type == "text")
 
@@ -341,7 +355,12 @@ def main():
           f"{sum(1 for t in inventory if t['kind'] == 'item')} items, "
           f"{sum(1 for t in inventory if t['kind'] == 'quest')} quêtes, ...)")
 
-    skills = generate_skills(floor_info, inventory, args.count)
+    # Niveaux réels du contenu de l'étage, sinon ceux prévus pour ce numéro d'étage.
+    levels = [t["level"] for t in inventory if isinstance(t.get("level"), int)]
+    level_range = [min(levels), max(levels)] if levels else content_targets.floor_level_range(floor_number)
+    targets = content_targets.skill_targets(level_range)
+
+    skills = generate_skills(floor_info, inventory, args.count, targets)
 
     full_index = load_index()
     warnings = validate_skills(skills, inventory, full_index)

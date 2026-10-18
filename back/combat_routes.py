@@ -35,22 +35,22 @@ try:
     from .content_store import find_entry, load_static_zone_content, load_template
     from .database import db
     from .game_rules import (
-        compute_final_stats, has_defeated_entry, is_entry_unlocked, is_one_time_per_player, is_shared_entry,
-        resolve_entry_state,
+        compute_final_stats, current_hp, has_defeated_entry, is_entry_unlocked, is_one_time_per_player,
+        is_shared_entry, resolve_entry_state,
     )
     from .player_store import get_player, get_zone_dynamic_state, save_player
-    from .progression import apply_monster_kill_rewards
+    from .progression import apply_defeat, apply_monster_kill_rewards, record_combat_hp
 except ImportError:
     import combat_engine as engine
     from auth import AUTH_REQUIRED, check_player, verify_id_token
     from content_store import find_entry, load_static_zone_content, load_template
     from database import db
     from game_rules import (
-        compute_final_stats, has_defeated_entry, is_entry_unlocked, is_one_time_per_player, is_shared_entry,
-        resolve_entry_state,
+        compute_final_stats, current_hp, has_defeated_entry, is_entry_unlocked, is_one_time_per_player,
+        is_shared_entry, resolve_entry_state,
     )
     from player_store import get_player, get_zone_dynamic_state, save_player
-    from progression import apply_monster_kill_rewards
+    from progression import apply_defeat, apply_monster_kill_rewards, record_combat_hp
 
 router = APIRouter()
 active_combats: dict[str, dict] = {}
@@ -70,8 +70,11 @@ async def send_victory(websocket: WebSocket, session: dict) -> None:
     la connexion : le joueur peut relancer un combat.
     """
     try:
-        rewards = apply_monster_kill_rewards(session["player_id"], session["zone_id"], session["entry_id"])
+        rewards = apply_monster_kill_rewards(
+            session["player_id"], session["zone_id"], session["entry_id"], session["player_current_hp"],
+        )
     except HTTPException as exc:
+        record_combat_hp(session["player_id"], session["player_current_hp"])
         await websocket.send_json({"type": "combat_won_no_reward", "reason": exc.detail})
         return
     except Exception:
@@ -122,10 +125,7 @@ async def combat_tick_loop(websocket: WebSocket, combat_id: str):
             if session is None:
                 break
 
-            engine.expire_effects(session)
-            engine.regen_mana(session, engine.TICK_INTERVAL_SECONDS)
-
-            attack = engine.monster_tick(session)
+            attack = engine.tick(session)
             if attack:
                 await send_event(websocket, session, {
                     "type": "monster_attack",
@@ -135,9 +135,9 @@ async def combat_tick_loop(websocket: WebSocket, combat_id: str):
                     "player_mana": session["player_current_mana"],
                 })
                 if session["player_current_hp"] <= 0:
-                    await websocket.send_json({"type": "combat_lost"})
                     # Retirer la session empêche la boucle de repartir au tick suivant.
                     active_combats.pop(combat_id, None)
+                    await websocket.send_json({"type": "combat_lost", **apply_defeat(session["player_id"])})
                     break
 
             for passive in engine.trigger_passives(session):
@@ -218,9 +218,15 @@ async def start_combat(websocket: WebSocket, message: dict) -> tuple[str, dict] 
         if skill.get("trigger") == "conditional":
             conditional_passives.append(skill)
 
+    equipped_active = player["skills"]["equipped_active"]
+    stats = compute_final_stats(player)
+    # Les PV perdus aux combats précédents ne sont pas encore tous revenus.
+    hp = max(1.0, current_hp(player, stats["hp"]))
     session = engine.new_session(
-        player_id, zone_id, entry_id, monster, compute_final_stats(player),
-        player["skills"]["equipped_active"], conditional_passives,
+        player_id, zone_id, entry_id, monster, stats,
+        equipped_active, conditional_passives,
+        {skill_id: load_template("skill", skill_id) for skill_id in equipped_active},
+        player.get("level", 1), hp,
     )
     combat_id = str(uuid.uuid4())
     active_combats[combat_id] = session
@@ -233,12 +239,13 @@ async def start_combat(websocket: WebSocket, message: dict) -> tuple[str, dict] 
         "monster_level": monster.get("level", 1),
         "phase": session["phase_index"] + 1 if session["phase_index"] is not None else None,
         "phase_count": phase_count or None,
-        "player_hp": session["player_max_hp"],
+        "player_hp": session["player_current_hp"],
+        "player_max_hp": session["player_max_hp"],
         "player_mana": session["player_max_mana"],
         # Le client anime la régénération et les recharges entre deux
         # messages ; chaque événement resynchronise les valeurs exactes.
-        "player_mana_regen": round(engine.compute_mana_regen(engine.player_stat(session, "sag")), 2),
-        "basic_attack_cooldown": round(engine.compute_basic_attack_cooldown(engine.player_stat(session, "agi")), 2),
+        "player_mana_regen": round(engine.player_mana_regen(session), 2),
+        "basic_attack_cooldown": round(engine.player_attack_cooldown(session), 2),
         "item_cooldown": engine.ITEM_COOLDOWN_SECONDS,
     })
     return combat_id, session
@@ -261,6 +268,10 @@ async def combat_websocket(websocket: WebSocket):
             action = message.get("action")
 
             if action == "start_combat":
+                # Un seul combat à la fois : ses PV ne sont enregistrés qu'à la fin.
+                if combat_id in active_combats:
+                    await websocket.send_json({"type": "error", "message": "Un combat est déjà en cours"})
+                    continue
                 started = await start_combat(websocket, message)
                 if started:
                     combat_id, _session = started
@@ -274,19 +285,16 @@ async def combat_websocket(websocket: WebSocket):
             t = engine.now()
 
             if action == "basic_attack":
-                # L'attaque basique est limitée par un timestamp monotonic :
-                # celui-ci n'est pas affecté par les changements d'heure système.
-                if t < session["player_basic_attack_ready_at"]:
-                    await websocket.send_json({"type": "error", "message": "Attaque pas encore prête"})
+                # Les recharges sont des timestamps monotonic : ils ne sont pas
+                # affectés par les changements d'heure système.
+                try:
+                    attack = engine.basic_attack(session)
+                except engine.CombatRefusal as exc:
+                    await websocket.send_json({"type": "error", "message": str(exc)})
                     continue
-                raw_damage = engine.BASIC_ATTACK_POWER * engine.player_stat(session, "atk")
-                final_damage = engine.damage_monster(session, raw_damage)
-                cooldown = engine.compute_basic_attack_cooldown(engine.player_stat(session, "agi"))
-                session["player_basic_attack_ready_at"] = t + cooldown
                 await send_event(websocket, session, {
-                    "type": "player_basic_attack", "raw_damage": round(raw_damage, 1),
-                    "final_damage": final_damage, "monster_hp": session["monster_current_hp"],
-                    "monster_max_hp": session["monster_max_hp"], "next_ready_in": round(cooldown, 2),
+                    "type": "player_basic_attack", **attack,
+                    "monster_hp": session["monster_current_hp"], "monster_max_hp": session["monster_max_hp"],
                 })
                 await after_player_action(websocket, combat_id, session)
 
@@ -294,25 +302,15 @@ async def combat_websocket(websocket: WebSocket):
                 # Une compétence doit être équipée, disponible et abordable en
                 # mana avant que ses effets ne modifient la session.
                 skill_id = message.get("skill_id", "")
-                if skill_id not in session["equipped_active"]:
-                    await websocket.send_json({"type": "error", "message": "Compétence non équipée"})
+                try:
+                    used = engine.use_skill(session, skill_id)
+                except engine.CombatRefusal as exc:
+                    await websocket.send_json({"type": "error", "message": str(exc)})
                     continue
-                skill = load_template("skill", skill_id)
-                cooldowns = session["player_skill_cooldowns"]
-                if t < cooldowns.get(skill_id, 0):
-                    await websocket.send_json({"type": "error", "message": "Compétence pas encore prête"})
-                    continue
-                if session["player_current_mana"] < skill["mana_cost"]:
-                    await websocket.send_json({"type": "error", "message": "Pas assez de mana"})
-                    continue
-                session["player_current_mana"] -= skill["mana_cost"]
-                cooldowns[skill_id] = t + skill["cooldown_seconds"]
-                results = engine.apply_skill_effects(session, skill)
                 await send_event(websocket, session, {
-                    "type": "player_skill_used", "skill_id": skill_id, "results": results,
+                    "type": "player_skill_used", "skill_id": skill_id, **used,
                     "monster_hp": session["monster_current_hp"], "player_hp": session["player_current_hp"],
                     "player_mana": session["player_current_mana"],
-                    "next_ready_in": round(skill["cooldown_seconds"], 2),
                 })
                 await after_player_action(websocket, combat_id, session)
 
@@ -354,7 +352,9 @@ async def combat_websocket(websocket: WebSocket):
                 await websocket.send_json({"type": "error", "message": "Action inconnue"})
     except WebSocketDisconnect:
         # Une fermeture réseau doit libérer la tâche et la session en mémoire.
+        # Quitter un combat en cours n'efface pas les PV perdus.
         if tick_task:
             tick_task.cancel()
-        if combat_id and combat_id in active_combats:
-            del active_combats[combat_id]
+        session = active_combats.pop(combat_id, None) if combat_id else None
+        if session is not None:
+            record_combat_hp(session["player_id"], session["player_current_hp"])

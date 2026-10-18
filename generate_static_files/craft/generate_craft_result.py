@@ -34,11 +34,16 @@ import anthropic
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent.parent
 
+# Chiffres cibles d'équilibrage, calculés par le serveur (back/content_targets.py).
+sys.path.insert(0, str(PROJECT_ROOT))
+from back import content_targets  # noqa: E402
+
 API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 if not API_KEY:
     sys.exit("❌ Variable d'environnement ANTHROPIC_API_KEY absente.")
 
 MODEL = "claude-sonnet-5"
+MAX_TOKENS = 16000
 PROMPT_FILE = SCRIPT_DIR / "arthesia_craft_prompt.md"
 TEMPLATES_DIR = PROJECT_ROOT / "templates"
 WORKSHOPS_DIR = TEMPLATES_DIR / "workshops"
@@ -165,6 +170,7 @@ def build_user_message(workshop: dict, params: dict, inputs_full: list[dict]) ->
         "Génère le résultat de ce craft inédit :\n\n"
         f"workshop:\n{json.dumps(workshop_info, ensure_ascii=False, indent=2)}\n\n"
         f"inputs:\n{json.dumps(inputs_full, ensure_ascii=False, indent=2)}\n\n"
+        f"balance_targets:\n{json.dumps(content_targets.craft_inputs_targets(inputs_full), ensure_ascii=False)}\n\n"
         "Réponds uniquement avec le JSON demandé, sans aucun texte avant ou après."
     )
 
@@ -183,12 +189,20 @@ def generate_craft_item(workshop: dict, params: dict, inputs_full: list[dict]) -
     user_message = build_user_message(workshop, params, inputs_full)
 
     print(f"🌐 Combinaison inédite — appel à {MODEL}...")
-    response = client.messages.create(
+    # Streaming : le SDK refuse un appel non streamé au-delà d'environ 21 000
+    # tokens de limite. La réflexion du modèle compte dans cette limite.
+    with client.messages.stream(
         model=MODEL,
-        max_tokens=2000,
+        max_tokens=MAX_TOKENS,
         system=system_prompt,
         messages=[{"role": "user", "content": user_message}],
-    )
+    ) as stream:
+        response = stream.get_final_message()
+
+    # Une réponse coupée donne un JSON inutilisable : on s'arrête sans rien écrire.
+    if response.stop_reason == "max_tokens":
+        sys.exit(f"❌ Réponse coupée à {MAX_TOKENS} tokens : rien n'est sauvegardé. "
+                 f"Augmente MAX_TOKENS ou relance.")
 
     raw_text = "".join(block.text for block in response.content if block.type == "text")
 
@@ -277,6 +291,8 @@ def main():
     new_item = generate_craft_item(workshop, params, inputs_full)
 
     full_index = load_index()
+    for warning in content_targets.check_template({**new_item, "kind": "item"}):
+        print(f"⚠️  {warning}")
     saved_id = save_new_item(new_item, full_index)
 
     if saved_id:

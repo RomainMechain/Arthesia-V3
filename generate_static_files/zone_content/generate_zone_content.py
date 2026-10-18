@@ -31,11 +31,16 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent.parent
 SKELETONS_DIR = PROJECT_ROOT / "zone_skeletons"
 
+# Chiffres cibles d'équilibrage, calculés par le serveur (back/content_targets.py).
+sys.path.insert(0, str(PROJECT_ROOT))
+from back import content_targets  # noqa: E402
+
 API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 if not API_KEY:
     sys.exit("❌ Variable d'environnement ANTHROPIC_API_KEY absente.")
 
 MODEL = "claude-sonnet-5"
+MAX_TOKENS = 32000
 PROMPT_FILE = SCRIPT_DIR / "arthesia_zone_content_prompt.md"
 TEMPLATES_DIR = PROJECT_ROOT / "templates"
 ZONES_DIR = PROJECT_ROOT / "zones"
@@ -139,10 +144,11 @@ def load_system_prompt() -> str:
     return PROMPT_FILE.read_text(encoding="utf-8")
 
 
-def build_user_message(zone: dict, obligations: list[dict], library_excerpt: list[dict]) -> str:
+def build_user_message(zone: dict, obligations: list[dict], library_excerpt: list[dict], targets: dict) -> str:
     return (
         "Génère le contenu de cette zone avec les paramètres suivants :\n\n"
         f"zone:\n{json.dumps(zone, ensure_ascii=False, indent=2)}\n\n"
+        f"balance_targets:\n{json.dumps(targets, ensure_ascii=False)}\n\n"
         f"manifest_obligations:\n{json.dumps(obligations, ensure_ascii=False, indent=2)}\n\n"
         f"template_library_excerpt:\n{json.dumps(library_excerpt, ensure_ascii=False, indent=2)}\n\n"
         "Réponds uniquement avec le JSON demandé, sans aucun texte avant ou après."
@@ -186,19 +192,27 @@ def extract_json(text: str) -> dict:
     raise json.JSONDecodeError("Aucun JSON valide trouvé dans la réponse", cleaned, 0)
 
 
-def generate_zone_content(zone: dict, obligations: list[dict], library_excerpt: list[dict]) -> dict:
+def generate_zone_content(zone: dict, obligations: list[dict], library_excerpt: list[dict], targets: dict) -> dict:
     client = anthropic.Anthropic(api_key=API_KEY)
 
     system_prompt = load_system_prompt()
-    user_message = build_user_message(zone, obligations, library_excerpt)
+    user_message = build_user_message(zone, obligations, library_excerpt, targets)
 
     print(f"🌐 Appel à {MODEL} pour la zone '{zone['id']}'...")
-    response = client.messages.create(
+    # Streaming : le SDK refuse un appel non streamé au-delà d'environ 21 000
+    # tokens de limite. La réflexion du modèle compte dans cette limite.
+    with client.messages.stream(
         model=MODEL,
-        max_tokens=20000,
+        max_tokens=MAX_TOKENS,
         system=system_prompt,
         messages=[{"role": "user", "content": user_message}],
-    )
+    ) as stream:
+        response = stream.get_final_message()
+
+    # Une réponse coupée donne un JSON inutilisable : on s'arrête sans rien écrire.
+    if response.stop_reason == "max_tokens":
+        sys.exit(f"❌ Réponse coupée à {MAX_TOKENS} tokens : rien n'est sauvegardé. "
+                 f"Augmente MAX_TOKENS ou relance.")
 
     raw_text = "".join(
         block.text for block in getattr(response, "content", [])
@@ -450,9 +464,17 @@ def main():
     if obligations:
         print(f"📋 {len(obligations)} obligation(s) du manifeste à honorer pour cette zone.")
 
-    result = generate_zone_content(zone, obligations, library_excerpt)
+    tier = content_targets.zone_difficulty_tier(skeleton, args.zone_id)
+    level_range = zone.get("generation_brief", {}).get("level_range") or content_targets.floor_level_range(floor_number)
+    targets = content_targets.zone_targets(level_range, tier)
+    print(f"⚖️  Niveaux {level_range[0]}-{level_range[-1]}, profondeur « {tier} ».")
+
+    result = generate_zone_content(zone, obligations, library_excerpt, targets)
 
     warnings, colliding_pairs = validate_result(result, full_index, obligations)
+    # Écarts aux chiffres d'équilibrage : signalés, à corriger à la main ou en relançant.
+    for template in result.get("new_templates", []):
+        warnings.extend(content_targets.check_template(template, tier))
     if warnings:
         print("\n⚠️  Points à vérifier :")
         for w in warnings:

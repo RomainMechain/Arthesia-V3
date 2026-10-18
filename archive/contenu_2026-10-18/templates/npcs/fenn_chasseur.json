@@ -1,0 +1,11 @@
+{
+  "id": "fenn_chasseur",
+  "name": "Fenn",
+  "description": "Un chasseur solitaire qui pose ses pièges à l'orée du sentier, là où les roseaux s'épaississent. Il parle peu, surveille beaucoup, et n'aime pas que les sangliers s'approchent trop de son campement.",
+  "role": "Chasseur",
+  "dialogues": [
+    "Les sangliers deviennent nerveux, ces derniers temps. Ça ne me dit rien de bon.",
+    "Tu veux chasser avec moi ? Reste discret, et surtout, reste derrière.",
+    "Ces pierres dans la boue... je préfère ne pas y toucher. Toi, fais comme tu veux."
+  ]
+}

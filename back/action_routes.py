@@ -24,12 +24,13 @@ try:
         build_recipe_key, generate_craft_item_via_ai, get_cached_craft,
         save_craft_cache, save_new_craft_item,
     )
+    from .balance import max_item_level_for, profession_action_xp, profession_level_for, profession_xp_to_next_level
     from .database import db
     from .game_rules import (
         advance_quest_objectives, apply_player_level_ups, apply_profession_level_ups, deplete_entry_state,
         get_profession, is_entry_unlocked, is_zone_accessible, public_entry_state, quest_progress_view,
         has_defeated_entry, is_shared_entry, reachable_floor_ids, require_entry_unlocked, require_player_in_zone,
-        resolve_entry_state, roll_loot_table, xp_to_next_level,
+        resolve_entry_state, roll_loot_table, compute_final_stats, current_hp, set_hp, settle_hp,
     )
     from .models import *
     from .player_store import get_player, get_zone_dynamic_state, save_player, save_zone_dynamic_state
@@ -41,12 +42,13 @@ except ImportError:
         build_recipe_key, generate_craft_item_via_ai, get_cached_craft,
         save_craft_cache, save_new_craft_item,
     )
+    from balance import max_item_level_for, profession_action_xp, profession_level_for, profession_xp_to_next_level
     from database import db
     from game_rules import (
         advance_quest_objectives, apply_player_level_ups, apply_profession_level_ups, deplete_entry_state,
         get_profession, is_entry_unlocked, is_zone_accessible, public_entry_state, quest_progress_view,
         has_defeated_entry, is_shared_entry, reachable_floor_ids, require_entry_unlocked, require_player_in_zone,
-        resolve_entry_state, roll_loot_table, xp_to_next_level,
+        resolve_entry_state, roll_loot_table, compute_final_stats, current_hp, set_hp, settle_hp,
     )
     from models import *
     from player_store import get_player, get_zone_dynamic_state, save_player, save_zone_dynamic_state
@@ -89,6 +91,9 @@ def _travel_tx(transaction, req: TravelRequest, floors: list[dict], floor_id: st
         raise HTTPException(403, "Cet étage n'est pas encore accessible : franchis d'abord le passage de l'étage précédent")
     if not is_zone_accessible(zone, player):
         raise HTTPException(403, "Cette zone n'est pas encore accessible")
+    # La régénération des PV dépend de la zone (plus rapide en ville) : celle
+    # acquise jusqu'ici est figée avant de changer de zone.
+    settle_hp(player)
     player["current_zone_id"] = zone["id"]
     save_player(req.player_id, player, transaction)
     return {"current_zone_id": zone["id"], "floor_id": floor_id}
@@ -201,15 +206,17 @@ def _resource_gather_tx(transaction, req: ResourceGatherRequest, entry: dict, re
         profession_id = prof_req["profession_id"]
         player_prof = player["professions"].setdefault(profession_id, get_profession(player, profession_id))
         level_before = player_prof["level"]
-        player_prof["xp"] += prof_req.get("xp_reward", 0)
+        # L'XP dépend du niveau de la ressource (balance.profession_action_xp).
+        xp_gained = profession_action_xp(prof_req["min_level"])
+        player_prof["xp"] += xp_gained
         apply_profession_level_ups(player_prof)
         profession = {
             "id": profession_id,
-            "xp_gained": prof_req.get("xp_reward", 0),
+            "xp_gained": xp_gained,
             "level": player_prof["level"],
             "levels_gained": player_prof["level"] - level_before,
             "xp": player_prof["xp"],
-            "xp_to_next_level": xp_to_next_level(player_prof["level"]),
+            "xp_to_next_level": profession_xp_to_next_level(player_prof["level"]),
         }
 
     player["lifetime_counters"]["gathers"][entry["template_id"]] = player["lifetime_counters"]["gathers"].get(entry["template_id"], 0) + 1
@@ -462,8 +469,9 @@ def craft(req: CraftRequest):
         if player["inventory"].get(inp.item_id, 0) < inp.quantity:
             raise HTTPException(400, f"Pas assez de '{inp.item_id}' en inventaire")
         item = load_template("item", inp.item_id)
-        if item.get("level", 1) > profession_level:
-            raise HTTPException(403, f"'{item.get('name', inp.item_id)}' (niveau {item.get('level', 1)}) dépasse ton niveau en {profession_id} ({profession_level})")
+        # Un niveau de métier couvre plusieurs niveaux d'objet (balance.profession_level_for).
+        if item.get("level", 1) > max_item_level_for(profession_level):
+            raise HTTPException(403, f"'{item.get('name', inp.item_id)}' (niveau {item.get('level', 1)}) demande le niveau {profession_level_for(item.get('level', 1))} en {profession_id}")
         inputs_full.append({**item, "quantity": inp.quantity})
 
     # La clé canonique garantit que l'ordre des inputs/paramètres ne crée pas
@@ -507,7 +515,7 @@ def _craft_consume_tx(transaction, req: CraftRequest, profession_id: str, output
     # L'XP de craft est calculée à partir du niveau de l'item produit.
     player_prof = player["professions"].setdefault(profession_id, get_profession(player, profession_id))
     level_before = player_prof["level"]
-    craft_xp_gained = output_item.get("level", 1) * 10
+    craft_xp_gained = profession_action_xp(profession_level_for(output_item.get("level", 1)), "craft")
     player_prof["xp"] += craft_xp_gained
     apply_profession_level_ups(player_prof)
     save_player(req.player_id, player, transaction)
@@ -518,10 +526,40 @@ def _craft_consume_tx(transaction, req: CraftRequest, profession_id: str, output
             "level": player_prof["level"],
             "levels_gained": player_prof["level"] - level_before,
             "xp": player_prof["xp"],
-            "xp_to_next_level": xp_to_next_level(player_prof["level"]),
+            "xp_to_next_level": profession_xp_to_next_level(player_prof["level"]),
         },
         "player_inventory": player["inventory"],
     }
+
+
+@router.post("/actions/use_item")
+def use_item(req: UseItemRequest):
+    """Utilise un consommable de soin hors combat : les PV perdus aux combats
+    précédents remontent d'autant. Les autres consommables (mana, buffs) ne
+    servent qu'en combat."""
+    item = load_template("item", req.item_id)
+    consumable = item.get("consumable") or {}
+    if item.get("category") != "consumable" or consumable.get("effect_type") != "heal":
+        raise HTTPException(400, "Cet objet ne s'utilise qu'en combat")
+    return _use_item_tx(db.transaction(), req, float(consumable.get("amount", 0)))
+
+
+@firestore.transactional
+def _use_item_tx(transaction, req: UseItemRequest, amount: float) -> dict:
+    player = get_player(req.player_id, transaction)
+    if player["inventory"].get(req.item_id, 0) < 1:
+        raise HTTPException(409, "Tu n'as pas cet objet")
+    max_hp = compute_final_stats(player)["hp"]
+    before = current_hp(player, max_hp)
+    if before >= max_hp:
+        raise HTTPException(409, "Tes PV sont déjà au maximum")
+    player["inventory"][req.item_id] -= 1
+    if player["inventory"][req.item_id] <= 0:
+        del player["inventory"][req.item_id]
+    set_hp(player, before + amount, max_hp)
+    save_player(req.player_id, player, transaction)
+    after = min(max_hp, before + amount)
+    return {"healed": round(after - before, 1), "hp": after, "max_hp": max_hp, "player_inventory": player["inventory"]}
 
 
 @router.post("/actions/allocate_stat_points")

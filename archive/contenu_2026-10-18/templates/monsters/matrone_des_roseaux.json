@@ -1,0 +1,59 @@
+{
+  "id": "matrone_des_roseaux",
+  "name": "Matrone des Roseaux",
+  "description": "Elle est plus grande que n'importe quel rat du sentier ne devrait l'être, le poil hérissé de reflets presque métalliques, comme si quelque chose dans la terre gorgée d'eau avait nourri sa croissance au-delà du raisonnable. Les voyageurs qui s'enfoncent trop longtemps dans les roseaux racontent l'avoir entraperçue près des pierres taillées, immobile, les yeux tournés vers le sol comme si elle en écoutait un murmure que personne d'autre n'entend. Ceux qui l'ont affrontée disent qu'elle ne fuit jamais, contrairement aux siens — comme si fuir n'avait plus de sens pour elle depuis longtemps.",
+  "level": 3,
+  "role": "elite",
+  "stats": {
+    "hp": 691,
+    "atk": 27,
+    "def": 22,
+    "agi": 10,
+    "int": 27,
+    "sag": 13
+  },
+  "moveset": [
+    {
+      "id": "griffade_frenetique",
+      "damage_type": "physical",
+      "cooldown_seconds": 2.5,
+      "power": 0.27,
+      "weight": 3,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "charge_ravageuse",
+      "damage_type": "physical",
+      "cooldown_seconds": 7,
+      "power": 0.539,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    },
+    {
+      "id": "cri_percant",
+      "damage_type": "magical",
+      "cooldown_seconds": 5,
+      "power": 0.385,
+      "weight": 1,
+      "telegraph_seconds": 0,
+      "avoidable_by": null
+    }
+  ],
+  "phases": null,
+  "loot_table": [
+    {
+      "item_id": "fragment_pierre_taillee",
+      "quantity_min": 1,
+      "quantity_max": 2,
+      "weight": 5
+    },
+    {
+      "item_id": "noyau_scelle",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "weight": 1
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "id": "fibre_de_roseau",
+  "name": "Fibre de Roseau",
+  "description": "Un ruban fibreux et résistant, détaché de l'écorce intérieure d'un roseau. Idéal pour le tressage.",
+  "category": "material",
+  "level": 1,
+  "base_value": 5,
+  "stack_size": 20
+}

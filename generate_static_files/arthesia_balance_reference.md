@@ -1,143 +1,268 @@
 # Arthesia — Référence d'équilibrage
 
-> Point de départ chiffré, pas une vérité gravée dans le marbre — à calibrer en testant. Sert d'ancrage
-> commun pour **tous** les prompts de génération (monstres, items, compétences, craft) afin qu'ils
-> cessent d'improviser des nombres chacun dans leur coin. Extraits copiés directement dans les prompts
-> concernés (pas juste référencés) puisque chaque appel API doit rester autonome.
+> Ce document décrit les règles et les intentions. Les chiffres font foi dans le code :
+> - `back/balance.py` : stats, XP, métiers, PV, défaite, profils des monstres ;
+> - `back/content_targets.py` : chiffres cibles du contenu généré ;
+> - `back/combat_engine.py` : formules de combat.
+>
+> Les générateurs (squelette excepté) joignent à chaque appel un bloc `balance_targets` calculé par
+> `content_targets.py` pour les niveaux concernés. Les prompts expliquent les règles et disent au
+> modèle de prendre les valeurs dans ce bloc ; il n'a aucun calcul à faire. Après génération,
+> `content_targets.check_template` signale les monstres et objets trop loin de leurs cibles.
+>
+> Pour changer l'équilibrage : modifier les constantes, relancer le simulateur
+> (`generate_static_files/balance/simulate_combat.py`), puis mettre ce document à jour.
 
 ---
 
-## Système de points de stat (joueur)
+## Intentions de jeu
 
-Chaque niveau, le joueur gagne **6 points** à répartir librement entre `hp`/`atk`/`def`/`agi`/`int`/`sag`.
-Un point n'a pas la même valeur selon la stat (sinon un point en HP et un point en AGI se vaudraient) :
-
-| Stat | Valeur d'1 point |
-|---|---|
-| `hp` | +25 |
-| `atk` | +2 |
-| `def` | +2 |
-| `agi` | +1 |
-| `int` | +2 |
-| `sag` | +1 |
-
-**Stats de base** (niveau "0", avant tout point dépensé — le plancher du personnage) :
-`hp: 80, atk: 8, def: 5, agi: 5, int: 6, sag: 5`.
-
-Un joueur **généraliste** (1 point/stat/niveau, les 6 points bien répartis) suit la **courbe de
-référence** ci-dessous. Un joueur **spécialisé** (ex. 6 points en HP à chaque niveau) s'en écarte
-fortement dans un sens — c'est voulu, c'est la diversité de builds, pas quelque chose à corriger. Toute
-la calibration monstres/items ci-dessous se fait contre le profil généraliste, comme ancrage neutre.
-
-### Courbe de référence (généraliste)
-
-| Niveau | HP | ATK | DEF | AGI | INT | SAG |
-|---|---|---|---|---|---|---|
-| 1 | 105 | 10 | 7 | 6 | 8 | 6 |
-| 3 | 155 | 14 | 11 | 8 | 12 | 8 |
-| 5 | 205 | 18 | 15 | 10 | 16 | 10 |
-| 7 | 255 | 22 | 19 | 12 | 20 | 12 |
-| 10 | 330 | 28 | 25 | 15 | 26 | 15 |
-
-Formule générale (extensible à n'importe quel niveau, utile au-delà de l'étage 1) :
-```
-hp  = 80 + 25 × niveau
-atk = 8  + 2  × niveau
-def = 5  + 2  × niveau
-agi = 5  + 1  × niveau
-int = 6  + 2  × niveau
-sag = 5  + 1  × niveau
-```
+- Une tour façon SAO : des étages ajoutés au fil du temps, **environ 10 niveaux par étage**
+  (étage N : niveaux 10(N−1)+1 à 10N, le boss au niveau le plus haut).
+- Un étage dure plusieurs jours ou semaines en jouant un peu chaque jour.
+- Un monstre normal n'est pas très dur, mais on peut perdre. La difficulté monte quand on s'enfonce
+  dans l'étage. Les élites et les boss sont très durs : tout le monde ne les bat pas.
+- Durée d'un combat : environ 1 min contre un normal, 1-2 min contre une élite, 3-5 min contre un boss.
+- Jeu solo pour l'instant ; le jeu en groupe viendra plus tard.
+- L'équipement fait 40-50 % de la puissance. Les builds hybrides restent viables.
+- XP : 70 % en combat, 30 % en quêtes. Les métiers montent plus lentement, pour pousser à se
+  spécialiser et à commercer. L'or reste modéré, avec des dépenses.
+- Les attaques télégraphiées (`telegraph_seconds`, `avoidable_by`) ne sont pas encore en jeu :
+  l'équilibrage se fait sans elles.
 
 ---
 
-## Constantes des formules de combat
+## Personnage
 
-| Constante | Valeur | Effet à def/int/sag/agi typiques |
+**Stats de base** (avant tout point) : `hp 80, atk 8, def 5, agi 5, int 6, sag 5`.
+**6 points par niveau**, à répartir librement. Valeur d'un point :
+
+| Stat | Valeur d'un point | Rôle |
 |---|---|---|
-| `K_def` | 20 | def=7 → 26% mitigation, def=25 → 56%, def=60 → 75% (rendements décroissants) |
-| `K_int` (avec `base_mana: 50`) | 4 | int=8 → 82 mana, int=26 → 154 mana |
-| `K_sag` (avec `base_regen: 1`) | 0.15 | sag=6 → 1,9/s, sag=15 → 3,25/s |
-| `K_agi` (avec `base_cooldown: 2.0s`) | 0.03 | agi=6 → 1,69s, agi=15 → 1,38s |
-| `K_sell` | 0.35 | Rachat au serveur = 35% du `base_value` (toujours < prix de vente, jamais d'argent infini) |
+| `hp` | +25 | PV |
+| `atk` | +2 | dégâts physiques |
+| `def` | +2 | réduction des dégâts |
+| `agi` | +1 | vitesse de l'attaque de base, critiques, esquive |
+| `int` | +2 | dégâts magiques, mana max |
+| `sag` | +2 | soins, boucliers, régénération de mana |
+
+**Points équivalents** : `hp/25 + atk/2 + def/2 + agi + int/2 + sag/2`. Toute comparaison de puissance
+(équipement, passifs) se fait dans cette unité.
+
+### Joueur de référence
+
+Les monstres sont calibrés contre un joueur de référence **équipé**. Ses points de niveau suivent
+`balance.REFERENCE_WEIGHTS`, un hybride un peu plus porté sur l'ATK, les PV et la DEF (le build
+« aventurier » du simulateur). Son équipement vaut 45 % de sa puissance totale
+(`balance.GEAR_SHARE`), soit 0,45 / 0,55 fois ses points de niveau.
+
+| Niveau | PV | ATK | DEF | AGI | INT | SAG | Mana |
+|---|---|---|---|---|---|---|---|
+| 1 | 137 | 14 | 10 | 6 | 8 | 8 | 76 |
+| 5 | 364 | 35 | 28 | 12 | 15 | 19 | 130 |
+| 10 | 648 | 62 | 50 | 19 | 24 | 32 | 198 |
+| 20 | 1 216 | 117 | 96 | 32 | 42 | 60 | 335 |
+| 30 | 1 784 | 172 | 141 | 46 | 60 | 87 | 471 |
+| 50 | 2 921 | 281 | 232 | 73 | 97 | 141 | 744 |
+
+Les monstres sont calqués sur ce build et non sur un généraliste. Au niveau 1, les stats de base
+dominent et tous les builds se ressemblent ; l'écart entre deux builds grandit ensuite avec le niveau.
+Avec des monstres calqués sur un autre build que celui de calibration, l'équilibrage dériverait :
+un boss passait de 0 % de victoires au niveau 10 à 95 % au niveau 50.
+
+Contre un monstre normal, tous les builds gagnent. Contre une élite ou un boss au même niveau, le
+résultat dépend surtout du build :
+
+| Build | Élite | Boss |
+|---|---|---|
+| aventurier (référence) | ~60 % | ~45-65 % |
+| guerrier, mage, tank | ~95-100 % | ~100 % |
+| assassin | ~15-20 % | ~2 % |
+| généraliste, lame-sort (ATK = INT) | 0 % | 0 % |
+
+Les builds ATK = INT perdent parce que leurs dégâts se répartissent sur deux stats. Il leur faudra
+des compétences hybrides.
 
 ---
 
-## Monstres : multiplicateurs par rôle
+## Combat
 
-Stats d'un monstre = stats du joueur généraliste **au même niveau**, multipliées selon son `role` :
+Toutes les formules sont dans `combat_engine.py`. Celles qui dériveraient avec des stats linéaires
+sont relatives au niveau. Leurs constantes sont proportionnelles aux stats du joueur de référence
+(DEF ≈ 5 + 4,5 × niveau, AGI ≈ 5 + 1,4 × niveau) : il garde ~38 % de réduction et ~1,35 s par
+attaque à tous les niveaux.
 
-| `role` | HP × | ATK × | DEF × |
+| Règle | Formule |
+|---|---|
+| Réduction des dégâts | `def / (def + 6,6 + 6 × niveau de l'attaquant)` |
+| Recharge de l'attaque de base | `2,0 s / (1 + agi / (agi + 7,4 + 2 × niveau))` |
+| Attaque de base | `0,4 × max(ATK, INT)` |
+| Mana max | `50 + 10 × niveau + 2 × INT` |
+| Régénération de mana | `1 + 0,2 × niveau + 0,05 × SAG` par seconde |
+| Compétence de dégâts | `power × ATK` (physique) ou `power × INT` (magique) |
+| Soin | `power × SAG` |
+| Bouclier | `amount_power × SAG` (`× ATK` si la compétence est physique) |
+| Attaque de monstre | `power × ATK du monstre` (`× INT` si magique) |
+
+Chaque coup passe par `roll_hit` : esquive, puis variance de ±8 %, puis critique (×1,5).
+Avec `edge = (agi_att − agi_déf) / (agi_att + agi_déf)` :
+critique `0,05 + 0,15 × edge`, esquive `0,05 + 0,10 × edge`.
+
+---
+
+## Monstres
+
+Stats d'un monstre = stats du joueur de référence **de son niveau**, avec une INT égale à son ATK
+(`balance.monster_base_stats`), × le profil de son rôle (`balance.ROLE_PROFILES`, calibré par le
+simulateur aux niveaux 5 et 30) :
+
+| Rôle | PV × | ATK × | DEF × | AGI/INT × | Puissance P de l'attaque principale | XP |
+|---|---|---|---|---|---|---|
+| `normal` | 2,15 | 1,0 | 1,0 | 1,0 | 0,21 (× profondeur) | ×1 |
+| `elite` | 2,76 | 1,1 | 1,2 | 1,1 | 0,271 | ×4 |
+| `boss` | 5,67 | 1,2 | 1,4 | 1,2 | 0,143 | ×15 |
+
+Cibles qui ont servi à la calibration (joueur de référence au même niveau) :
+
+| Rôle | Durée d'une victoire | Résultat visé |
+|---|---|---|
+| `normal` | ~65 s | perd ~50 % de ses PV, sans potion |
+| `elite` | ~100 s | gagne ~55 % du temps, avec 2 potions |
+| `boss` | ~240 s | gagne ~40 % du temps, avec 5 potions |
+
+**Attaques.** L'attaque principale a la puissance P et une recharge de 2,5 s. Une attaque plus lente
+peut frapper plus fort, au même rythme : `power ≈ P × recharge / 3,5`. Par exemple, `2P` à 7 s,
+`1,5P` à 5 s, ou `3P` à 10 s pour la furie d'un boss. Un boss a 2 ou 3 phases
+(`hp_above_percent`), et sa dernière phase débloque sa grosse attaque.
+
+**Profondeur de la zone** (`DIFFICULTY_TIERS`). Elle ne joue que sur la puissance des attaques des
+monstres **normaux**. Les PV ne changent pas, donc la durée des combats non plus.
+
+| Profondeur | Puissance × | PV perdus par victoire (référence) |
+|---|---|---|
+| `entree` (premier tiers de l'étage) | 0,7 | ~36 % |
+| `coeur` | 1,0 | ~50 % |
+| `profondeurs` (dernier tiers) | 1,15 | ~58 % |
+
+La profondeur vient de `generation_brief.difficulty_tier` dans le squelette. Sans ce champ, elle
+est déduite du nombre de sauts depuis la ville de départ.
+
+Le résultat contre un boss reste très sensible : 1 % de puissance en plus ou en moins déplace la
+part de victoires de 20 points. Le joueur de référence gagne ~40 % du temps contre un boss de
+niveau 10, ~55-65 % au-delà du niveau 30 et moins de 15 % sous le niveau 5 (aucun boss d'étage n'y
+est).
+
+**Écart de niveau.** Les élites et les boss sont un test de stats : à ±1 niveau ou selon le build,
+la part de victoires passe de presque 0 % à presque 100 %. C'est voulu tant que les attaques
+télégraphiées n'existent pas.
+
+---
+
+## Progression
+
+### XP du personnage (`balance.py`)
+
+La courbe est pensée en temps de jeu. Un niveau dure environ 15 min au niveau 1, 1 h au niveau 11,
+puis +1,2 % par niveau. On compte 12 monstres normaux par heure, régénération comprise.
+
+| Niveau | XP pour monter | XP d'un normal | Durée du niveau |
 |---|---|---|---|
-| `normal` | 1.5 – 2.2 | 0.9 – 1.7 | 0.8 – 1.3 |
-| `elite` (mini-boss, `group_required`) | 5 – 9 | 1.5 – 2.2 | 1.2 – 1.8 |
-| `boss` | 15 – 25 | 2 – 3 | 1.3 – 2.2 |
+| 1 | 43 | 10 | ~15 min |
+| 10 | 298 | 17 | ~1 h |
+| 50 | 5 345 | 174 | ~1 h 45 |
+| 100 | 178 745 | 3 201 | ~3 h 15 |
 
-**Vérifié contre le contenu déjà généré :** Loup Alpha (lvl4, `normal`) → HP ×1.89, ATK ×1.67, DEF ×0.98
-— dans la fourchette. Gardien de la Clairière (lvl6, `boss`) → HP ×18.3, ATK ×2.83, DEF ×1.58 — dans la
-fourchette. Les deux exemples déjà écrits dans le modèle de données tombent naturellement dedans, bon
-signe que ces plages sont réalistes plutôt qu'arbitraires.
+Un étage complet prend environ 6 h de jeu (étage 1), 17 h (étage 5) et 31 h (étage 10).
 
----
+- **Écart de niveau** : un monstre plus fort rapporte +10 % par niveau d'écart (au plus +50 %) ; un
+  plus faible rapporte −20 % par niveau (au moins 10 %).
+- **Quêtes** (`quest_xp`) : une part du seuil du niveau de la quête. Une petite quête vaut 6 %, une
+  normale 12 %, une majeure 25 %. Il faut donc environ 2,5 quêtes normales par niveau, soit
+  **environ 25 quêtes normales en équivalent XP par étage**, réparties sur ses zones.
 
-## Équipement : budget de stats en "points équivalents"
+### Métiers
 
-Pour rester comparable au système de points du joueur, le total des `stat_bonuses` d'un équipement se
-raisonne en **points équivalents** (même table de valeur par point que plus haut) plutôt qu'en chiffres
-bruts mélangés entre stats différentes :
+Les métiers ont une courbe à part, plus lente : environ 120 récoltes par niveau au début. Une
+fabrication vaut 4 récoltes. **Le serveur calcule l'XP d'une action** à partir du niveau de la
+ressource ou de l'objet fabriqué ; le `xp_reward` des templates n'est plus lu.
 
-```
-points_equivalents = hp_bonus/25 + atk_bonus/2 + def_bonus/2 + agi_bonus/1 + int_bonus/2 + sag_bonus/1
-```
+### PV hors combat et défaite
 
-| Cas | Budget |
-|---|---|
-| Équipement normal (cohérence normale, voir prompt craft) | ≈ 1 niveau d'équivalent (6 points) |
-| Craft "cohérence rare" (voir prompt craft) | Jusqu'à ≈ 2-3 niveaux d'équivalent (12-18 points) |
-| Jamais | Au-delà de ~3 niveaux d'équivalent, quelle que soit la justification |
-
-**Vérifié contre le contenu déjà généré :** Sceau du Cœur Scellé (craft "cohérence rare", lvl9) → 18,8
-points ≈ 3,1 niveaux d'équivalent — pile dans la fourchette haute autorisée, alors que cette règle
-n'avait pas encore été chiffrée au moment de sa génération. Épée Rouillée (lvl1, exemple du doc de
-modèle) → 2,5 points ≈ 0,4 niveau — nettement en dessous, cohérent avec un objet volontairement
-modeste ("elle a connu de meilleurs jours").
-
-## Items : `base_value` indicatif par niveau
-
-```
-material   ≈ 5  × niveau
-consumable ≈ 15 × niveau
-equipment  ≈ 30 × niveau
-```
-Cas exceptionnel (craft cohérence rare) : jusqu'à ×2-3 ce montant, cohérent avec la règle déjà posée
-dans le prompt de craft ("au-dessus de la somme des ingrédients").
+- Les PV perdus restent perdus d'un combat à l'autre. Ils remontent entièrement en 10 min, 3 fois
+  plus vite en ville. Monter de niveau remet les PV au maximum.
+- **Défaite** : perte de 10 % de l'XP du niveau, sans jamais perdre de niveau. Perte de 3 % de l'or,
+  au plus 20 × le niveau. On se relève à 20 % des PV.
 
 ---
 
-## Compétences : rappel des coefficients (déjà posé dans le prompt dédié)
+## Objets et économie (`content_targets.py`)
 
-`power`/`amount_power` sont des coefficients multiplicateurs de la stat du lanceur (`atk` ou `int` selon
-`damage_type`), jamais une valeur brute :
+### Équipement
 
-| Palier | `power` |
-|---|---|
-| Simple | 0.8 – 1.5 |
-| Difficile | 1.5 – 2.5 |
-| Exceptionnelle | 2.5 – 4, jamais au-delà |
+Les sept emplacements de combat (`weapon`, `head`, `chest`, `gloves`, `boots`, `ring`, `amulet`) se
+partagent la part de l'équipement. Une pièce de niveau L vaut donc environ **0,7 × L points
+équivalents** : 0,7 au niveau 1, 3,5 au niveau 5, 7 au niveau 10, 21 au niveau 30. Une panoplie
+complète au niveau du joueur donne les 45 % prévus.
 
-Exemple concret avec la courbe ci-dessus : un joueur niveau 5 (généraliste, `atk: 18`) avec une
-compétence `power: 2.0` (palier Difficile) inflige `2.0 × 18 = 36` dégâts avant mitigation adverse.
+- Un objet ordinaire (butin, boutique) suit ce budget.
+- Un craft très cohérent avec le lore peut aller de ×1,5 à ×2, jamais au-delà.
+- L'outil (`tool`) ne donne pas de stats de combat.
+
+### Valeur de base
+
+En or : `material 5 × niveau`, `consumable 15 × niveau`, `equipment 30 × niveau`. Le serveur rachète
+à 35 % (`K_SELL`). Une boutique vend toujours au moins au `base_value`, donc on ne peut pas faire
+d'or en boucle.
+
+### Consommables
+
+- Un soin rend 30 % des PV du joueur de référence de son niveau : 41 au niveau 1, 194 au niveau 10.
+- Une potion de mana rend 35 % de son mana.
+- Un bonus de stat donne 10 à 20 % pendant 30 à 60 s.
+
+### Quêtes
+
+| Ampleur | XP | Or | Objectifs (monstres ou récoltes) |
+|---|---|---|---|
+| `small` | 6 % du niveau | 3 × niveau | 3-5 |
+| `normal` | 12 % du niveau | 6 × niveau | 6-10 |
+| `major` | 25 % du niveau | 15 × niveau | 12-20 |
+
+L'or vient surtout des quêtes et de la revente du butin. L'or se dépense en boutique, à l'Autel des
+Ventes et lors des défaites ; une réinitialisation des points de stat payante est prévue.
 
 ---
 
-## Ce que ça ne couvre pas encore
+## Compétences (`content_targets.py`)
 
-- Aucune vraie simulation/playtest — ces chiffres sont dérivés par recoupement logique, pas éprouvés en
-  jeu. À ajuster dès que des combats réels (ou simulés) sont possibles.
-- Le comportement de la courbe **au-delà de l'étage 1** (niveaux 11+) — la formule est linéaire et
-  extensible, mais rien ne garantit qu'une progression purement linéaire reste satisfaisante à très haut
-  niveau (les jeux typiques ralentissent ou incurvent la progression). À revisiter.
-- L'agrégation des bonus de **plusieurs équipements simultanés** (le budget ci-dessus est pièce par
-  pièce — un joueur full équipé cumule plusieurs items, jamais vérifié si le total cumulé reste sain).
-- L'impact des **titres et passifs** sur cette courbe (ils s'additionnent par-dessus, non pris en compte
-  ici).
+Une compétence de dégâts vaut **`power ≈ 0,31 × recharge^0,75` × son palier**. C'est le kit sur
+lequel le simulateur a calibré les monstres (1,2 à 6 s, 2,0 à 12 s).
+
+| Recharge | Simple (×1) | Difficile (×1,25) | Exceptionnelle (×1,6) |
+|---|---|---|---|
+| 3 s | 0,71 | 0,88 | 1,13 |
+| 6 s | 1,19 | 1,49 | 1,90 |
+| 10 s | 1,74 | 2,18 | 2,79 |
+| 15 s | 2,36 | 2,95 | 3,78 |
+| 20 s | 2,93 | 3,66 | 4,69 |
+
+- **Soins et boucliers** : la moitié de la puissance d'une attaque de même recharge.
+- **Coût en mana** : 2 % du mana du joueur de référence par seconde de recharge, entre 8 % et 25 %.
+  Il est donné en valeur absolue par niveau dans `balance_targets`.
+- **Buffs et debuffs** : 10 à 30 % pendant 8 à 20 s. Une relance rafraîchit l'effet, elle ne le
+  cumule pas.
+- **Passifs permanents** (`stat_bonus`) : une part de la puissance totale du joueur de référence au
+  niveau de déblocage. Simple 4 %, difficile 8 %, exceptionnelle 15 % ; au moins 1,5 / 3 / 6 points
+  équivalents.
+- **Passifs en pourcentage** (`stat_bonus_percent`) : 3-5 %, 6-10 % ou 12-20 % selon le palier.
+
+---
+
+## Ce qui reste à faire
+
+- Les attaques télégraphiées. Elles rendront les élites et les boss moins binaires : l'habileté
+  comptera, pas seulement les stats.
+- Des compétences hybrides ATK + INT : un build mixte dilue aujourd'hui ses dégâts.
+- La réinitialisation des points de stat (une dépense d'or).
+- Le jeu en groupe : les élites `group_required` se battent encore en solo.
+- Les templates actuels ont été générés avec les anciennes règles ; ils seront régénérés.

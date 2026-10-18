@@ -41,9 +41,24 @@ sa position, ses connexions, ses conditions de déblocage, et un brief pour guid
 
 ## RÈGLES DE PROGRESSION
 
-- `generation_brief.level_range` doit **croître avec la distance** (en nombre de sauts) depuis la zone de
-  départ. Les zones directement connectées à la ville sont les plus faciles ; la zone boss a le
-  `level_range` le plus élevé de l'étage.
+Un étage couvre environ 10 niveaux de personnage, donnés par `floor_level_range` (par exemple
+`[11, 20]` pour l'étage 2). Un joueur y passe plusieurs jours de jeu : chaque zone doit avoir de quoi
+l'occuper un moment.
+
+- `generation_brief.level_range` reste dans `floor_level_range` et doit **croître avec la distance**
+  (en nombre de sauts) depuis la zone de départ. Chaque zone couvre 2 à 3 niveaux, et deux zones
+  voisines se chevauchent d'un niveau.
+- La ville de départ couvre les deux premiers niveaux de l'étage. La zone boss et le passage sont au
+  dernier niveau (`[max, max]`).
+- Entre la ville et le boss, l'ensemble des zones doit couvrir **tous** les niveaux de l'étage, sans
+  trou.
+- `generation_brief.difficulty_tier` indique la profondeur de la zone dans l'étage. Les monstres
+  normaux frappent plus fort quand on s'enfonce :
+  - `"entree"` : zones à un saut de la ville ;
+  - `"coeur"` : le milieu de l'étage ;
+  - `"profondeurs"` : les zones les plus éloignées, juste avant le boss.
+
+  Mets `"entree"` pour la ville, et `"profondeurs"` pour la zone boss et le passage.
 - Évite les sauts de difficulté trop brutaux entre deux zones directement connectées.
 
 ## RÈGLES DE SECRETS
@@ -100,6 +115,7 @@ fournira. Une condition non résolvable rendrait une zone inaccessible pour touj
       "hint": null,
       "generation_brief": {
         "level_range": [0, 0],
+        "difficulty_tier": "entree | coeur | profondeurs",
         "tags": ["mot-clé", "mot-clé"],
         "content_intent": "1-3 phrases : quel type de contenu cette zone doit contenir (combat/récolte/social/exploration), quelle densité, quelle ambiance.",
         "provides": [
@@ -129,7 +145,9 @@ doivent être visuellement proches).
 
 - [ ] Une seule zone `town` (départ), une seule `boss`, une seule `passage`.
 - [ ] Graphe entièrement connecté depuis `start_zone_id`.
-- [ ] `level_range` croissant avec la distance au départ.
+- [ ] `level_range` dans `floor_level_range`, croissant avec la distance au départ, tous les niveaux
+      couverts ; boss et passage au dernier niveau.
+- [ ] `difficulty_tier` renseigné sur chaque zone, cohérent avec sa distance à la ville.
 - [ ] Au moins une zone `hidden` avec condition composite, et au moins une zone verrouillée `visible`
       avec `hint`.
 - [ ] Types de `unlock_condition` variés (pas uniquement `level`).
@@ -142,6 +160,7 @@ doivent être visuellement proches).
 ## Entrées fournies à chaque appel (à remplacer avant l'envoi)
 
 - `floor_number` : numéro de l'étage.
+- `floor_level_range` : niveaux de personnage couverts par l'étage.
 - `theme_brief` : quelques phrases sur le thème/ambiance voulus pour cet étage (biome dominant, danger,
   fil narratif).
 - `zone_count_target` : nombre de zones visé.

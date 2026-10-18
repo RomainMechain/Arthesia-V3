@@ -1,0 +1,23 @@
+{
+  "id": "fleau_des_roseaux",
+  "name": "Le Fléau des Roseaux",
+  "description": "Fenn en a assez de voir ses pièges saccagés par les sangliers. Il te demande d'en abattre quelques-uns pour calmer la zone.",
+  "objectives": [
+    {
+      "type": "kill_count",
+      "monster_id": "sanglier_roseaux",
+      "count": 4
+    }
+  ],
+  "rewards": {
+    "xp": 4,
+    "gold": 6,
+    "items": [
+      {
+        "item_id": "defense_sanglier",
+        "quantity": 1
+      }
+    ]
+  },
+  "repeatable": false
+}

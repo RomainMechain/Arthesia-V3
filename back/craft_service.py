@@ -11,10 +11,12 @@ from fastapi import HTTPException
 try:
     from .config import ANTHROPIC_API_KEY, CRAFT_MODEL, CRAFT_PROMPT_FILE, TEMPLATES_DIR
     from .content_store import load_template
+    from .content_targets import craft_inputs_targets
     from .database import db
 except ImportError:
     from config import ANTHROPIC_API_KEY, CRAFT_MODEL, CRAFT_PROMPT_FILE, TEMPLATES_DIR
     from content_store import load_template
+    from content_targets import craft_inputs_targets
     from database import db
 
 
@@ -61,6 +63,7 @@ def generate_craft_item_via_ai(workshop: dict, parameters: dict, inputs_full: li
         "Génère le résultat de ce craft inédit :\n\n"
         f"workshop:\n{json.dumps(workshop_info, ensure_ascii=False, indent=2)}\n\n"
         f"inputs:\n{json.dumps(inputs_full, ensure_ascii=False, indent=2)}\n\n"
+        f"balance_targets:\n{json.dumps(craft_inputs_targets(inputs_full), ensure_ascii=False)}\n\n"
         "Réponds uniquement avec le JSON demandé, sans aucun texte avant ou après."
     )
     try:

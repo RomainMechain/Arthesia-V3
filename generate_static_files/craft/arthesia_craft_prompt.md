@@ -51,8 +51,8 @@ jugement, pas le hasard ni l'envie de "faire quelque chose de stylé", qui doit 
   légendaire déjà croisée dans l'étage) → le résultat peut dépasser nettement la courbe de puissance
   normale pour son niveau : nom et description qui capturent vraiment ce moment, bonus de stats plus
   généreux, éventuellement un effet que ce niveau n'aurait normalement pas. Reste toutefois
-  **plafonné** : vise l'équivalent de ce qu'on trouverait normalement 2 à 3 niveaux au-dessus des
-  ingrédients, jamais plus — un saut de puissance qui rendrait tout le contenu du même niveau trivial
+  **plafonné** : au plus deux fois le budget normal de stats de son niveau (fourchette
+  `equipment_points.rare` de la section ÉQUILIBRAGE), jamais plus — un saut de puissance qui rendrait tout le contenu du même niveau trivial
   est toujours excessif, même pour la combinaison la plus inspirée.
 
 Deux combinaisons à l'ambiance mystérieuse similaire dans leur texte, mais à la cohérence thématique
@@ -73,25 +73,28 @@ sur des stats identiques.
 Pas une règle absolue — si les ingrédients suggèrent clairement une autre catégorie, suis la logique des
 ingrédients plutôt que le tableau.
 
-## ÉQUILIBRAGE : ancrage chiffré
+## ÉQUILIBRAGE : prends les chiffres dans `balance_targets`
 
-Ces repères s'appliquent au cas "cohérence normale". Pour "aucun rapport particulier", vise le bas de
-cette fourchette voire en dessous ; pour "cohérence rare et marquante", le dépassement expliqué
-ci-dessus est légitime — mais reste l'exception, pas la norme.
+Le bloc `balance_targets` donne les valeurs cibles pour chaque niveau possible du résultat, du plus
+faible au plus fort des ingrédients. Tu n'as rien à calculer.
 
-- `level` du résultat : proche du niveau des items en entrée (grossièrement leur moyenne ou leur max),
-  jamais un saut brutal.
-- `base_value` indicatif selon la catégorie : `material ≈ 5 × level`, `consumable ≈ 15 × level`,
-  `equipment ≈ 30 × level`. Doit rester au-dessus de la somme des `base_value × quantité` des items en
-  entrée (le craft ajoute de la valeur). Cas "cohérence rare" : jusqu'à ×2-3 ce montant.
-- `equipment.stat_bonuses`, exprimé en **points équivalents** (le joueur gagne 6 points/niveau au même
-  barème : `hp` vaut 1/25 de point, `atk`/`def`/`int` valent 1/2 point, `agi`/`sag` valent 1 point
-  chacun — `points = hp/25 + atk/2 + def/2 + agi/1 + int/2 + sag/1`) :
-  - Cohérence normale : ≈ 6 points (1 niveau d'équivalent) pour le `level` du résultat.
-  - Cohérence rare : jusqu'à ≈ 12-18 points (2-3 niveaux d'équivalent), jamais au-delà.
-  - Exemple : un résultat niveau 6 en cohérence normale vise ~6 points au total — par exemple
-    `{"def": 6, "hp": 50}` (6/2 + 50/25 = 3 + 2 = 5, proche du budget) plutôt que des dizaines de points
-    dans une seule stat.
+- `level` du résultat : le niveau des ingrédients (leur moyenne, ou le plus haut si un ingrédient
+  domine la recette), jamais au-dessus du plus haut. Une recette cohérente ne monte pas le niveau :
+  elle améliore les stats.
+- `equipment.level_required` = `level`.
+- `base_value` : `base_value[category]` du niveau, et toujours au-dessus de la somme des
+  `base_value × quantité` des ingrédients (le craft ajoute de la valeur).
+- **Équipement** : la somme des `stat_bonuses` en points équivalents
+  (`hp/25 + atk/2 + def/2 + agi + int/2 + sag/2`) suit `equipment_points` du niveau :
+  - aucun rapport entre les ingrédients : 50 à 80 % de `equipment_points.normal` ;
+  - cohérence normale : `equipment_points.normal` ;
+  - cohérence rare : dans la fourchette `equipment_points.rare` (×1,5 à ×2), jamais au-delà.
+
+  Exemple avec 7 points : `{"atk": 10, "agi": 2}` (5 + 2) ou `{"def": 8, "hp": 75}` (4 + 3), plutôt
+  que des dizaines de points dans une seule stat. Un outil (`slot: "tool"`) n'a pas de
+  `stat_bonuses`.
+- **Consommable** : `amount` = `consumable_amount.heal` pour un soin ou `consumable_amount.restore_mana`
+  pour du mana, ±20 % selon la cohérence. Un `buff_stat` donne 10 à 20 % pendant 30 à 60 s.
 
 ## SCHÉMA DE SORTIE : Item
 
@@ -125,8 +128,9 @@ le bloc non pertinent). Pour `stat_bonuses`, n'inclus que les stats réellement 
 - [ ] Catégorie cohérente avec l'atelier (ou justifiée si différente du tableau).
 - [ ] `level` proche de celui des items en entrée.
 - [ ] `base_value` supérieur à la somme des `base_value` en entrée, sans excès.
-- [ ] `stat_bonuses` (si `equipment`) dans le budget de points équivalents pour le palier de cohérence
-      jugé (≈6 en normal, ≈12-18 en rare, jamais au-delà).
+- [ ] `stat_bonuses` (si `equipment`) dans le budget de `balance_targets` pour le palier de cohérence
+      jugé (`normal`, ou la fourchette `rare`, jamais au-delà).
+- [ ] `amount` d'un consommable repris de `consumable_amount`.
 - [ ] Un seul `Item` produit — jamais plusieurs objets, jamais de sous-produits.
 - [ ] JSON strictement valide, aucun texte hors du JSON.
 
@@ -137,3 +141,5 @@ le bloc non pertinent). Pour `stat_bonuses`, n'inclus que les stats réellement 
 - `workshop` : id, name, description, et le paramètre choisi avec sa valeur (ex. `temperature: haute`).
 - `inputs` : liste des items en entrée, chacun avec sa définition complète (id, name, description,
   category, level, base_value, et son bloc `equipment`/`consumable` le cas échéant) + la quantité utilisée.
+- `balance_targets` : pour chaque niveau possible du résultat, `equipment_points` (`normal` et
+  fourchette `rare`), `base_value` par catégorie et `consumable_amount`.

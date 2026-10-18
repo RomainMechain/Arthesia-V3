@@ -9,7 +9,10 @@ try:
     from .auth import require_player
     from .database import db
     from .content_store import find_quest_givers, load_ordered_floors, load_template
-    from .game_rules import POINT_VALUE, compute_final_stats, quest_progress_view, reachable_floor_ids, xp_to_next_level
+    from .balance import profession_xp_to_next_level
+    from .game_rules import (
+        POINT_VALUE, compute_final_stats, health_view, quest_progress_view, reachable_floor_ids, xp_to_next_level,
+    )
     from .models import CreatePlayerRequest
     from .player_store import build_new_player_state
     from .progression import check_and_apply_unlocks
@@ -17,7 +20,10 @@ except ImportError:
     from auth import require_player
     from database import db
     from content_store import find_quest_givers, load_ordered_floors, load_template
-    from game_rules import POINT_VALUE, compute_final_stats, quest_progress_view, reachable_floor_ids, xp_to_next_level
+    from balance import profession_xp_to_next_level
+    from game_rules import (
+        POINT_VALUE, compute_final_stats, health_view, quest_progress_view, reachable_floor_ids, xp_to_next_level,
+    )
     from models import CreatePlayerRequest
     from player_store import build_new_player_state
     from progression import check_and_apply_unlocks
@@ -27,6 +33,11 @@ router = APIRouter(dependencies=[Depends(require_player)])
 
 # Pseudo : 3 à 20 caractères, lettres (accents compris), chiffres, espace, - _ '
 DISPLAY_NAME_PATTERN = re.compile(r"^[\w À-ÿ'-]{3,20}$")
+
+
+def with_health(player: dict) -> dict:
+    """Ajoute les PV actuels (régénération comprise) à l'état renvoyé au client."""
+    return {**player, "health_view": health_view(player)}
 
 
 @router.post("/players")
@@ -40,7 +51,7 @@ def create_player(req: CreatePlayerRequest):
     # Les contenus sans condition ou à la portée d'un niveau 1 sont débloqués
     # dès la création.
     check_and_apply_unlocks(req.player_id)
-    return db.collection("players").document(req.player_id).get().to_dict()
+    return with_health(db.collection("players").document(req.player_id).get().to_dict())
 
 
 @firestore.transactional
@@ -63,7 +74,7 @@ def get_player_state(player_id: str):
     doc = db.collection("players").document(player_id).get()
     if not doc.exists:
         raise HTTPException(404, f"Joueur '{player_id}' introuvable")
-    return doc.to_dict()
+    return with_health(doc.to_dict())
 
 
 @router.post("/players/{player_id}/sync")
@@ -76,7 +87,7 @@ def sync_player(player_id: str):
     if not doc_ref.get().exists:
         raise HTTPException(404, f"Joueur '{player_id}' introuvable")
     check_and_apply_unlocks(player_id)
-    return doc_ref.get().to_dict()
+    return with_health(doc_ref.get().to_dict())
 
 
 @router.get("/players/{player_id}/stats")
@@ -92,7 +103,7 @@ def get_player_stats(player_id: str):
         "xp_to_next_level": xp_to_next_level(player["level"]),
         "point_value": POINT_VALUE,
         "profession_xp_to_next_level": {
-            profession_id: xp_to_next_level(profession["level"])
+            profession_id: profession_xp_to_next_level(profession["level"])
             for profession_id, profession in player["professions"].items()
         },
         "note": "Passifs conditionnels (temps réel combat) non inclus — voir catégorie D, hors périmètre.",

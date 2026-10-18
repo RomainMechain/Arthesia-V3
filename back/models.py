@@ -14,6 +14,11 @@ class GatherStartRequest(BaseModel):
     entry_id: str
 
 
+class UseItemRequest(BaseModel):
+    player_id: str
+    item_id: str
+
+
 class ResourceGatherRequest(BaseModel):
     player_id: str
     zone_id: str

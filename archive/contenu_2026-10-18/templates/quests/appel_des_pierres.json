@@ -1,0 +1,18 @@
+{
+  "id": "appel_des_pierres",
+  "name": "L'Appel des Pierres",
+  "description": "Yolenne s'inquiète des fragments de pierre taillée qui affleurent dans la boue. Elle te demande de lui en rapporter plusieurs, pour les examiner de plus près.",
+  "objectives": [
+    {
+      "type": "gather_count",
+      "resource_id": "fragment_pierre_taillee",
+      "count": 6
+    }
+  ],
+  "rewards": {
+    "xp": 7,
+    "gold": 12,
+    "items": []
+  },
+  "repeatable": false
+}

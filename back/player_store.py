@@ -32,6 +32,8 @@ def default_player_state(player_id: str) -> dict:
         "quests": {},
         "unlocks": {"zones": [], "entries": [], "skills": [], "titles": []},
         "current_zone_id": get_default_start_zone_id(),
+        # PV hors combat (game_rules.current_hp) ; None : en pleine forme.
+        "health": {"current": None, "at": None},
     }
 
 
