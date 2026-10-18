@@ -31,6 +31,7 @@ from firebase_admin import firestore
 
 try:
     from . import combat_engine as engine
+    from .auth import AUTH_REQUIRED, check_player, verify_id_token
     from .content_store import find_entry, load_static_zone_content, load_template
     from .database import db
     from .game_rules import (
@@ -41,6 +42,7 @@ try:
     from .progression import apply_monster_kill_rewards
 except ImportError:
     import combat_engine as engine
+    from auth import AUTH_REQUIRED, check_player, verify_id_token
     from content_store import find_entry, load_static_zone_content, load_template
     from database import db
     from game_rules import (
@@ -169,10 +171,14 @@ def _consume_item_tx(transaction, player_id: str, item_id: str) -> int:
 
 async def start_combat(websocket: WebSocket, message: dict) -> tuple[str, dict] | None:
     """Valide et crée une session de combat ; renvoie (combat_id, session)."""
-    player_id = message["player_id"]
-    zone_id = message["zone_id"]
-    entry_id = message["entry_id"]
+    player_id = message.get("player_id", "")
+    zone_id = message.get("zone_id", "")
+    entry_id = message.get("entry_id", "")
     try:
+        if AUTH_REQUIRED:
+            # Le WebSocket n'a pas d'en-tête par message : le jeton voyage
+            # dans start_combat.
+            check_player(verify_id_token(message.get("id_token", "")), player_id)
         entry = find_entry(load_static_zone_content(zone_id), entry_id)
     except HTTPException as exc:
         await websocket.send_json({"type": "error", "message": exc.detail})
@@ -184,6 +190,9 @@ async def start_combat(websocket: WebSocket, message: dict) -> tuple[str, dict] 
     # Le joueur est lu une seule fois : ses stats et ses compétences
     # équipées restent figées pour toute la durée du combat.
     player = get_player(player_id)
+    if player.get("current_zone_id") != zone_id:
+        await websocket.send_json({"type": "error", "message": "Tu dois être dans cette zone pour combattre"})
+        return None
     if not is_entry_unlocked(entry, player):
         await websocket.send_json({"type": "error", "message": "Ce monstre n'est pas encore accessible"})
         return None

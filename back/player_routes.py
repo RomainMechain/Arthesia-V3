@@ -1,31 +1,60 @@
 """Routes HTTP de gestion du joueur et de ses statistiques."""
 
-from fastapi import APIRouter, HTTPException
+import re
+
+from fastapi import APIRouter, Depends, HTTPException
+from firebase_admin import firestore
 
 try:
+    from .auth import require_player
     from .database import db
     from .content_store import find_quest_givers, load_ordered_floors, load_template
     from .game_rules import POINT_VALUE, compute_final_stats, quest_progress_view, reachable_floor_ids, xp_to_next_level
     from .models import CreatePlayerRequest
     from .player_store import build_new_player_state
+    from .progression import check_and_apply_unlocks
 except ImportError:
+    from auth import require_player
     from database import db
     from content_store import find_quest_givers, load_ordered_floors, load_template
     from game_rules import POINT_VALUE, compute_final_stats, quest_progress_view, reachable_floor_ids, xp_to_next_level
     from models import CreatePlayerRequest
     from player_store import build_new_player_state
+    from progression import check_and_apply_unlocks
 
-router = APIRouter()
+# Toutes les routes joueur exigent d'être connecté en tant que ce joueur.
+router = APIRouter(dependencies=[Depends(require_player)])
+
+# Pseudo : 3 à 20 caractères, lettres (accents compris), chiffres, espace, - _ '
+DISPLAY_NAME_PATTERN = re.compile(r"^[\w À-ÿ'-]{3,20}$")
 
 
 @router.post("/players")
 def create_player(req: CreatePlayerRequest):
-    doc_ref = db.collection("players").document(req.player_id)
-    if doc_ref.get().exists:
-        raise HTTPException(409, f"Le joueur '{req.player_id}' existe déjà")
+    """Crée le personnage du joueur connecté. Le pseudo est unique (sans
+    tenir compte des majuscules) : il est réservé dans ``display_names``."""
+    display_name = (req.display_name or req.player_id).strip()
+    if not DISPLAY_NAME_PATTERN.match(display_name):
+        raise HTTPException(400, "Pseudo invalide : 3 à 20 caractères, lettres, chiffres, espaces, - _ '")
+    _create_player_tx(db.transaction(), req, display_name)
+    # Les contenus sans condition ou à la portée d'un niveau 1 sont débloqués
+    # dès la création.
+    check_and_apply_unlocks(req.player_id)
+    return db.collection("players").document(req.player_id).get().to_dict()
 
-    player_state = build_new_player_state(req.player_id, req.current_zone_id)
-    doc_ref.set(player_state)
+
+@firestore.transactional
+def _create_player_tx(transaction, req: CreatePlayerRequest, display_name: str) -> dict:
+    doc_ref = db.collection("players").document(req.player_id)
+    name_ref = db.collection("display_names").document(display_name.lower())
+    if doc_ref.get(transaction=transaction).exists:
+        raise HTTPException(409, "Ce compte a déjà un personnage")
+    if name_ref.get(transaction=transaction).exists:
+        raise HTTPException(409, f"Le pseudo « {display_name} » est déjà pris")
+
+    player_state = build_new_player_state(req.player_id, req.current_zone_id, display_name)
+    transaction.set(doc_ref, player_state)
+    transaction.set(name_ref, {"player_id": req.player_id, "display_name": display_name})
     return player_state
 
 
@@ -35,6 +64,19 @@ def get_player_state(player_id: str):
     if not doc.exists:
         raise HTTPException(404, f"Joueur '{player_id}' introuvable")
     return doc.to_dict()
+
+
+@router.post("/players/{player_id}/sync")
+def sync_player(player_id: str):
+    """Début de session : réévalue les déblocages (un contenu ajouté ou
+    régénéré depuis la dernière session peut être déjà accessible), puis
+    renvoie l'état du joueur."""
+    doc_ref = db.collection("players").document(player_id)
+    # Vérifier l'existence avant : le déblocage créerait sinon un joueur vide.
+    if not doc_ref.get().exists:
+        raise HTTPException(404, f"Joueur '{player_id}' introuvable")
+    check_and_apply_unlocks(player_id)
+    return doc_ref.get().to_dict()
 
 
 @router.get("/players/{player_id}/stats")

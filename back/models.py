@@ -8,6 +8,12 @@ class TravelRequest(BaseModel):
     zone_id: str
 
 
+class GatherStartRequest(BaseModel):
+    player_id: str
+    zone_id: str
+    entry_id: str
+
+
 class ResourceGatherRequest(BaseModel):
     player_id: str
     zone_id: str
@@ -16,6 +22,7 @@ class ResourceGatherRequest(BaseModel):
 
 class CreatePlayerRequest(BaseModel):
     player_id: str = Field(min_length=1)
+    display_name: str | None = None
     current_zone_id: str | None = None
 
 

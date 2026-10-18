@@ -14,10 +14,11 @@ La logique transversale est conservée dans les modules suivants :
 from datetime import datetime, timedelta, timezone
 import uuid
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from firebase_admin import firestore
 
 try:
+    from .auth import require_player
     from .content_store import find_entry, find_quest_givers, load_ordered_floors, load_static_zone_content, load_template
     from .craft_service import (
         build_recipe_key, generate_craft_item_via_ai, get_cached_craft,
@@ -27,13 +28,14 @@ try:
     from .game_rules import (
         advance_quest_objectives, apply_player_level_ups, apply_profession_level_ups, deplete_entry_state,
         get_profession, is_entry_unlocked, is_zone_accessible, public_entry_state, quest_progress_view,
-        has_defeated_entry, is_shared_entry, reachable_floor_ids, require_entry_unlocked,
+        has_defeated_entry, is_shared_entry, reachable_floor_ids, require_entry_unlocked, require_player_in_zone,
         resolve_entry_state, roll_loot_table, xp_to_next_level,
     )
     from .models import *
     from .player_store import get_player, get_zone_dynamic_state, save_player, save_zone_dynamic_state
     from .progression import check_and_apply_unlocks
 except ImportError:
+    from auth import require_player
     from content_store import find_entry, find_quest_givers, load_ordered_floors, load_static_zone_content, load_template
     from craft_service import (
         build_recipe_key, generate_craft_item_via_ai, get_cached_craft,
@@ -43,7 +45,7 @@ except ImportError:
     from game_rules import (
         advance_quest_objectives, apply_player_level_ups, apply_profession_level_ups, deplete_entry_state,
         get_profession, is_entry_unlocked, is_zone_accessible, public_entry_state, quest_progress_view,
-        has_defeated_entry, is_shared_entry, reachable_floor_ids, require_entry_unlocked,
+        has_defeated_entry, is_shared_entry, reachable_floor_ids, require_entry_unlocked, require_player_in_zone,
         resolve_entry_state, roll_loot_table, xp_to_next_level,
     )
     from models import *
@@ -51,7 +53,8 @@ except ImportError:
     from progression import check_and_apply_unlocks
 
 
-router = APIRouter()
+# Toutes les actions exigent d'être connecté en tant que le joueur concerné.
+router = APIRouter(dependencies=[Depends(require_player)])
 
 # Paramètres d'équilibrage et limites de gameplay utilisés par les routes.
 K_SELL = 0.35
@@ -98,6 +101,39 @@ def _travel_tx(transaction, req: TravelRequest, floors: list[dict], floor_id: st
 # WebSocket de combat (combat_routes.py) peut accorder les récompenses d'un kill.
 # -----------------------------------------------------------------------------
 
+# Marge accordée au client sur la durée de récolte (latence réseau).
+GATHER_TIME_TOLERANCE_SECONDS = 0.5
+
+
+@router.post("/actions/gather_start")
+def gather_start(req: GatherStartRequest):
+    """Commence une récolte : le serveur note quand elle pourra se terminer.
+
+    ``resource_gather`` refuse ensuite une récolte qui n'a pas été commencée
+    ou dont la durée (``gather_time_seconds``) n'est pas écoulée.
+    """
+    entry = find_entry(load_static_zone_content(req.zone_id), req.entry_id)
+    if entry["template_type"] != "resource":
+        raise HTTPException(400, "Cette entry n'est pas une ressource")
+    resource = load_template("resource", entry["template_id"])
+    return _gather_start_tx(db.transaction(), req, entry, resource)
+
+
+@firestore.transactional
+def _gather_start_tx(transaction, req: GatherStartRequest, entry: dict, resource: dict) -> dict:
+    player = get_player(req.player_id, transaction)
+    require_player_in_zone(player, req.zone_id)
+    require_entry_unlocked(entry, player)
+    duration = resource.get("gather_time_seconds", 0)
+    player["gathering"] = {
+        "zone_id": req.zone_id,
+        "entry_id": req.entry_id,
+        "ready_at": datetime.now(timezone.utc) + timedelta(seconds=duration),
+    }
+    save_player(req.player_id, player, transaction)
+    return {"gather_time_seconds": duration}
+
+
 @router.post("/actions/resource_gather")
 def report_resource_gather(req: ResourceGatherRequest):
     """Récolte une ressource, gère son stock partagé et accorde l'XP de métier."""
@@ -124,7 +160,15 @@ def _resource_gather_tx(transaction, req: ResourceGatherRequest, entry: dict, re
     zone_state = get_zone_dynamic_state(req.zone_id, transaction) if shared else None
     player = get_player(req.player_id, transaction)
 
+    require_player_in_zone(player, req.zone_id)
     require_entry_unlocked(entry, player)
+    gathering = player.get("gathering") or {}
+    if gathering.get("zone_id") != req.zone_id or gathering.get("entry_id") != req.entry_id:
+        raise HTTPException(409, "Commence d'abord la récolte de cette ressource")
+    remaining = (gathering["ready_at"] - datetime.now(timezone.utc)).total_seconds()
+    if remaining > GATHER_TIME_TOLERANCE_SECONDS:
+        raise HTTPException(409, f"Récolte en cours : encore {remaining:.1f} s")
+    player["gathering"] = None
     prof_req = resource.get("profession_required")
     if prof_req:
         if get_profession(player, prof_req["profession_id"])["level"] < prof_req["min_level"]:
@@ -234,6 +278,8 @@ def _start_quest_tx(transaction, req: StartQuestRequest, quest_def: dict, givers
     # (une quête de suite n'apparaît qu'une fois la précédente terminée).
     if not any(is_entry_unlocked(giver["entry"], player) for giver in givers):
         raise HTTPException(403, "Cette quête n'est pas encore disponible")
+    if player.get("current_zone_id") not in {giver["zone_id"] for giver in givers}:
+        raise HTTPException(403, "Rends-toi chez le donneur de cette quête pour l'accepter")
     existing = player["quests"].get(req.quest_id)
     if existing:
         # Une quête active ne peut pas être démarrée deux fois. Une quête
@@ -273,16 +319,18 @@ def _abandon_quest_tx(transaction, req: AbandonQuestRequest) -> dict:
 def turn_in_quest(req: TurnInQuestRequest):
     """Valide les objectifs d'une quête, consomme les livraisons et distribue les récompenses."""
     quest_def = load_template("quest", req.quest_id)
-    result = _turn_in_quest_tx(db.transaction(), req, quest_def)
+    result = _turn_in_quest_tx(db.transaction(), req, quest_def, find_quest_givers(req.quest_id))
     result["newly_unlocked"] = check_and_apply_unlocks(req.player_id)
     return result
 
 
 @firestore.transactional
-def _turn_in_quest_tx(transaction, req: TurnInQuestRequest, quest_def: dict) -> dict:
+def _turn_in_quest_tx(transaction, req: TurnInQuestRequest, quest_def: dict, givers: list[dict]) -> dict:
     # La remise relit le template et l'état joueur pour vérifier la progression
     # réelle, plutôt que de faire confiance aux données envoyées par le client.
     player = get_player(req.player_id, transaction)
+    if player.get("current_zone_id") not in {giver["zone_id"] for giver in givers}:
+        raise HTTPException(403, "Rends-toi chez le donneur de cette quête pour la rendre")
     progress = player["quests"].get(req.quest_id)
     if not progress or progress.get("state") != "active":
         raise HTTPException(409, "Quête non active pour ce joueur")
@@ -361,6 +409,15 @@ def turn_in_quest(req: TurnInQuestRequest):
 
 # Nombre maximal d'ingrédients différents dans un craft.
 MAX_CRAFT_INPUTS = 4
+# Créations inédites (appels IA payants) autorisées par joueur sur une heure
+# glissante. Les recettes déjà connues ne sont pas limitées.
+MAX_NEW_RECIPES_PER_HOUR = 10
+
+
+def recent_new_recipes(player: dict) -> list:
+    """Dates des créations inédites du joueur dans l'heure écoulée."""
+    limit = datetime.now(timezone.utc) - timedelta(hours=1)
+    return [at for at in player.get("craft_ai_log", []) if at > limit]
 
 
 @router.post("/actions/craft")
@@ -416,6 +473,8 @@ def craft(req: CraftRequest):
     from_cache = True
     output_item_id = get_cached_craft(recipe_key)
     if output_item_id is None:
+        if len(recent_new_recipes(player)) >= MAX_NEW_RECIPES_PER_HOUR:
+            raise HTTPException(429, f"Tu as déjà inventé {MAX_NEW_RECIPES_PER_HOUR} objets dans l'heure : reviens plus tard, ou refais une recette connue")
         # Une recette inconnue déclenche l'IA une seule fois. Le résultat est
         # sauvegardé avant de consommer les ingrédients du joueur.
         from_cache = False
@@ -424,16 +483,18 @@ def craft(req: CraftRequest):
         save_craft_cache(recipe_key, output_item_id)
 
     output_item = load_template("item", output_item_id)
-    result = _craft_consume_tx(db.transaction(), req, profession_id, output_item)
+    result = _craft_consume_tx(db.transaction(), req, profession_id, output_item, not from_cache)
     result.update({"output_item_id": output_item_id, "output_item": output_item, "from_cache": from_cache})
     result["newly_unlocked"] = check_and_apply_unlocks(req.player_id)
     return result
 
 
 @firestore.transactional
-def _craft_consume_tx(transaction, req: CraftRequest, profession_id: str, output_item: dict) -> dict:
+def _craft_consume_tx(transaction, req: CraftRequest, profession_id: str, output_item: dict, is_new_recipe: bool = False) -> dict:
     # L'inventaire est revérifié ici : il a pu changer pendant l'appel IA.
     player = get_player(req.player_id, transaction)
+    if is_new_recipe:
+        player["craft_ai_log"] = recent_new_recipes(player) + [datetime.now(timezone.utc)]
     for inp in req.inputs:
         if player["inventory"].get(inp.item_id, 0) < inp.quantity:
             raise HTTPException(409, f"'{inp.item_id}' n'est plus en quantité suffisante dans ton inventaire")
@@ -686,6 +747,7 @@ def _shop_buy_tx(transaction, req: ShopBuyRequest, entry: dict, shop: dict, offe
     limited = offer.get("stock") is not None and entry["state_scope"] == "shared"
     zone_state = get_zone_dynamic_state(req.zone_id, transaction) if limited else None
     player = get_player(req.player_id, transaction)
+    require_player_in_zone(player, req.zone_id)
     require_entry_unlocked(entry, player)
 
     total_cost = offer["price"] * req.quantity
@@ -730,6 +792,7 @@ def shop_sell(req: ShopSellRequest):
 @firestore.transactional
 def _shop_sell_tx(transaction, req: ShopSellRequest, entry: dict, shop: dict, item: dict) -> dict:
     player = get_player(req.player_id, transaction)
+    require_player_in_zone(player, req.zone_id)
     require_entry_unlocked(entry, player)
     if player["inventory"].get(req.item_id, 0) < req.quantity:
         raise HTTPException(400, f"Pas assez de '{req.item_id}' en inventaire")
@@ -801,7 +864,9 @@ def _market_list_item_tx(transaction, req: ListItemForSaleRequest, entry: dict, 
     # Le retrait de l'inventaire et la création de l'annonce sont atomiques :
     # deux dépôts simultanés ne peuvent pas lister le même exemplaire.
     player = get_player(req.player_id, transaction)
+    require_player_in_zone(player, req.zone_id)
     require_entry_unlocked(entry, player)
+    listing["seller_name"] = player.get("display_name", req.player_id)
     if player["inventory"].get(req.item_id, 0) < req.quantity:
         raise HTTPException(400, f"Pas assez de '{req.item_id}' en inventaire")
     # Les items sont placés en dépôt immédiatement : ils ne peuvent donc pas
@@ -823,6 +888,16 @@ def market_browse():
     return {"listings": listings}
 
 
+def zone_has_market(zone_id: str | None) -> bool:
+    if not zone_id:
+        return False
+    try:
+        zone = load_static_zone_content(zone_id)
+    except HTTPException:
+        return False
+    return any(e.get("template_type") == "player_market" for e in zone.get("entries", []))
+
+
 @router.post("/actions/market_buy")
 def market_buy(req: BuyListingRequest):
     """Achète une annonce, crédite le vendeur et supprime l'annonce."""
@@ -842,6 +917,9 @@ def _market_buy_tx(transaction, req: BuyListingRequest) -> dict:
         raise HTTPException(400, "Impossible d'acheter sa propre annonce")
     buyer = get_player(req.player_id, transaction)
     seller = get_player(listing["seller_player_id"], transaction)
+    # Tous les autels sont reliés, mais on achète depuis un autel.
+    if not zone_has_market(buyer.get("current_zone_id")):
+        raise HTTPException(403, "Rends-toi à un Autel des Ventes pour acheter")
     currency = listing["currency"]
     if buyer["currency"].get(currency, 0) < listing["price"]:
         raise HTTPException(400, f"Pas assez d'{currency}")

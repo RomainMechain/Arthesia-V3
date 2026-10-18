@@ -11,6 +11,8 @@ except ImportError:
 def default_player_state(player_id: str) -> dict:
     return {
         "player_id": player_id,
+        # Pseudo visible par les autres joueurs (Autel des Ventes...).
+        "display_name": player_id,
         "level": 1,
         "xp": 0,
         "stat_points": {
@@ -33,8 +35,10 @@ def default_player_state(player_id: str) -> dict:
     }
 
 
-def build_new_player_state(player_id: str, current_zone_id: str | None = None) -> dict:
+def build_new_player_state(player_id: str, current_zone_id: str | None = None, display_name: str | None = None) -> dict:
     state = default_player_state(player_id)
+    if display_name:
+        state["display_name"] = display_name
     if current_zone_id is not None:
         state["current_zone_id"] = current_zone_id
     return state

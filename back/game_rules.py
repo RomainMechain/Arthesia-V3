@@ -294,6 +294,12 @@ def reachable_floor_ids(floors: list[dict], player: dict) -> list[str]:
     return reachable
 
 
+def require_player_in_zone(player: dict, zone_id: str) -> None:
+    """Refuse une action faite depuis une autre zone que celle du joueur."""
+    if player.get("current_zone_id") != zone_id:
+        raise HTTPException(403, "Tu dois être dans cette zone pour faire ça")
+
+
 def is_entry_unlocked(entry: dict, player: dict) -> bool:
     """Indique si une entry de zone est accessible au joueur.
 
