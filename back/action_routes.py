@@ -615,28 +615,38 @@ def equip_title(req: EquipTitleRequest):
     # Le chargement vérifie que le fichier du titre existe avant de vérifier son
     # déblocage dans l'état joueur.
     load_template("title", req.title_id)
-    player = get_player(req.player_id)
+    return _equip_title_tx(db.transaction(), req)
+
+
+@firestore.transactional
+def _equip_title_tx(transaction, req: EquipTitleRequest) -> dict:
+    player = get_player(req.player_id, transaction)
     if req.title_id not in player["titles"]["unlocked"]:
         raise HTTPException(403, f"Titre '{req.title_id}' non débloqué")
     previous_title_id = player["titles"]["equipped"]
     # Le titre précédent est conservé dans la réponse pour permettre au client
     # de mettre à jour son interface sans relire tout le profil.
     player["titles"]["equipped"] = req.title_id
-    save_player(req.player_id, player)
+    save_player(req.player_id, player, transaction)
     return {"equipped": req.title_id, "previous": previous_title_id, "titles": player["titles"]}
 
 
 @router.post("/actions/unequip_title")
 def unequip_title(req: UnequipTitleRequest):
     """Retire le titre actuellement équipé."""
-    player = get_player(req.player_id)
+    return _unequip_title_tx(db.transaction(), req)
+
+
+@firestore.transactional
+def _unequip_title_tx(transaction, req: UnequipTitleRequest) -> dict:
+    player = get_player(req.player_id, transaction)
     if not player["titles"]["equipped"]:
         raise HTTPException(400, "Aucun titre équipé")
     # L'identifiant est sauvegardé avant de vider le slot afin de pouvoir le
     # retourner dans la réponse.
     previous_title_id = player["titles"]["equipped"]
     player["titles"]["equipped"] = None
-    save_player(req.player_id, player)
+    save_player(req.player_id, player, transaction)
     return {"unequipped": previous_title_id, "titles": player["titles"]}
 
 
