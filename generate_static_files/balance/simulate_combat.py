@@ -67,6 +67,8 @@ TARGETS = {
 POTION_HEAL_SHARE = 0.30
 
 REACTION_SECONDS = (0.15, 0.45)
+# Délai pour voir une annonce et réagir (elle dure 1,5 à 2 s).
+COUNTER_REACTION_SECONDS = (0.4, 1.0)
 STEP_SECONDS = 0.1
 MAX_SECONDS = 900
 
@@ -120,6 +122,12 @@ def reference_monster(level: int, role: str, profile: dict | None = None, tier: 
             {"hp_above_percent": 50, "moveset_ids": ["coup", "assaut", "sort"]},
             {"hp_above_percent": 0, "moveset_ids": ["coup", "assaut", "sort", "furie"]},
         ]
+    # Grosses attaques télégraphiées : plus fortes, mais esquivables ou interruptibles.
+    for move in moveset:
+        telegraph = balance.TELEGRAPHED_MOVES.get(role, {}).get(move["id"])
+        if telegraph:
+            move["power"] = round(move["power"] * balance.TELEGRAPH_POWER_MULTIPLIER, 3)
+            move["telegraph_seconds"], move["avoidable_by"] = telegraph
     return {"id": f"{role}_{level}", "name": f"{role} {level}", "level": level, "role": role,
             "stats": stats, "moveset": moveset, "phases": phases}
 
@@ -137,8 +145,15 @@ class Clock:
 
 
 def fight(monster: dict, level: int, build: str = REFERENCE_BUILD, potions: int = 0,
-          stats: dict | None = None, skills: dict | None = None) -> dict:
-    """Simule un combat ; renvoie l'issue, la durée et les PV perdus."""
+          stats: dict | None = None, skills: dict | None = None,
+          avoid_rate: float | None = None) -> dict:
+    """Simule un combat ; renvoie l'issue, la durée et les PV perdus.
+
+    ``avoid_rate`` est la part des attaques télégraphiées auxquelles le joueur
+    réagit (par défaut balance.AVERAGE_AVOID_RATE). Il réagit avec un délai
+    humain, et sa parade échoue si l'esquive est en recharge ou si aucune
+    compétence de dégâts n'est prête pour interrompre."""
+    avoid_rate = balance.AVERAGE_AVOID_RATE if avoid_rate is None else avoid_rate
     clock = Clock()
     engine.now = clock
     stats = stats or balance.reference_player_stats(level, GEAR_SHARE, BUILDS[build])
@@ -153,14 +168,33 @@ def fight(monster: dict, level: int, build: str = REFERENCE_BUILD, potions: int 
     next_tick = engine.TICK_INTERVAL_SECONDS
     next_decision = random.uniform(*REACTION_SECONDS)
     potions_used = 0
+    counter_at = None   # moment où le joueur réagit à l'annonce en cours
     while clock.t < MAX_SECONDS:
         clock.t = round(clock.t + STEP_SECONDS, 3)
         if clock.t >= next_tick:
             next_tick += engine.TICK_INTERVAL_SECONDS
-            engine.tick(session)
+            event = engine.tick(session)
+            if event and event.get("telegraph") and event["avoidable_by"] and random.random() < avoid_rate:
+                counter_at = clock.t + random.uniform(*COUNTER_REACTION_SECONDS)
             engine.trigger_passives(session)
             if session["player_current_hp"] <= 0:
                 return {"won": False, "duration": clock.t, "hp_lost": 1.0, "potions_used": potions_used}
+
+        if counter_at is not None and clock.t >= counter_at:
+            counter_at = None
+            pending = session["monster_pending"]
+            if pending and engine.counter_of(pending["move"]) == "esquive":
+                try:
+                    engine.dodge(session)
+                except engine.CombatRefusal:
+                    pass
+            elif pending and engine.counter_of(pending["move"]) == "interruption":
+                for skill in damage_skills:
+                    try:
+                        engine.use_skill(session, skill["id"])
+                        break
+                    except engine.CombatRefusal:
+                        continue
 
         if clock.t < next_decision:
             continue
@@ -196,8 +230,9 @@ def fight(monster: dict, level: int, build: str = REFERENCE_BUILD, potions: int 
             "potions_used": potions_used, "timeout": True}
 
 
-def run_many(monster: dict, level: int, build: str, potions: int, count: int) -> dict:
-    results = [fight(monster, level, build, potions) for _ in range(count)]
+def run_many(monster: dict, level: int, build: str, potions: int, count: int,
+             avoid_rate: float | None = None) -> dict:
+    results = [fight(monster, level, build, potions, avoid_rate=avoid_rate) for _ in range(count)]
     wins = [r for r in results if r["won"]]
     return {
         "win_rate": len(wins) / count,
@@ -315,6 +350,7 @@ def main():
     p.add_argument("--player-level", type=int)
     p.add_argument("--build", choices=list(BUILDS), default=REFERENCE_BUILD)
     p.add_argument("--potions", type=int)
+    p.add_argument("--avoid-rate", type=float, help="part des annonces parées (défaut : joueur moyen)")
     p.add_argument("--count", type=int, default=300)
 
     p = sub.add_parser("template", help="un template de monstre contre le joueur de référence")
@@ -336,7 +372,8 @@ def main():
     elif args.command == "duel":
         potions = args.potions if args.potions is not None else TARGETS[args.role]["potions"]
         monster = reference_monster(args.level, args.role)
-        print(describe(run_many(monster, args.player_level or args.level, args.build, potions, args.count)))
+        print(describe(run_many(monster, args.player_level or args.level, args.build, potions, args.count,
+                                args.avoid_rate)))
     elif args.command == "template":
         path = ROOT / "templates" / "monsters" / f"{args.monster}.json"
         monster = json.loads(path.read_text(encoding="utf-8"))

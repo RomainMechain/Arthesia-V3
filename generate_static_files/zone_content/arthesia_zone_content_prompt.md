@@ -212,7 +212,17 @@ Intentions de jeu, pour comprendre ce que produisent ces chiffres :
   {"hp_above_percent": 0, "moveset_ids": ["a", "b", "c", "furie"]}]`.
 - L'XP d'un monstre est calculée par le serveur (`monsters[role].xp`, pour information) : n'écris pas
   de champ d'XP sur un monstre.
-- `telegraph_seconds: 0` et `avoidable_by: null` sur toutes les attaques (pas encore en jeu).
+- **Attaques télégraphiées (élites et boss uniquement).** Une grosse attaque s'annonce pendant
+  `telegraph_seconds` avant de frapper, et le joueur peut la parer : `avoidable_by: "esquive"` (il
+  appuie sur Esquiver pendant l'annonce) ou `"interruption"` (il lance une compétence de dégâts
+  pendant l'annonce). Comme on peut les parer, elles frappent beaucoup plus fort.
+  - Recopie `monsters[role].telegraphed_moves` : chaque entrée donne `cooldown_seconds`, `power`,
+    `telegraph_seconds` et `avoidable_by`. Une élite en a une (son attaque lente, à esquiver), un boss
+    deux (une à interrompre, une à esquiver, la seconde réservée à sa dernière phase).
+  - Donne-leur un nom évocateur qui laisse deviner l'attaque (« Racines Étouffantes », « Aube
+    Éternelle ») : c'est ce que le joueur lit dans l'annonce.
+  - Toutes les autres attaques, et toutes celles des monstres normaux : `telegraph_seconds: 0` et
+    `avoidable_by: null`.
 
 ### Objets
 

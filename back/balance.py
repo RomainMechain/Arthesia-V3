@@ -77,8 +77,21 @@ def monster_base_stats(level: int) -> dict:
 # Issues de ``calibrate`` (moyenne des niveaux 5 et 30).
 ROLE_PROFILES = {
     "normal": {"hp": 2.15, "atk": 1.0, "def": 1.0, "agi": 1.0, "int": 1.0, "sag": 1.0, "power": 0.21},
-    "elite": {"hp": 2.76, "atk": 1.1, "def": 1.2, "agi": 1.1, "int": 1.1, "sag": 1.0, "power": 0.271},
-    "boss": {"hp": 5.67, "atk": 1.2, "def": 1.4, "agi": 1.2, "int": 1.2, "sag": 1.0, "power": 0.143},
+    "elite": {"hp": 2.75, "atk": 1.1, "def": 1.2, "agi": 1.1, "int": 1.1, "sag": 1.0, "power": 0.253},
+    "boss": {"hp": 5.63, "atk": 1.2, "def": 1.4, "agi": 1.2, "int": 1.2, "sag": 1.0, "power": 0.129},
+}
+
+# Attaques télégraphiées (élites et boss) : la grosse attaque s'annonce
+# pendant quelques secondes et peut être esquivée ou interrompue. Elle frappe
+# TELEGRAPH_POWER_MULTIPLIER fois plus fort qu'une attaque lente ordinaire : la
+# calibration suppose un joueur moyen qui pare AVERAGE_AVOID_RATE des annonces,
+# donc un joueur attentif bat ce qu'un joueur distrait ne bat pas.
+TELEGRAPH_POWER_MULTIPLIER = 2.5
+AVERAGE_AVOID_RATE = 0.5
+# Attaques télégraphiées du moveset de référence : durée de l'annonce et parade.
+TELEGRAPHED_MOVES = {
+    "elite": {"assaut": (1.5, "esquive")},
+    "boss": {"assaut": (1.5, "interruption"), "furie": (2.0, "esquive")},
 }
 
 # Montée de la difficulté dans un étage : la puissance des attaques des

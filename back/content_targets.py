@@ -79,12 +79,32 @@ def monster_targets(level: int, role: str, tier: str = "coeur") -> dict:
     base = balance.monster_base_stats(level)
     stats = {stat: round(base[stat] * profile[stat]) for stat in balance.STATS}
     power = profile["power"] * (balance.DIFFICULTY_TIERS[tier] if role == "normal" else 1.0)
-    return {
+    targets = {
         "stats": stats,
         "main_move": {"power": round(power, 2), "cooldown_seconds": MAIN_MOVE_COOLDOWN},
         "slow_move_power_per_second": round(power / SLOW_MOVE_SECONDS_PER_POWER, 3),
         "xp": balance.kill_xp(level, role),
     }
+    if role in balance.TELEGRAPHED_MOVES:
+        targets["telegraphed_moves"] = telegraphed_moves(role, power)
+    return targets
+
+
+def telegraphed_moves(role: str, power: float) -> list[dict]:
+    """Grosses attaques télégraphiées d'une élite ou d'un boss, reprises du
+    moveset de référence du simulateur : recharge, puissance (déjà multipliée),
+    durée de l'annonce et parade."""
+    reference = {"assaut": (7, 2), "furie": (10, 3)}  # recharge, puissance en multiples de P
+    moves = []
+    for move_id, (seconds, counter) in balance.TELEGRAPHED_MOVES[role].items():
+        cooldown, multiple = reference[move_id]
+        moves.append({
+            "cooldown_seconds": cooldown,
+            "power": round(power * multiple * balance.TELEGRAPH_POWER_MULTIPLIER, 3),
+            "telegraph_seconds": seconds,
+            "avoidable_by": counter,
+        })
+    return moves
 
 
 def equipment_points(level: int) -> float:
@@ -268,10 +288,22 @@ def check_template(template: dict, tier: str = "coeur") -> list[str]:
             if "power" not in move:
                 warnings.append(f"{name} : l'attaque {move.get('id')} n'a pas de power")
                 continue
-            # Une attaque lente peut frapper plus fort, au même rythme de dégâts.
+            # Une attaque lente peut frapper plus fort, au même rythme de dégâts ;
+            # une attaque télégraphiée encore plus, puisqu'on peut la parer.
             allowed = max(main_power, target["slow_move_power_per_second"] * move.get("cooldown_seconds", 0))
+            telegraphed = move.get("telegraph_seconds", 0) > 0
+            if telegraphed:
+                allowed *= balance.TELEGRAPH_POWER_MULTIPLIER
             if move["power"] > allowed * (1 + TOLERANCE):
                 warnings.append(f"{name} : l'attaque {move.get('id')} a power {move['power']} (max ≈ {round(allowed, 2)})")
+            if telegraphed and role == "normal":
+                warnings.append(f"{name} : attaque télégraphiée {move.get('id')} sur un monstre normal")
+            if telegraphed and move.get("avoidable_by") not in ("esquive", "interruption"):
+                warnings.append(f"{name} : l'attaque {move.get('id')} doit avoir avoidable_by « esquive » ou « interruption »")
+        expected = len(target.get("telegraphed_moves", []))
+        found = sum(1 for move in moves if move.get("telegraph_seconds", 0) > 0)
+        if found < expected:
+            warnings.append(f"{name} : {found} attaque(s) télégraphiée(s), {expected} attendue(s) pour un {role}")
 
     elif kind == "item" or template.get("category"):
         category = template.get("category")

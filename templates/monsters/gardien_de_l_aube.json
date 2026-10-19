@@ -5,7 +5,7 @@
   "level": 10,
   "role": "boss",
   "stats": {
-    "hp": 3755,
+    "hp": 3622,
     "atk": 75,
     "def": 71,
     "agi": 22,
@@ -17,7 +17,7 @@
       "id": "poing_de_l_horizon",
       "damage_type": "physical",
       "cooldown_seconds": 2.5,
-      "power": 0.14,
+      "power": 0.13,
       "weight": 3,
       "telegraph_seconds": 0,
       "avoidable_by": null
@@ -26,16 +26,16 @@
       "id": "ecrasement_des_anneaux",
       "damage_type": "physical",
       "cooldown_seconds": 7,
-      "power": 0.28,
+      "power": 0.645,
       "weight": 1,
-      "telegraph_seconds": 0,
-      "avoidable_by": null
+      "telegraph_seconds": 1.5,
+      "avoidable_by": "interruption"
     },
     {
       "id": "rayon_du_cercle",
       "damage_type": "magical",
       "cooldown_seconds": 5,
-      "power": 0.21,
+      "power": 0.195,
       "weight": 1,
       "telegraph_seconds": 0,
       "avoidable_by": null
@@ -44,10 +44,10 @@
       "id": "aube_eternelle",
       "damage_type": "magical",
       "cooldown_seconds": 10,
-      "power": 0.42,
+      "power": 0.968,
       "weight": 1,
-      "telegraph_seconds": 0,
-      "avoidable_by": null
+      "telegraph_seconds": 2.0,
+      "avoidable_by": "esquive"
     }
   ],
   "phases": [

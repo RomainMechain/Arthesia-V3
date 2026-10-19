@@ -27,8 +27,8 @@
 - L'équipement fait 40-50 % de la puissance. Les builds hybrides restent viables.
 - XP : 70 % en combat, 30 % en quêtes. Les métiers montent plus lentement, pour pousser à se
   spécialiser et à commercer. L'or reste modéré, avec des dépenses.
-- Les attaques télégraphiées (`telegraph_seconds`, `avoidable_by`) ne sont pas encore en jeu :
-  l'équilibrage se fait sans elles.
+- Les élites et les boss ont des attaques télégraphiées : l'habileté du joueur compte autant que son
+  build. Une attaque ne peut pas toujours être parée.
 
 ---
 
@@ -119,21 +119,41 @@ simulateur aux niveaux 5 et 30) :
 | Rôle | PV × | ATK × | DEF × | AGI/INT × | Puissance P de l'attaque principale | XP |
 |---|---|---|---|---|---|---|
 | `normal` | 2,15 | 1,0 | 1,0 | 1,0 | 0,21 (× profondeur) | ×1 |
-| `elite` | 2,76 | 1,1 | 1,2 | 1,1 | 0,271 | ×4 |
-| `boss` | 5,67 | 1,2 | 1,4 | 1,2 | 0,143 | ×15 |
+| `elite` | 2,75 | 1,1 | 1,2 | 1,1 | 0,253 | ×4 |
+| `boss` | 5,63 | 1,2 | 1,4 | 1,2 | 0,129 | ×15 |
 
 Cibles qui ont servi à la calibration (joueur de référence au même niveau) :
 
 | Rôle | Durée d'une victoire | Résultat visé |
 |---|---|---|
 | `normal` | ~65 s | perd ~50 % de ses PV, sans potion |
-| `elite` | ~100 s | gagne ~55 % du temps, avec 2 potions |
-| `boss` | ~240 s | gagne ~40 % du temps, avec 5 potions |
+| `elite` | ~100 s | gagne ~55 % du temps, avec 2 potions, en parant la moitié des annonces |
+| `boss` | ~240 s | gagne ~40 % du temps, avec 5 potions, en parant la moitié des annonces |
 
 **Attaques.** L'attaque principale a la puissance P et une recharge de 2,5 s. Une attaque plus lente
 peut frapper plus fort, au même rythme : `power ≈ P × recharge / 3,5`. Par exemple, `2P` à 7 s,
 `1,5P` à 5 s, ou `3P` à 10 s pour la furie d'un boss. Un boss a 2 ou 3 phases
 (`hp_above_percent`), et sa dernière phase débloque sa grosse attaque.
+
+**Attaques télégraphiées** (élites et boss, `balance.TELEGRAPHED_MOVES`). La grosse attaque
+s'annonce pendant `telegraph_seconds`, puis frappe. Sa parade (`avoidable_by`) :
+- `esquive` : le bouton Esquiver, pendant l'annonce. Il a sa propre recharge de 8 s : deux annonces
+  rapprochées ne s'esquivent pas toutes les deux, et une esquive lancée hors annonce est perdue ;
+- `interruption` : une compétence de dégâts lancée pendant l'annonce, ce qui demande d'en garder une
+  prête et le mana pour la lancer.
+
+Une élite a une attaque à esquiver (son assaut, 1,5 s d'annonce). Un boss a un assaut à interrompre
+(1,5 s) et une furie à esquiver (2 s, dernière phase). Ces attaques frappent 2,5 fois plus fort
+(`TELEGRAPH_POWER_MULTIPLIER`), et la calibration suppose un joueur moyen qui pare la moitié des
+annonces (`AVERAGE_AVOID_RATE`). Joueur de référence contre le boss de niveau 10 :
+
+| Annonces parées | 0 % | 50 % | 80 % | 100 % |
+|---|---|---|---|---|
+| Victoires | 0 % | ~40 % | ~90 % | 100 % |
+
+Elles réduisent aussi l'écart entre builds : l'assassin passe de ~25 % à ~65 % de victoires contre un
+boss quand il pare 80 % des annonces. Les builds mixtes (ATK = INT) restent à 0 % : il leur faut des
+compétences hybrides.
 
 **Profondeur de la zone** (`DIFFICULTY_TIERS`). Elle ne joue que sur la puissance des attaques des
 monstres **normaux**. Les PV ne changent pas, donc la durée des combats non plus.
@@ -148,13 +168,8 @@ La profondeur vient de `generation_brief.difficulty_tier` dans le squelette. San
 est déduite du nombre de sauts depuis la ville de départ.
 
 Le résultat contre un boss reste très sensible : 1 % de puissance en plus ou en moins déplace la
-part de victoires de 20 points. Le joueur de référence gagne ~40 % du temps contre un boss de
-niveau 10, ~55-65 % au-delà du niveau 30 et moins de 15 % sous le niveau 5 (aucun boss d'étage n'y
-est).
-
-**Écart de niveau.** Les élites et les boss sont un test de stats : à ±1 niveau ou selon le build,
-la part de victoires passe de presque 0 % à presque 100 %. C'est voulu tant que les attaques
-télégraphiées n'existent pas.
+part de victoires de 20 points. Pour un monstre généré, on ajuste ses PV au simulateur
+(`template --monster <id> --potions …`) plutôt que de les deviner.
 
 ---
 
@@ -270,8 +285,6 @@ lequel le simulateur a calibré les monstres (1,2 à 6 s, 2,0 à 12 s).
 
 ## Ce qui reste à faire
 
-- Les attaques télégraphiées. Elles rendront les élites et les boss moins binaires : l'habileté
-  comptera, pas seulement les stats.
 - Des compétences hybrides ATK + INT : un build mixte dilue aujourd'hui ses dégâts.
 - La réinitialisation des points de stat (une dépense d'or).
 - Le jeu en groupe : les élites `group_required` se battent encore en solo.

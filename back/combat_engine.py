@@ -48,6 +48,13 @@ MANA_REGEN_PER_LEVEL = 0.2
 K_SAG = 0.05
 # Recharge commune à tous les consommables utilisés en combat.
 ITEM_COOLDOWN_SECONDS = 5.0
+# Attaques télégraphiées : le monstre annonce une grosse attaque pendant
+# ``telegraph_seconds`` avant de frapper. Sa parade (``avoidable_by``) est soit
+# l'esquive (bouton dédié, avec sa recharge : deux annonces rapprochées ne
+# s'esquivent pas toutes les deux), soit l'interruption (une compétence de
+# dégâts lancée pendant l'annonce). Une esquive hors annonce est gaspillée.
+DODGE_COOLDOWN_SECONDS = 8.0
+COUNTERS = {"esquive", "interruption"}
 
 # Chaque coup de dégâts varie de ±DAMAGE_VARIANCE autour de sa valeur.
 DAMAGE_VARIANCE = 0.08
@@ -169,6 +176,9 @@ def new_session(player_id: str, zone_id: str, entry_id: str, monster: dict, play
         "player_shield": 0.0,
         "player_shield_expires_at": None,
         "player_basic_attack_ready_at": now(),
+        "player_dodge_ready_at": now(),
+        # Attaque télégraphiée en cours d'annonce : {move, resolves_at, dodged}.
+        "monster_pending": None,
         "player_skill_cooldowns": {},
         "item_ready_at": now(),
         "equipped_active": list(equipped_active),
@@ -437,13 +447,25 @@ def available_moveset(session: dict) -> list[dict]:
 
 def monster_tick(session: dict) -> dict | None:
     """Fait avancer d'un tick les recharges du monstre et l'attaque si une
-    compétence est prête. Renvoie l'attaque réalisée, le cas échéant."""
+    compétence est prête.
+
+    Renvoie l'attaque réalisée, l'annonce d'une attaque télégraphiée
+    (``{"telegraph": True, ...}``) ou ``None``. Pendant une annonce, le
+    monstre ne lance rien d'autre ; l'attaque frappe quand l'annonce se
+    termine, sauf si elle a été esquivée ou interrompue.
+    """
     # Un debuff d'agilité ralentit la recharge des attaques du monstre.
     speed = max(0.2, 1 + sum(e["percent"] for e in session["monster_effects"] if e["stat"] == "agi") / 100)
     cooldowns = session["monster_cooldowns"]
     moveset = available_moveset(session)
     for move in moveset:
         cooldowns[move["id"]] = max(0.0, cooldowns.get(move["id"], 0.0) - TICK_INTERVAL_SECONDS * speed)
+
+    pending = session["monster_pending"]
+    if pending is not None:
+        if now() < pending["resolves_at"]:
+            return None
+        return resolve_telegraph(session)
 
     ready = [move for move in moveset if cooldowns.get(move["id"], 0.0) <= 0]
     if not ready:
@@ -452,9 +474,51 @@ def monster_tick(session: dict) -> dict | None:
     # relative de ses attaques sans coder cette préférence ici.
     chosen = random.choices(ready, weights=[move.get("weight", 1) for move in ready], k=1)[0]
     cooldowns[chosen["id"]] = chosen["cooldown_seconds"]
+    if chosen.get("telegraph_seconds", 0) > 0:
+        session["monster_pending"] = {
+            "move": chosen,
+            "resolves_at": now() + chosen["telegraph_seconds"],
+            "dodged": False,
+        }
+        return {"telegraph": True, **pending_view(session)}
     raw = monster_move_damage(session, chosen)
     result = damage_player(session, raw)
     return {"skill_id": chosen["id"], "raw_damage": round(raw, 1), **result}
+
+
+def counter_of(move: dict) -> str | None:
+    """Parade d'une attaque télégraphiée : « esquive », « interruption » ou
+    ``None`` (inévitable : l'annonce sert à se préparer)."""
+    counter = move.get("avoidable_by")
+    return counter if counter in COUNTERS else None
+
+
+def pending_view(session: dict) -> dict | None:
+    pending = session["monster_pending"]
+    if pending is None:
+        return None
+    move = pending["move"]
+    return {
+        "skill_id": move["id"],
+        "skill_name": move.get("name", move["id"]),
+        "avoidable_by": counter_of(move),
+        "seconds": move.get("telegraph_seconds", 0),
+        "remaining": round(max(0.0, pending["resolves_at"] - now()), 2),
+        "dodged": pending["dodged"],
+    }
+
+
+def resolve_telegraph(session: dict) -> dict:
+    """Fin de l'annonce : l'attaque frappe, sauf si elle a été esquivée."""
+    pending = session["monster_pending"]
+    session["monster_pending"] = None
+    move = pending["move"]
+    if pending["dodged"]:
+        return {"skill_id": move["id"], "telegraphed": True, "avoided": "esquive", "raw_damage": 0.0,
+                "final_damage": 0.0, "absorbed": 0.0, "critical": False, "dodged": True}
+    raw = monster_move_damage(session, move)
+    return {"skill_id": move["id"], "telegraphed": True, "avoided": None, "raw_damage": round(raw, 1),
+            **damage_player(session, raw)}
 
 
 def monster_move_damage(session: dict, move: dict) -> float:
@@ -498,6 +562,36 @@ def basic_attack(session: dict) -> dict:
     return {"raw_damage": round(raw_damage, 1), **hit, "next_ready_in": round(cooldown, 2)}
 
 
+def dodge(session: dict) -> dict:
+    """Esquive du joueur ; lève CombatRefusal pendant sa recharge.
+
+    Elle n'évite que l'attaque en cours d'annonce dont la parade est
+    l'esquive. Lancée à un autre moment, elle est perdue (et sa recharge
+    court quand même) : on ne peut pas esquiver par réflexe en continu."""
+    t = now()
+    if t < session["player_dodge_ready_at"]:
+        raise CombatRefusal("Esquive pas encore prête")
+    session["player_dodge_ready_at"] = t + DODGE_COOLDOWN_SECONDS
+    pending = session["monster_pending"]
+    useful = pending is not None and not pending["dodged"] and counter_of(pending["move"]) == "esquive"
+    if useful:
+        pending["dodged"] = True
+    return {"useful": useful, "against": pending["move"]["id"] if pending else None,
+            "next_ready_in": DODGE_COOLDOWN_SECONDS}
+
+
+def interrupt_pending(session: dict, skill: dict) -> str | None:
+    """Une compétence de dégâts lancée pendant l'annonce d'une attaque à
+    interrompre l'annule. Renvoie l'attaque interrompue, le cas échéant."""
+    pending = session["monster_pending"]
+    if pending is None or counter_of(pending["move"]) != "interruption":
+        return None
+    if not any(effect["type"] == "damage" for effect in skill.get("effects", [])):
+        return None
+    session["monster_pending"] = None
+    return pending["move"]["id"]
+
+
 def use_skill(session: dict, skill_id: str) -> dict:
     """Lance une compétence active équipée ; lève CombatRefusal si elle n'est
     pas équipée, pas prête ou trop chère en mana."""
@@ -512,7 +606,9 @@ def use_skill(session: dict, skill_id: str) -> dict:
         raise CombatRefusal("Pas assez de mana")
     session["player_current_mana"] -= skill["mana_cost"]
     cooldowns[skill_id] = t + skill["cooldown_seconds"]
-    return {"results": apply_skill_effects(session, skill), "next_ready_in": round(skill["cooldown_seconds"], 2)}
+    interrupted = interrupt_pending(session, skill)
+    return {"results": apply_skill_effects(session, skill), "next_ready_in": round(skill["cooldown_seconds"], 2),
+            "interrupted": interrupted}
 
 
 def tick(session: dict) -> dict | None:
@@ -556,6 +652,9 @@ def status(session: dict) -> dict:
         ],
         "basic_attack_cooldown": round(player_attack_cooldown(session), 2),
         "player_mana_regen": round(player_mana_regen(session), 2),
+        "monster_pending": pending_view(session),
+        "dodge_ready_in": round(max(0.0, session["player_dodge_ready_at"] - t), 2),
+        "dodge_cooldown": DODGE_COOLDOWN_SECONDS,
     }
 
 
@@ -567,4 +666,5 @@ def status_signature(session: dict) -> tuple:
         tuple((e["source"], e["stat"]) for e in session["player_effects"]),
         tuple((e["source"], e["stat"]) for e in session["monster_effects"]),
         tuple(s["id"] for s in session["conditional_passives"] if evaluate_combat_condition(s.get("condition"), session)),
+        (session["monster_pending"] or {}).get("dodged"),
     )

@@ -5,7 +5,7 @@
   "level": 6,
   "role": "elite",
   "stats": {
-    "hp": 1162,
+    "hp": 1154,
     "atk": 45,
     "def": 39,
     "agi": 15,
@@ -17,7 +17,7 @@
       "id": "branche_fouet",
       "damage_type": "physical",
       "cooldown_seconds": 2.5,
-      "power": 0.27,
+      "power": 0.25,
       "weight": 3,
       "telegraph_seconds": 0,
       "avoidable_by": null
@@ -26,16 +26,16 @@
       "id": "racines_etouffantes",
       "damage_type": "physical",
       "cooldown_seconds": 7,
-      "power": 0.54,
+      "power": 1.265,
       "weight": 1,
-      "telegraph_seconds": 0,
-      "avoidable_by": null
+      "telegraph_seconds": 1.5,
+      "avoidable_by": "esquive"
     },
     {
       "id": "pulsation_runique",
       "damage_type": "magical",
       "cooldown_seconds": 5,
-      "power": 0.385,
+      "power": 0.375,
       "weight": 1,
       "telegraph_seconds": 0,
       "avoidable_by": null

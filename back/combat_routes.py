@@ -7,15 +7,19 @@ consommable utilisé, et pour enregistrer la récompense finale via
 ``apply_monster_kill_rewards``. Les règles elles-mêmes (stats effectives,
 effets, boucliers, passifs, phases) sont dans ``combat_engine.py``.
 
-Le protocole WebSocket repose sur quatre messages clients :
+Le protocole WebSocket repose sur cinq messages clients :
 
 * ``start_combat`` initialise une session ;
 * ``basic_attack`` applique une attaque avec cooldown ;
 * ``use_skill`` consomme du mana et applique les effets de la compétence ;
-* ``use_item`` utilise un consommable du sac (recharge commune).
+  lancée pendant l'annonce d'une attaque « à interrompre », une compétence
+  de dégâts l'annule ;
+* ``use_item`` utilise un consommable du sac (recharge commune) ;
+* ``dodge`` esquive l'attaque annoncée dont la parade est l'esquive.
 
 Les messages serveur sont des événements JSON tels que ``combat_started``,
-``monster_attack``, ``player_basic_attack``, ``player_skill_used``,
+``monster_telegraph`` (une grosse attaque s'annonce), ``monster_attack``,
+``player_basic_attack``, ``player_skill_used``, ``player_dodge``,
 ``player_item_used``, ``passive_triggered``, ``monster_phase``, ``status``,
 ``combat_won`` et ``combat_lost``. Chaque événement de combat porte un champ
 ``status`` (bouclier, effets actifs, cadences) décrit par
@@ -126,7 +130,12 @@ async def combat_tick_loop(websocket: WebSocket, combat_id: str):
                 break
 
             attack = engine.tick(session)
-            if attack:
+            if attack and attack.get("telegraph"):
+                await send_event(websocket, session, {
+                    "type": "monster_telegraph",
+                    **{k: v for k, v in attack.items() if k != "telegraph"},
+                })
+            elif attack:
                 await send_event(websocket, session, {
                     "type": "monster_attack",
                     **attack,
@@ -313,6 +322,14 @@ async def combat_websocket(websocket: WebSocket):
                     "player_mana": session["player_current_mana"],
                 })
                 await after_player_action(websocket, combat_id, session)
+
+            elif action == "dodge":
+                try:
+                    dodged = engine.dodge(session)
+                except engine.CombatRefusal as exc:
+                    await websocket.send_json({"type": "error", "message": str(exc)})
+                    continue
+                await send_event(websocket, session, {"type": "player_dodge", **dodged})
 
             elif action == "use_item":
                 # Un consommable est retiré du sac tout de suite (une écriture
