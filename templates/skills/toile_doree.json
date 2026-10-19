@@ -2,6 +2,7 @@
   "id": "toile_doree",
   "name": "Toile Dorée",
   "description": "Tu as appris des tisseuses à jeter un fil de lumière qui s'enroule autour de l'ennemi et freine chacun de ses gestes.",
+  "level": 8,
   "kind": "active",
   "unlock_condition": {
     "type": "kill_count",
@@ -16,7 +17,8 @@
   "effects": [
     {
       "type": "damage",
-      "power": 0.9
+      "power": 0.36,
+      "base": 28
     },
     {
       "type": "debuff",

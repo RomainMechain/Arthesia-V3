@@ -2,6 +2,7 @@
   "id": "bond_du_lynx",
   "name": "Bond du Lynx",
   "description": "Le lynx à robe claire ne se montre qu'au moment de frapper. Après en avoir affronté des dizaines, tu sais toi aussi surgir de la lumière.",
+  "level": 5,
   "kind": "active",
   "unlock_condition": {
     "type": "kill_count",
@@ -16,7 +17,8 @@
   "effects": [
     {
       "type": "damage",
-      "power": 2.18
+      "power": 0.87,
+      "base": 46
     }
   ]
 }

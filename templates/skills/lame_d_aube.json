@@ -1,0 +1,23 @@
+{
+  "id": "lame_d_aube",
+  "name": "Lame d'Aube",
+  "description": "Une lame courte, enveloppée de la lumière de l'aube. Elle ne frappe fort qu'entre des mains qui savent à la fois manier l'acier et appeler la lumière.",
+  "level": 4,
+  "kind": "active",
+  "unlock_condition": {
+    "type": "level",
+    "min": 4
+  },
+  "damage_type": "hybrid",
+  "cooldown_seconds": 8,
+  "mana_cost": 19,
+  "telegraph_seconds": 0,
+  "avoidable_by": null,
+  "effects": [
+    {
+      "type": "damage",
+      "base": 26,
+      "power": 0.59
+    }
+  ]
+}

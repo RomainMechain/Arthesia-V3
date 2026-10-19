@@ -1,0 +1,24 @@
+{
+  "id": "rune_tranchante",
+  "name": "Rune Tranchante",
+  "description": "À force d'abattre les rouages errants, tu as compris leur secret : un tranchant de bronze guidé par un éclair. Tu traces la même rune sur ton arme, et elle frappe de l'acier et de la lumière à la fois.",
+  "level": 7,
+  "kind": "active",
+  "unlock_condition": {
+    "type": "kill_count",
+    "monster_id": "rouage_errant",
+    "count": 30
+  },
+  "damage_type": "hybrid",
+  "cooldown_seconds": 10,
+  "mana_cost": 31,
+  "telegraph_seconds": 0,
+  "avoidable_by": null,
+  "effects": [
+    {
+      "type": "damage",
+      "base": 60,
+      "power": 0.87
+    }
+  ]
+}

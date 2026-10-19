@@ -2,6 +2,7 @@
   "id": "chant_du_fond",
   "name": "Chant du Fond",
   "description": "Tu as entendu le chant qui monte sous le miroir. Tu sais maintenant le faire vibrer à ton tour : une note sourde qui ébranle et ralentit tout ce qu'elle traverse.",
+  "level": 5,
   "kind": "active",
   "unlock_condition": {
     "type": "quest",
@@ -16,7 +17,8 @@
   "effects": [
     {
       "type": "damage",
-      "power": 2.6
+      "power": 1.04,
+      "base": 55
     },
     {
       "type": "debuff",

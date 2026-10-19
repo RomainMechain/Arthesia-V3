@@ -2,6 +2,7 @@
   "id": "verdict_du_heraut",
   "name": "Verdict du Héraut",
   "description": "Le Héraut de l'Aube ne parlait pas, il jugeait. Après l'avoir abattu et avoir ouvert la porte des dormants, tu portes à ton tour son verdict : un cercle de lumière qui s'abat sans appel.",
+  "level": 10,
   "kind": "active",
   "unlock_condition": {
     "type": "group",
@@ -27,7 +28,8 @@
   "effects": [
     {
       "type": "damage",
-      "power": 4.69
+      "power": 1.88,
+      "base": 176
     }
   ]
 }

@@ -2,6 +2,7 @@
   "id": "croc_dore",
   "name": "Croc Doré",
   "description": "À force d'affronter les loups dorés de la lisière, tu as appris leur façon de mordre : vite, sans élan, là où ça fait mal.",
+  "level": 1,
   "kind": "active",
   "unlock_condition": {
     "type": "kill_count",
@@ -16,7 +17,8 @@
   "effects": [
     {
       "type": "damage",
-      "power": 1.19
+      "power": 0.48,
+      "base": 10
     }
   ]
 }

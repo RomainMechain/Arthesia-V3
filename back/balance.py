@@ -22,6 +22,15 @@ STAT_POINTS_PER_LEVEL = 6
 MAX_ACTIVE_SKILL_SLOTS = 4
 MAX_PASSIVE_SKILL_SLOTS = 4
 
+# Effet d'une compétence = base + power × stat. Au niveau où la compétence se
+# débloque, la base fait SKILL_BASE_SHARE de l'effet pour le joueur de
+# référence. Le coût en mana est fixe : une compétence de début de jeu reste
+# bon marché mais perd de son importance, puisque sa base ne grandit pas.
+SKILL_BASE_SHARE = 0.6
+# Le kit du joueur de référence a été débloqué SKILL_KIT_LEVEL_LAG niveaux
+# plus tôt, en moyenne : la calibration des monstres en tient compte.
+SKILL_KIT_LEVEL_LAG = 3
+
 STATS = ("hp", "atk", "def", "agi", "int", "sag")
 
 

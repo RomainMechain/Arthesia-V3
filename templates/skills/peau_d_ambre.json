@@ -2,6 +2,7 @@
   "id": "peau_d_ambre",
   "name": "Peau d'Ambre",
   "description": "Les loups d'ambre portent sur eux un instant figé. À force de les combattre, un peu de cette résine semble avoir pris sur toi, et les coups s'y enlisent.",
+  "level": 6,
   "kind": "passive",
   "unlock_condition": {
     "type": "kill_count",

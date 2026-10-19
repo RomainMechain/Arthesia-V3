@@ -2,6 +2,7 @@
   "id": "mains_de_ravaudeur",
   "name": "Mains de Ravaudeur",
   "description": "Couper et tresser les roseaux dorés t'a donné les mains sûres et patientes des pêcheurs de la rive.",
+  "level": 1,
   "kind": "passive",
   "unlock_condition": {
     "type": "gather_count",

@@ -2257,5 +2257,32 @@
     "tags": [],
     "description": "La lumière se concentre un instant dans la paume, puis éclate contre l'ennemi.",
     "floor_origin": null
+  },
+  {
+    "id": "lame_d_aube",
+    "name": "Lame d'Aube",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "Une lame courte, enveloppée de la lumière de l'aube. Elle ne frappe fort qu'entre des mains qui savent à la fois manier l'acier et appeler la lumière.",
+    "floor_origin": null
+  },
+  {
+    "id": "rune_tranchante",
+    "name": "Rune Tranchante",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "À force d'abattre les rouages errants, tu as compris leur secret : un tranchant de bronze guidé par un éclair. Tu traces la même rune sur ton arme, et elle frappe de l'acier et de la lumière à la fois.",
+    "floor_origin": 1
+  },
+  {
+    "id": "lame_des_consignes",
+    "name": "Lame des Consignes",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "Les noyaux des automates portaient les consignes des Architectes. Tu en as retenu une seule, gravée dans le geste plus que dans la mémoire : frapper juste, au rythme du cercle. Elle demande un bras exercé et un esprit attentif.",
+    "floor_origin": 1
   }
 ]

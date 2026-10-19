@@ -2,6 +2,7 @@
   "id": "eclat_d_aube",
   "name": "Éclat d'Aube",
   "description": "La lumière se concentre un instant dans la paume, puis éclate contre l'ennemi.",
+  "level": 3,
   "kind": "active",
   "unlock_condition": {
     "type": "level",
@@ -15,7 +16,8 @@
   "effects": [
     {
       "type": "damage",
-      "power": 2.0
+      "power": 0.8,
+      "base": 29
     }
   ]
 }

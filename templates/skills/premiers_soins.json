@@ -2,6 +2,7 @@
   "id": "premiers_soins",
   "name": "Premiers Soins",
   "description": "Quelques gestes sûrs pour refermer une plaie et reprendre son souffle au milieu du combat.",
+  "level": 2,
   "kind": "active",
   "unlock_condition": {
     "type": "level",
@@ -15,7 +16,8 @@
   "effects": [
     {
       "type": "heal",
-      "power": 1.18
+      "power": 0.47,
+      "base": 7
     }
   ]
 }

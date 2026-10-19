@@ -1,0 +1,24 @@
+{
+  "id": "lame_des_consignes",
+  "name": "Lame des Consignes",
+  "description": "Les noyaux des automates portaient les consignes des Architectes. Tu en as retenu une seule, gravée dans le geste plus que dans la mémoire : frapper juste, au rythme du cercle. Elle demande un bras exercé et un esprit attentif.",
+  "level": 9,
+  "kind": "active",
+  "unlock_condition": {
+    "type": "quest",
+    "quest_id": "ce_que_disent_les_runes",
+    "state": "completed"
+  },
+  "damage_type": "hybrid",
+  "cooldown_seconds": 15,
+  "mana_cost": 46,
+  "telegraph_seconds": 0,
+  "avoidable_by": null,
+  "effects": [
+    {
+      "type": "damage",
+      "base": 101,
+      "power": 1.18
+    }
+  ]
+}

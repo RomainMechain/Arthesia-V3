@@ -2,6 +2,7 @@
   "id": "instinct_de_traqueuse",
   "name": "Instinct de Traqueuse",
   "description": "Suivre la piste du cerf pâle t'a appris ce que sait Vesna : quand la bête se retourne, c'est le moment d'être plus vif qu'elle.",
+  "level": 5,
   "kind": "passive",
   "unlock_condition": {
     "type": "quest",

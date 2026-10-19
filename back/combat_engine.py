@@ -46,6 +46,12 @@ K_INT = 2
 BASE_MANA_REGEN = 1
 MANA_REGEN_PER_LEVEL = 0.2
 K_SAG = 0.05
+# Une compétence hybride s'appuie sur ATK et INT à la fois : sa stat vaut
+# HYBRID_STAT_FACTOR × la plus faible des deux. Un build qui investit autant
+# dans l'une que dans l'autre en profite pleinement ; pour un spécialiste, elle
+# reste toujours sous sa meilleure stat, donc ses compétences mono-stat restent
+# meilleures (et la calibration des monstres n'en dépend pas).
+HYBRID_STAT_FACTOR = 2.0
 # Recharge commune à tous les consommables utilisés en combat.
 ITEM_COOLDOWN_SECONDS = 5.0
 # Attaques télégraphiées : le monstre annonce une grosse attaque pendant
@@ -337,26 +343,40 @@ def heal_player(session: dict, amount: float) -> float:
 
 
 def apply_shield(session: dict, skill: dict, effect: dict) -> float:
-    """Bouclier : ``amount_power`` × SAG (× ATK pour une compétence physique)."""
+    """Bouclier : ``base`` + ``amount_power`` × SAG (× ATK pour une
+    compétence physique)."""
     stat = "atk" if skill.get("damage_type") == "physical" else "sag"
-    amount = round(effect.get("amount_power", 0) * player_stat(session, stat), 1)
+    amount = round(effect.get("base", 0) + effect.get("amount_power", 0) * player_stat(session, stat), 1)
     session["player_shield"] = round(max(session["player_shield"], amount), 1)
     duration = effect.get("duration_seconds")
     session["player_shield_expires_at"] = now() + duration if duration else None
     return amount
 
 
+def skill_damage_stat(session: dict, skill: dict) -> float:
+    """Stat des dégâts d'une compétence : ATK (physique), INT (magique) ou
+    HYBRID_STAT_FACTOR × la plus faible des deux (hybride)."""
+    damage_type = skill.get("damage_type")
+    if damage_type == "hybrid":
+        return HYBRID_STAT_FACTOR * min(player_stat(session, "atk"), player_stat(session, "int"))
+    return player_stat(session, "int" if damage_type == "magical" else "atk")
+
+
 def apply_skill_effects(session: dict, skill: dict) -> list[dict]:
-    """Applique les effets d'une compétence active et décrit le résultat."""
+    """Applique les effets d'une compétence active et décrit le résultat.
+
+    Dégâts et soins valent ``base`` + ``power`` × stat : la base est fixée au
+    niveau de la compétence, donc une compétence ancienne perd peu à peu de
+    son importance face aux nouvelles."""
     results = []
     for effect in skill.get("effects", []):
         effect_type = effect["type"]
         if effect_type == "damage":
-            stat = "int" if skill.get("damage_type") == "magical" else "atk"
-            results.append({"effect": "damage", **damage_monster(session, effect["power"] * player_stat(session, stat))})
+            raw = effect.get("base", 0) + effect.get("power", 0) * skill_damage_stat(session, skill)
+            results.append({"effect": "damage", **damage_monster(session, raw)})
         elif effect_type == "heal":
             # Les soins dépendent de la SAG : l'INT fait les dégâts magiques.
-            amount = heal_player(session, effect["power"] * player_stat(session, "sag"))
+            amount = heal_player(session, effect.get("base", 0) + effect.get("power", 0) * player_stat(session, "sag"))
             results.append({"effect": "heal", "amount": amount})
         elif effect_type == "shield":
             results.append({"effect": "shield", "amount": apply_shield(session, skill, effect)})

@@ -37,6 +37,7 @@ sys.path.insert(0, str(ROOT))
 from back import balance  # noqa: E402
 from back import combat_engine as engine  # noqa: E402
 from back.balance import DIFFICULTY_TIERS, GEAR_SHARE, REFERENCE_WEIGHTS, ROLE_PROFILES  # noqa: E402
+from back import content_targets  # noqa: E402
 
 # Répartition des points de chaque niveau selon le build.
 BUILDS = {
@@ -81,24 +82,32 @@ def reference_mana(level: int) -> float:
     return engine.compute_max_mana(balance.reference_player_stats(level, GEAR_SHARE, BUILDS[REFERENCE_BUILD])["int"], level)
 
 
-def reference_kit(level: int, build: str) -> dict[str, dict]:
+def reference_kit(level: int, build: str, hybrid_kit: bool = True) -> dict[str, dict]:
     """Quatre compétences actives (balance.MAX_ACTIVE_SKILL_SLOTS) : une
-    rapide, une moyenne, une lente et un soin. Leur coût en mana est une part
-    du mana du joueur de référence du niveau. Un build qui mise autant sur ATK
-    que sur INT a des compétences des deux types."""
+    rapide, une moyenne, une lente et un soin, de palier simple. Elles ont été
+    débloquées balance.SKILL_KIT_LEVEL_LAG niveaux plus tôt : leur base et
+    leur coût en mana (fixe) sont ceux de ce niveau-là, comme pour un vrai
+    joueur. Un build qui mise autant sur ATK que sur INT a des compétences des
+    deux types, ou des compétences hybrides (``hybrid_kit``)."""
     weights = BUILDS[build]
     main_type = "physical" if weights["atk"] >= weights["int"] else "magical"
     second_type = "magical" if weights["atk"] == weights["int"] else main_type
-    mana = reference_mana(level)
+    if hybrid_kit and weights["atk"] == weights["int"]:
+        # Un build mixte prend des compétences hybrides (ATK + INT).
+        main_type = second_type = "hybrid"
+    unlocked_at = max(1, level - balance.SKILL_KIT_LEVEL_LAG)
+
+    def skill(skill_id, damage_type, cooldown, effect_type="damage"):
+        effect = content_targets.skill_effect(unlocked_at, cooldown, support=effect_type != "damage")
+        return {"id": skill_id, "damage_type": damage_type, "cooldown_seconds": cooldown,
+                "mana_cost": content_targets.skill_mana_cost(unlocked_at, cooldown),
+                "effects": [{"type": effect_type, **effect}]}
+
     return {
-        "frappe": {"id": "frappe", "damage_type": main_type, "mana_cost": round(0.12 * mana),
-                   "cooldown_seconds": 6, "effects": [{"type": "damage", "power": 1.2}]},
-        "technique": {"id": "technique", "damage_type": second_type, "mana_cost": round(0.22 * mana),
-                      "cooldown_seconds": 12, "effects": [{"type": "damage", "power": 2.0}]},
-        "assaut": {"id": "assaut", "damage_type": main_type, "mana_cost": round(0.20 * mana),
-                   "cooldown_seconds": 10, "effects": [{"type": "damage", "power": 1.74}]},
-        "soin": {"id": "soin", "damage_type": "magical", "mana_cost": round(0.20 * mana),
-                 "cooldown_seconds": 15, "effects": [{"type": "heal", "power": 1.0}]},
+        "frappe": skill("frappe", main_type, 6),
+        "technique": skill("technique", second_type, 12),
+        "assaut": skill("assaut", main_type, 10),
+        "soin": skill("soin", "magical", 15, "heal"),
     }
 
 

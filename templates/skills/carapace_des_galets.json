@@ -2,6 +2,7 @@
   "id": "carapace_des_galets",
   "name": "Carapace des Galets",
   "description": "Comme les crabes de la rive, tu te ramasses sur toi-même et laisses les coups glisser sur une carapace qui n'existe pas.",
+  "level": 1,
   "kind": "active",
   "unlock_condition": {
     "type": "kill_count",
@@ -16,8 +17,9 @@
   "effects": [
     {
       "type": "shield",
-      "amount_power": 0.87,
-      "duration_seconds": 8
+      "amount_power": 0.35,
+      "duration_seconds": 8,
+      "base": 7
     }
   ]
 }

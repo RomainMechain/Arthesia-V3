@@ -2,6 +2,7 @@
   "id": "lumiere_figee",
   "name": "Lumière Figée",
   "description": "Tu as abattu le Cerf Pâle et entendu ce que répète la statue de la clairière. Tu sais désormais, l'espace d'un instant, arrêter la lumière autour de toi : elle se fige en une armure et tes gestes s'y aiguisent.",
+  "level": 9,
   "kind": "active",
   "unlock_condition": {
     "type": "group",
@@ -27,8 +28,9 @@
   "effects": [
     {
       "type": "shield",
-      "amount_power": 2.35,
-      "duration_seconds": 10
+      "amount_power": 0.94,
+      "duration_seconds": 10,
+      "base": 42
     },
     {
       "type": "buff",

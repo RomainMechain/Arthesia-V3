@@ -2,6 +2,7 @@
   "id": "rune_de_rupture",
   "name": "Rune de Rupture",
   "description": "Le mur effondré t'a livré une rune qui ne sert pas à tenir, mais à défaire. Tracée sur l'ennemi, elle fend ses défenses comme une pierre trop vieille.",
+  "level": 7,
   "kind": "active",
   "unlock_condition": {
     "type": "quest",
@@ -16,7 +17,8 @@
   "effects": [
     {
       "type": "damage",
-      "power": 1.6
+      "power": 0.64,
+      "base": 44
     },
     {
       "type": "debuff",

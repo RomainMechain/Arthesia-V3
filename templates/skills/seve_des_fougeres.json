@@ -2,6 +2,7 @@
   "id": "seve_des_fougeres",
   "name": "Sève des Fougères",
   "description": "Les fougères dorées ne fanent jamais. À force de les cueillir, tu as appris à faire passer un peu de cette sève immobile dans tes propres blessures.",
+  "level": 5,
   "kind": "active",
   "unlock_condition": {
     "type": "gather_count",
@@ -16,7 +17,8 @@
   "effects": [
     {
       "type": "heal",
-      "power": 1.48
+      "power": 0.59,
+      "base": 17
     }
   ]
 }

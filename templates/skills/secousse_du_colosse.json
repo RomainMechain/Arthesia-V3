@@ -2,6 +2,7 @@
   "id": "secousse_du_colosse",
   "name": "Secousse du Colosse",
   "description": "Les colosses moussus finissent un geste commencé il y a des siècles. Après en avoir abattu des dizaines, tu sais toi aussi frapper le sol de tout ton poids, lentement, sans hâte et sans pitié.",
+  "level": 8,
   "kind": "active",
   "unlock_condition": {
     "type": "kill_count",
@@ -16,7 +17,8 @@
   "effects": [
     {
       "type": "damage",
-      "power": 2.95
+      "power": 1.18,
+      "base": 91
     }
   ]
 }

@@ -2,6 +2,7 @@
   "id": "patience_du_pecheur",
   "name": "Patience du Pêcheur",
   "description": "Des heures à attendre que la truite argentée morde sur une eau qui ne bouge jamais. Tu y as gagné un calme que rien ne trouble, et l'esprit plus clair.",
+  "level": 1,
   "kind": "passive",
   "unlock_condition": {
     "type": "gather_count",

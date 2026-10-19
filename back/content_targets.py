@@ -131,6 +131,22 @@ def quest_rewards(level: int) -> dict:
     }
 
 
+def skill_effect(level: int, cooldown: float, tier: str = "simple", support: bool = False,
+                 physical_shield: bool = False) -> dict:
+    """``base`` et ``power`` d'un effet de compétence débloquée au niveau
+    ``level`` : pour le joueur de référence de ce niveau, l'effet total vaut
+    skill_power × stat, dont SKILL_BASE_SHARE en part fixe.
+
+    La stat de référence est l'ATK pour les dégâts (physiques comme
+    magiques : un mage a autant d'INT qu'un guerrier d'ATK) et pour un
+    bouclier physique, la SAG pour un soin ou un bouclier magique."""
+    total = skill_power(cooldown, tier, support)
+    stats = reference_player(level)
+    stat = stats["sag"] if support and not physical_shield else stats["atk"]
+    return {"base": round(total * stat * balance.SKILL_BASE_SHARE),
+            "power": round(total * (1 - balance.SKILL_BASE_SHARE), 2)}
+
+
 def skill_power(cooldown: float, tier: str = "simple", support: bool = False) -> float:
     power = SKILL_POWER_RATE * max(cooldown, 1) ** 0.75 * SKILL_TIER_MULTIPLIER[tier]
     return round(power * (SKILL_SUPPORT_SHARE if support else 1), 2)
@@ -171,24 +187,22 @@ def passive_points(level: int, tier: str) -> float:
 
 
 def skill_targets(level_range: list[int]) -> dict:
-    """Repères des compétences d'un étage : ATK/INT/SAG et mana du joueur de
-    référence par niveau, puissance selon la recharge et le palier."""
+    """Repères des compétences d'un étage, par niveau de déblocage : effets
+    (``base`` + ``power``) selon la recharge et le palier, coût en mana,
+    bonus des passifs."""
     cooldowns = (3, 6, 10, 15, 20)
     return {
-        "power_by_cooldown": {
-            tier: {str(cd): skill_power(cd, tier) for cd in cooldowns} for tier in SKILL_TIER_MULTIPLIER
-        },
-        "support_power_by_cooldown": {
-            tier: {str(cd): skill_power(cd, tier, support=True) for cd in cooldowns} for tier in SKILL_TIER_MULTIPLIER
-        },
         "passive_percent": PASSIVE_PERCENT,
         "levels": [
             {
                 "level": level,
-                "atk": reference_player(level)["atk"],
-                "int": reference_player(level)["int"],
-                "sag": reference_player(level)["sag"],
-                "max_mana": round(reference_mana(level)),
+                "damage_by_cooldown": {
+                    tier: {str(cd): skill_effect(level, cd, tier) for cd in cooldowns} for tier in SKILL_TIER_MULTIPLIER
+                },
+                "support_by_cooldown": {
+                    tier: {str(cd): skill_effect(level, cd, tier, support=True) for cd in cooldowns}
+                    for tier in SKILL_TIER_MULTIPLIER
+                },
                 "mana_cost_by_cooldown": {str(cd): skill_mana_cost(level, cd) for cd in cooldowns},
                 "passive_points": {tier: passive_points(level, tier) for tier in PASSIVE_POWER_SHARE},
             }
@@ -330,18 +344,24 @@ def check_skill(skill: dict) -> list[str]:
     # Un passif n'a pas de recharge : son bouclier ne part qu'une fois par
     # combat, on le compare à la recharge la plus longue.
     cooldown = skill.get("cooldown_seconds") or (20 if skill.get("kind") == "passive" else 6)
+    level = skill.get("level")
     warnings = []
+    if not isinstance(level, int):
+        warnings.append(f"{name} : niveau de déblocage (level) manquant")
+        level = 1
     for effect in skill.get("effects", []):
         kind = effect.get("type")
-        if kind == "damage":
-            top = skill_power(cooldown, "exceptionnelle")
-            if effect.get("power", 0) > top * (1 + TOLERANCE / 2):
-                warnings.append(f"{name} : power {effect.get('power')} (au plus ≈ {top} à {cooldown} s)")
-        elif kind in ("heal", "shield"):
-            value = effect.get("power", effect.get("amount_power", 0))
-            top = skill_power(cooldown, "exceptionnelle", support=True)
-            if value > top * (1 + TOLERANCE / 2):
-                warnings.append(f"{name} : {kind} {value} (au plus ≈ {top} à {cooldown} s)")
+        if kind in ("damage", "heal", "shield"):
+            support = kind != "damage"
+            top = skill_effect(level, cooldown, "exceptionnelle", support,
+                               physical_shield=kind == "shield" and skill.get("damage_type") == "physical")
+            power = effect.get("power", effect.get("amount_power", 0))
+            if "base" not in effect:
+                warnings.append(f"{name} : effet {kind} sans base")
+            elif effect["base"] > top["base"] * (1 + TOLERANCE / 2):
+                warnings.append(f"{name} : {kind} base {effect['base']} (au plus ≈ {top['base']} au niveau {level})")
+            if power > top["power"] * (1 + TOLERANCE / 2):
+                warnings.append(f"{name} : {kind} power {power} (au plus ≈ {top['power']} à {cooldown} s)")
         elif kind in ("buff", "debuff") and not 5 <= effect.get("amount_percent", 0) <= 35:
             warnings.append(f"{name} : {kind} de {effect.get('amount_percent')} % (10 à 30 % attendus)")
         elif kind == "stat_bonus_percent" and effect.get("amount_percent", 0) > PASSIVE_PERCENT["exceptionnelle"][1]:

@@ -2,6 +2,7 @@
   "id": "coup_puissant",
   "name": "Coup Puissant",
   "description": "Un coup lent et lourd, préparé une fraction de seconde de trop, mais qui porte.",
+  "level": 3,
   "kind": "active",
   "unlock_condition": {
     "type": "level",
@@ -15,7 +16,8 @@
   "effects": [
     {
       "type": "damage",
-      "power": 2.0
+      "power": 0.8,
+      "base": 29
     }
   ]
 }

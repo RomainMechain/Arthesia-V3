@@ -260,8 +260,27 @@ emplacement) : Frappe et Trait de Lumière au niveau 1, Premiers Soins au niveau
 Éclat d'Aube au niveau 3. Avec la seule attaque de base, un personnage de niveau 1 perd tous ses
 combats.
 
-Une compétence de dégâts vaut **`power ≈ 0,31 × recharge^0,75` × son palier**. C'est le kit sur
-lequel le simulateur a calibré les monstres (1,2 à 6 s, 2,0 à 12 s).
+**Effet d'une compétence = `base` + `power` × stat**, avec un **coût en mana fixe**. Chaque compétence a
+un niveau (`level`, celui de son déblocage). À ce niveau, pour le joueur de référence, l'effet total
+vaut `P × stat`, et la `base` en fait 60 % (`balance.SKILL_BASE_SHARE`) : `base = 0,6 × P × stat de
+référence`, `power = 0,4 × P`. La stat de référence est l'ATK pour les dégâts (un mage a autant d'INT
+qu'un guerrier d'ATK) et pour un bouclier physique, la SAG pour un soin ou un bouclier magique.
+
+Comme la base ne grandit pas, une compétence ancienne perd de son importance : au niveau 10, Frappe
+(niveau 1) fait ~40 dégâts quand une compétence du niveau 10 de même recharge en fait ~75 ; au
+niveau 20, 66 contre 140. Les compétences des étages suivants prennent le relais, et les stats
+gardent leur intérêt par la part `power`, l'attaque de base, la défense et l'AGI. Le simulateur
+calibre les monstres avec un kit débloqué 3 niveaux plus tôt (`SKILL_KIT_LEVEL_LAG`), coûts fixes
+compris.
+
+**Compétences hybrides** (`damage_type: "hybrid"`) : leur stat vaut 2 × la plus faible d'ATK et d'INT
+(`combat_engine.HYBRID_STAT_FACTOR`). Pour un spécialiste, elle reste sous sa meilleure stat (aventurier
+48 contre 62 d'ATK au niveau 10) : il garde ses compétences mono-stat, et la calibration n'en dépend
+pas. Un build ATK = INT en profite pleinement : au niveau 10, avec trois hybrides et un soin, le
+lame-sort bat le Héraut de l'Aube 93 % du temps en jouant moyennement (59 % avec des compétences
+mono-stat). Le « 1 point partout » reste le build le plus faible.
+
+Le total `P` d'une compétence de dégâts vaut **`0,31 × recharge^0,75` × son palier** :
 
 | Recharge | Simple (×1) | Difficile (×1,25) | Exceptionnelle (×1,6) |
 |---|---|---|---|
@@ -285,7 +304,6 @@ lequel le simulateur a calibré les monstres (1,2 à 6 s, 2,0 à 12 s).
 
 ## Ce qui reste à faire
 
-- Des compétences hybrides ATK + INT : un build mixte dilue aujourd'hui ses dégâts.
 - La réinitialisation des points de stat (une dépense d'or).
 - Le jeu en groupe : les élites `group_required` se battent encore en solo.
 - Les templates actuels ont été générés avec les anciennes règles ; ils seront régénérés.
