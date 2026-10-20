@@ -29,7 +29,8 @@ try:
     from .game_rules import (
         advance_quest_objectives, apply_player_level_ups, apply_profession_level_ups, deplete_entry_state,
         get_profession, is_entry_unlocked, is_zone_accessible, public_entry_state, quest_progress_view,
-        has_defeated_entry, is_shared_entry, reachable_floor_ids, require_entry_unlocked, require_player_in_zone,
+        has_defeated_entry, has_fought_echo, is_floor_boss, is_shared_entry, reachable_floor_ids,
+        require_entry_unlocked, require_player_in_zone,
         resolve_entry_state, roll_loot_table, compute_final_stats, current_hp, set_hp, settle_hp, zone_type,
     )
     from .models import *
@@ -47,7 +48,8 @@ except ImportError:
     from game_rules import (
         advance_quest_objectives, apply_player_level_ups, apply_profession_level_ups, deplete_entry_state,
         get_profession, is_entry_unlocked, is_zone_accessible, public_entry_state, quest_progress_view,
-        has_defeated_entry, is_shared_entry, reachable_floor_ids, require_entry_unlocked, require_player_in_zone,
+        has_defeated_entry, has_fought_echo, is_floor_boss, is_shared_entry, reachable_floor_ids,
+        require_entry_unlocked, require_player_in_zone,
         resolve_entry_state, roll_loot_table, compute_final_stats, current_hp, set_hp, settle_hp, zone_type,
     )
     from models import *
@@ -253,6 +255,10 @@ def get_zone_state(zone_id: str, player_id: str | None = None):
             result = public_entry_state(entry, state)
         if player is not None and has_defeated_entry(player, zone_id, entry["id"]):
             result["status"] = "defeated"
+        # Boss d'étage vaincu : chaque joueur peut en affronter l'écho une fois.
+        if (player is not None and result.get("status") == "defeated" and monster is not None
+                and is_floor_boss(zone_id, monster)):
+            result["echo_available"] = not has_fought_echo(player, zone_id, entry["id"])
         if player is not None and not is_entry_unlocked(entry, player):
             spawn = entry.get("spawn", {})
             hinted = spawn.get("visibility_when_locked") == "hinted"

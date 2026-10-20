@@ -19,22 +19,22 @@ from firebase_admin import firestore
 try:
     from .config import TEMPLATES_DIR
     from .content_store import find_entry, load_all_floor_skeletons, load_static_zone_content, load_template
-    from .balance import DEFEAT_HP_SHARE, MAX_ACTIVE_SKILL_SLOTS, MAX_PASSIVE_SKILL_SLOTS, defeat_penalty
+    from .balance import DEFEAT_HP_SHARE, MAX_ACTIVE_SKILL_SLOTS, MAX_PASSIVE_SKILL_SLOTS, defeat_penalty, xp_to_next_level
     from .database import db
     from .game_rules import (
         advance_quest_objectives, apply_player_level_ups, compute_final_stats, compute_kill_xp, defeated_entry_key,
-        evaluate_condition, has_defeated_entry, is_one_time_per_player, is_shared_entry, respawn_cooldown_seconds,
+        evaluate_condition, has_defeated_entry, has_fought_echo, is_one_time_per_player, is_shared_entry, respawn_cooldown_seconds,
         roll_loot_table, set_hp,
     )
     from .player_store import get_player, get_zone_dynamic_state, save_player, save_zone_dynamic_state
 except ImportError:
     from config import TEMPLATES_DIR
     from content_store import find_entry, load_all_floor_skeletons, load_static_zone_content, load_template
-    from balance import DEFEAT_HP_SHARE, MAX_ACTIVE_SKILL_SLOTS, MAX_PASSIVE_SKILL_SLOTS, defeat_penalty
+    from balance import DEFEAT_HP_SHARE, MAX_ACTIVE_SKILL_SLOTS, MAX_PASSIVE_SKILL_SLOTS, defeat_penalty, xp_to_next_level
     from database import db
     from game_rules import (
         advance_quest_objectives, apply_player_level_ups, compute_final_stats, compute_kill_xp, defeated_entry_key,
-        evaluate_condition, has_defeated_entry, is_one_time_per_player, is_shared_entry, respawn_cooldown_seconds,
+        evaluate_condition, has_defeated_entry, has_fought_echo, is_one_time_per_player, is_shared_entry, respawn_cooldown_seconds,
         roll_loot_table, set_hp,
     )
     from player_store import get_player, get_zone_dynamic_state, save_player, save_zone_dynamic_state
@@ -118,7 +118,8 @@ def auto_equip_skill(player: dict, skill: dict) -> None:
         equipped.append(skill["id"])
 
 
-def apply_monster_kill_rewards(player_id: str, zone_id: str, entry_id: str, player_hp: float | None = None) -> dict:
+def apply_monster_kill_rewards(player_id: str, zone_id: str, entry_id: str, player_hp: float | None = None,
+                               echo: bool = False) -> dict:
     """Valide une victoire et applique toutes ses conséquences persistantes.
 
     Le traitement suit cet ordre :
@@ -134,6 +135,10 @@ def apply_monster_kill_rewards(player_id: str, zone_id: str, entry_id: str, play
 
     ``player_hp`` (PV en fin de combat) est enregistré ; une montée de niveau
     remet le joueur en pleine forme.
+
+    ``echo`` : victoire contre l'écho d'un boss d'étage déjà vaincu. Elle ne
+    rapporte que l'XP (le butin reste au premier vainqueur), ne touche pas à
+    l'état partagé et ne se fait qu'une fois par joueur.
     """
     # La zone et l'entry proviennent du contenu statique local. Cela permet de
     # vérifier que le client n'a pas envoyé un identifiant inventé.
@@ -146,20 +151,24 @@ def apply_monster_kill_rewards(player_id: str, zone_id: str, entry_id: str, play
     # La réservation du spawn et les récompenses sont écrites dans la même
     # transaction : si deux victoires arrivent en même temps, Firestore rejoue
     # la seconde, qui voit alors le spawn déjà épuisé.
-    result = _apply_monster_kill_rewards_tx(db.transaction(), player_id, zone_id, entry_id, entry, monster, player_hp)
+    result = _apply_monster_kill_rewards_tx(db.transaction(), player_id, zone_id, entry_id, entry, monster, player_hp, echo)
     result["newly_unlocked"] = check_and_apply_unlocks(player_id)
     return result
 
 
 @firestore.transactional
 def _apply_monster_kill_rewards_tx(transaction, player_id: str, zone_id: str, entry_id: str, entry: dict, monster: dict,
-                                   player_hp: float | None = None) -> dict:
+                                   player_hp: float | None = None, echo: bool = False) -> dict:
     # Firestore impose de faire toutes les lectures avant la première écriture.
-    shared = is_shared_entry(zone_id, entry, monster)
+    shared = is_shared_entry(zone_id, entry, monster) and not echo
     zone_state = get_zone_dynamic_state(zone_id, transaction) if shared else None
     player = get_player(player_id, transaction)
 
-    if shared:
+    if echo:
+        if has_fought_echo(player, zone_id, entry_id):
+            raise HTTPException(409, "Tu as déjà vaincu l'écho de ce gardien")
+        player.setdefault("defeated_echoes", []).append(defeated_entry_key(zone_id, entry_id))
+    elif shared:
         # Les monstres partagés doivent être réservés avant les récompenses :
         # deux appels concurrents ne doivent pas pouvoir payer deux fois le même
         # spawn déjà vaincu.
@@ -193,7 +202,8 @@ def _apply_monster_kill_rewards_tx(transaction, player_id: str, zone_id: str, en
 
     # Une fois la rencontre validée, on applique les récompenses sur l'état
     # courant du joueur, lu plus haut dans la transaction.
-    loot = roll_loot_table(monster.get("loot_table", []))
+    # L'écho d'un boss ne rapporte que l'XP : le butin reste au premier vainqueur.
+    loot = None if echo else roll_loot_table(monster.get("loot_table", []))
     if loot:
         # roll_loot_table renvoie au plus un item et une quantité pour ce kill.
         item_id, quantity = loot
@@ -216,10 +226,13 @@ def _apply_monster_kill_rewards_tx(transaction, player_id: str, zone_id: str, en
     save_player(player_id, player, transaction)
     return {
         "loot": loot,
+        "echo": echo,
         "xp_gagne": xp_gained,
         "levels_gained": levels_gained,
         "player_level": player["level"],
         "player_xp_total": player["xp"],
+        # Seuil du niveau en cours : l'écran de victoire affiche la barre d'XP.
+        "xp_to_next_level": xp_to_next_level(player["level"]),
         "player_stat_points": player["stat_points"],
         "player_inventory": player["inventory"],
         "quest_progress": quest_progress,

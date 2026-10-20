@@ -39,8 +39,8 @@ try:
     from .content_store import find_entry, load_static_zone_content, load_template
     from .database import db
     from .game_rules import (
-        compute_final_stats, current_hp, has_defeated_entry, is_entry_unlocked, is_one_time_per_player,
-        is_shared_entry, resolve_entry_state,
+        compute_final_stats, current_hp, has_defeated_entry, has_fought_echo, is_entry_unlocked, is_floor_boss,
+        is_one_time_per_player, is_shared_entry, resolve_entry_state,
     )
     from .player_store import get_player, get_zone_dynamic_state, save_player
     from .progression import apply_defeat, apply_monster_kill_rewards, record_combat_hp
@@ -50,8 +50,8 @@ except ImportError:
     from content_store import find_entry, load_static_zone_content, load_template
     from database import db
     from game_rules import (
-        compute_final_stats, current_hp, has_defeated_entry, is_entry_unlocked, is_one_time_per_player,
-        is_shared_entry, resolve_entry_state,
+        compute_final_stats, current_hp, has_defeated_entry, has_fought_echo, is_entry_unlocked, is_floor_boss,
+        is_one_time_per_player, is_shared_entry, resolve_entry_state,
     )
     from player_store import get_player, get_zone_dynamic_state, save_player
     from progression import apply_defeat, apply_monster_kill_rewards, record_combat_hp
@@ -76,6 +76,7 @@ async def send_victory(websocket: WebSocket, session: dict) -> None:
     try:
         rewards = apply_monster_kill_rewards(
             session["player_id"], session["zone_id"], session["entry_id"], session["player_current_hp"],
+            session.get("echo", False),
         )
     except HTTPException as exc:
         record_combat_hp(session["player_id"], session["player_current_hp"])
@@ -208,14 +209,21 @@ async def start_combat(websocket: WebSocket, message: dict) -> tuple[str, dict] 
     if is_one_time_per_player(zone_id, entry, monster) and has_defeated_entry(player, zone_id, entry_id):
         await websocket.send_json({"type": "error", "message": "Tu as déjà vaincu ce monstre"})
         return None
+    echo = False
     if is_shared_entry(zone_id, entry, monster):
-        # Inutile de combattre un monstre partagé déjà tué ou un boss d'étage
-        # déjà vaincu : la victoire ne rapporterait rien.
+        # Inutile de combattre un monstre partagé déjà tué : la victoire ne
+        # rapporterait rien. Un boss d'étage déjà vaincu laisse un écho, que
+        # chaque joueur peut affronter une fois pour l'XP (sans butin).
         state = resolve_entry_state(entry, get_zone_dynamic_state(zone_id)["entries"].get(entry_id))
         if state.get("status") == "defeated":
-            await websocket.send_json({"type": "error", "message": "Ce gardien a déjà été vaincu"})
-            return None
-        if state.get("status") != "available":
+            if not is_floor_boss(zone_id, monster):
+                await websocket.send_json({"type": "error", "message": "Ce gardien a déjà été vaincu"})
+                return None
+            if has_fought_echo(player, zone_id, entry_id):
+                await websocket.send_json({"type": "error", "message": "Tu as déjà vaincu l'écho de ce gardien"})
+                return None
+            echo = True
+        elif state.get("status") != "available":
             await websocket.send_json({"type": "error", "message": "Ce monstre n'est pas là pour l'instant"})
             return None
 
@@ -237,13 +245,15 @@ async def start_combat(websocket: WebSocket, message: dict) -> tuple[str, dict] 
         {skill_id: load_template("skill", skill_id) for skill_id in equipped_active},
         player.get("level", 1), hp,
     )
+    session["echo"] = echo
     combat_id = str(uuid.uuid4())
     active_combats[combat_id] = session
     phase_count = len(monster.get("phases") or [])
     await send_event(websocket, session, {
         "type": "combat_started",
         "combat_id": combat_id,
-        "monster_name": monster["name"],
+        "monster_name": f"Écho : {monster['name']}" if echo else monster["name"],
+        "echo": echo,
         "monster_hp": session["monster_max_hp"],
         "monster_level": monster.get("level", 1),
         "phase": session["phase_index"] + 1 if session["phase_index"] is not None else None,

@@ -254,6 +254,11 @@ def has_defeated_entry(player: dict, zone_id: str, entry_id: str) -> bool:
     return defeated_entry_key(zone_id, entry_id) in player.get("defeated_entries", [])
 
 
+def has_fought_echo(player: dict, zone_id: str, entry_id: str) -> bool:
+    """Le joueur a déjà vaincu l'écho de ce boss d'étage (une fois par joueur)."""
+    return defeated_entry_key(zone_id, entry_id) in player.get("defeated_echoes", [])
+
+
 def is_boss_defeated(zone_id: str, player: dict | None = None) -> bool:
     """Indique si un boss de la zone est vaincu.
 

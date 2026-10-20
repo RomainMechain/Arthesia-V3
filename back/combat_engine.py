@@ -26,7 +26,7 @@ TICK_INTERVAL_SECONDS = 0.5
 # niveau : sans cela, les stats linéaires rendraient les hauts niveaux
 # quasi invulnérables et ultra-rapides. Les constantes sont proportionnelles
 # aux stats du joueur de référence (DEF ≈ 5 + 4,5 × niveau, AGI ≈ 5 + 1,4 ×
-# niveau) : le joueur de référence garde ~38 % de réduction et ~1,35 s par
+# niveau) : le joueur de référence garde ~43 % de réduction et ~1,42 s par
 # attaque à tous les niveaux, et l'équilibrage calibré ne dérive pas.
 K_DEF = 6.6
 K_DEF_PER_LEVEL = 6

@@ -89,7 +89,7 @@ des compétences hybrides.
 
 Toutes les formules sont dans `combat_engine.py`. Celles qui dériveraient avec des stats linéaires
 sont relatives au niveau. Leurs constantes sont proportionnelles aux stats du joueur de référence
-(DEF ≈ 5 + 4,5 × niveau, AGI ≈ 5 + 1,4 × niveau) : il garde ~38 % de réduction et ~1,35 s par
+(DEF ≈ 5 + 4,5 × niveau, AGI ≈ 5 + 1,4 × niveau) : il garde ~43 % de réduction et ~1,42 s par
 attaque à tous les niveaux.
 
 | Règle | Formule |
