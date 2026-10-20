@@ -96,6 +96,12 @@ def generate_craft_item_via_ai(workshop: dict, parameters: dict, inputs_full: li
     return item
 
 
+# Les objets inventés par un craft sont écrits comme templates locaux, et aussi
+# dans Firestore : un hébergement gratuit efface ses fichiers à chaque
+# redémarrage, et restore_crafted_items() les réécrit au démarrage.
+CRAFTED_ITEMS_COLLECTION = "crafted_items"
+
+
 def save_new_craft_item(item: dict) -> str:
     """Enregistre l'item généré comme template et retourne son id définitif.
 
@@ -110,7 +116,36 @@ def save_new_craft_item(item: dict) -> str:
         item_id = f"{base_id}_{suffix}"
         suffix += 1
     item["id"] = item_id
-    path = TEMPLATES_DIR / "items" / f"{item_id}.json"
+    db.collection(CRAFTED_ITEMS_COLLECTION).document(item_id).set(item)
+    write_item_template(item)
+    return item_id
+
+
+def write_item_template(item: dict) -> None:
+    path = TEMPLATES_DIR / "items" / f"{item['id']}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(item, ensure_ascii=False, indent=2), encoding="utf-8")
-    return item_id
+
+
+def restore_crafted_items() -> dict:
+    """Aligne les templates locaux et Firestore pour les objets craftés.
+
+    Réécrit en local chaque objet de ``crafted_items`` qui manque sur le disque
+    (redémarrage d'un hébergement), et envoie dans ``crafted_items`` chaque
+    résultat du ``craft_cache`` qui n'existe qu'en local (objets craftés avant
+    cette sauvegarde).
+    """
+    stored = {doc.id: doc.to_dict() for doc in db.collection(CRAFTED_ITEMS_COLLECTION).stream()}
+    restored = uploaded = 0
+    for item_id, item in stored.items():
+        if not (TEMPLATES_DIR / "items" / f"{item_id}.json").exists():
+            write_item_template({**item, "id": item_id})
+            restored += 1
+    for doc in db.collection("craft_cache").stream():
+        item_id = (doc.to_dict() or {}).get("output_item_id")
+        path = TEMPLATES_DIR / "items" / f"{item_id}.json"
+        if item_id and item_id not in stored and path.exists():
+            db.collection(CRAFTED_ITEMS_COLLECTION).document(item_id).set(json.loads(path.read_text(encoding="utf-8")))
+            stored[item_id] = True
+            uploaded += 1
+    return {"restored": restored, "uploaded": uploaded}

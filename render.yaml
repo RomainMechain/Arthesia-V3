@@ -1,0 +1,21 @@
+# Déploiement sur Render (offre gratuite) : New > Blueprint, puis ce dépôt.
+# Les deux secrets se renseignent dans le tableau de bord de Render :
+# - ANTHROPIC_API_KEY (variable d'environnement), pour le craft ;
+# - firebase_key.json (Secret Files), monté dans /etc/secrets/.
+services:
+  - type: web
+    name: arthesia
+    runtime: python
+    plan: free
+    region: frankfurt
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn back.main:app --host 0.0.0.0 --port $PORT
+    # La racine ne lit pas Firestore : les vérifications de Render ne coûtent rien.
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: FIREBASE_KEY_PATH
+        value: /etc/secrets/firebase_key.json
+      - key: ANTHROPIC_API_KEY
+        sync: false

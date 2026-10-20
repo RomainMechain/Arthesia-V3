@@ -169,6 +169,20 @@ class ProgressionTest(unittest.TestCase):
         self.assertEqual((book[0]["output_item_id"], book[0]["times"]), ("pain_de_miel", 2))
         self.assertEqual(fakes.player()["inventory"], {"branche_morte": 1, "pain_de_miel": 2})
 
+    def test_objets_craftes_restaures_au_demarrage(self):
+        from back.config import TEMPLATES_DIR
+        from back.craft_service import restore_crafted_items
+        path = TEMPLATES_DIR / "items" / "objet_de_test_restaure.json"
+        self.addCleanup(lambda: path.unlink(missing_ok=True))
+        # Seulement dans Firestore (disque effacé par un redémarrage) : réécrit.
+        STORE["crafted_items/objet_de_test_restaure"] = {"name": "Test", "category": "material", "level": 1}
+        # Seulement sur le disque (crafté avant la sauvegarde) : envoyé dans Firestore.
+        STORE["craft_cache/recette"] = {"output_item_id": "pain_de_miel"}
+        self.assertEqual(restore_crafted_items(), {"restored": 1, "uploaded": 1})
+        self.assertTrue(path.exists())
+        self.assertEqual(STORE["crafted_items/pain_de_miel"]["id"], "pain_de_miel")
+        self.assertEqual(restore_crafted_items(), {"restored": 0, "uploaded": 0})
+
     # --- Récolte et soin hors combat ----------------------------------------
 
     def test_recolte_xp_de_metier(self):

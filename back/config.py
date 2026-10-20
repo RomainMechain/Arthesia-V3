@@ -7,7 +7,8 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 SKELETONS_DIR = PROJECT_ROOT / "zone_skeletons"
 TEMPLATES_DIR = PROJECT_ROOT / "templates"
 ZONES_DIR = PROJECT_ROOT / "zones"
-SERVICE_ACCOUNT_PATH = PROJECT_ROOT / "firebase_key.json"
+# Hébergé (Render), la clé est un fichier secret monté ailleurs : FIREBASE_KEY_PATH.
+SERVICE_ACCOUNT_PATH = Path(os.environ.get("FIREBASE_KEY_PATH") or PROJECT_ROOT / "firebase_key.json")
 CRAFT_PROMPT_FILE = PROJECT_ROOT / "generate_static_files" / "craft" / "arthesia_craft_prompt.md"
 
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
@@ -29,5 +30,5 @@ KIND_TO_FOLDER = {
 if not SERVICE_ACCOUNT_PATH.exists():
     raise FileNotFoundError(
         f"Cle de compte de service introuvable : {SERVICE_ACCOUNT_PATH}\n"
-        "Ajuste SERVICE_ACCOUNT_PATH dans config.py."
+        "Place firebase_key.json à la racine du dépôt, ou indique son chemin dans FIREBASE_KEY_PATH."
     )

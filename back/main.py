@@ -10,6 +10,7 @@ Lancement (rechargement automatique à chaque modif du fichier) :
 """
 
 import json
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -24,12 +25,24 @@ try:
     from .database import db
     from .player_routes import router as player_router
     from .combat_routes import router as combat_router
+    from .craft_service import restore_crafted_items
 except ImportError:
     from database import db
     from player_routes import router as player_router
     from combat_routes import router as combat_router
+    from craft_service import restore_crafted_items
 
-app = FastAPI(title="Arthesia Server")
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    # Les objets craftés vivent dans Firestore : on les remet sur le disque
+    # avant de servir le moindre joueur.
+    counts = restore_crafted_items()
+    print(f"Objets craftés : {counts['restored']} restauré(s), {counts['uploaded']} sauvegardé(s) dans Firestore")
+    yield
+
+
+app = FastAPI(title="Arthesia Server", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
