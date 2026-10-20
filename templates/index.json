@@ -2284,5 +2284,14 @@
     "tags": [],
     "description": "Les noyaux des automates portaient les consignes des Architectes. Tu en as retenu une seule, gravée dans le geste plus que dans la mémoire : frapper juste, au rythme du cercle. Elle demande un bras exercé et un esprit attentif.",
     "floor_origin": 1
+  },
+  {
+    "id": "estoc_runique",
+    "name": "Estoc Runique",
+    "kind": "skill",
+    "level": null,
+    "tags": [],
+    "description": "Les sentinelles de pierre s'animent quand leurs runes s'allument. À force de les briser, tu as appris à allumer une rune au bout de ta lame, juste le temps d'un coup bref et précis. Elle ne mord que si le bras et l'esprit frappent ensemble.",
+    "floor_origin": 1
   }
 ]

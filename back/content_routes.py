@@ -115,12 +115,22 @@ def list_zone_entries(zone_id: str) -> list[dict]:
     return load_zone(zone_id).get("entries", [])
 
 
+# Templates dont la condition de déblocage n'est jamais envoyée au client.
+SECRET_CONDITION_KINDS = {"skill", "title"}
+
+
 @router.get("/templates/{kind}/{template_id}")
 def get_template(kind: str, template_id: str) -> dict:
     folder = KIND_TO_FOLDER.get(kind)
     if folder is None:
         raise HTTPException(400, f"Type de template inconnu : {kind}")
-    return read_json(TEMPLATES_DIR / folder / f"{template_id}.json")
+    template = read_json(TEMPLATES_DIR / folder / f"{template_id}.json")
+    if kind in SECRET_CONDITION_KINDS:
+        # Comment débloquer une compétence ou un titre reste un secret à
+        # découvrir (ou à se transmettre entre joueurs) : le serveur seul
+        # évalue la condition.
+        template = {k: v for k, v in template.items() if k != "unlock_condition"}
+    return template
 
 
 @router.get("/templates/{kind}")

@@ -1,0 +1,24 @@
+{
+  "id": "estoc_runique",
+  "name": "Estoc Runique",
+  "description": "Les sentinelles de pierre s'animent quand leurs runes s'allument. À force de les briser, tu as appris à allumer une rune au bout de ta lame, juste le temps d'un coup bref et précis. Elle ne mord que si le bras et l'esprit frappent ensemble.",
+  "level": 6,
+  "kind": "active",
+  "unlock_condition": {
+    "type": "kill_count",
+    "monster_id": "sentinelle_de_pierre",
+    "count": 15
+  },
+  "damage_type": "hybrid",
+  "cooldown_seconds": 4,
+  "mana_cost": 12,
+  "telegraph_seconds": 0,
+  "avoidable_by": null,
+  "effects": [
+    {
+      "type": "damage",
+      "base": 21,
+      "power": 0.35
+    }
+  ]
+}

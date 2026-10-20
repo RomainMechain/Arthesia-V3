@@ -1,0 +1,14 @@
+{
+  "id": "flambee_anse_doree",
+  "name": "Flambée de l'Anse Dorée",
+  "description": "Ablette, champignon doré et chair de pince de crabe saisis ensemble à flamme vive, jusqu'à ce que la peau du poisson crépite et que le sucre du champignon caramélise. Un plat simple de Val-de-l'Aube, servi encore fumant.",
+  "category": "consumable",
+  "level": 1,
+  "base_value": 18,
+  "stack_size": 10,
+  "consumable": {
+    "effect_type": "heal",
+    "amount": 41,
+    "duration_seconds": 0
+  }
+}

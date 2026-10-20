@@ -24,13 +24,13 @@ try:
         build_recipe_key, generate_craft_item_via_ai, get_cached_craft,
         save_craft_cache, save_new_craft_item,
     )
-    from .balance import MAX_ACTIVE_SKILL_SLOTS, MAX_PASSIVE_SKILL_SLOTS, max_item_level_for, profession_action_xp, profession_level_for, profession_xp_to_next_level
+    from .balance import MAX_ACTIVE_SKILL_SLOTS, MAX_PASSIVE_SKILL_SLOTS, max_item_level_for, respec_cost, profession_action_xp, profession_level_for, profession_xp_to_next_level
     from .database import db
     from .game_rules import (
         advance_quest_objectives, apply_player_level_ups, apply_profession_level_ups, deplete_entry_state,
         get_profession, is_entry_unlocked, is_zone_accessible, public_entry_state, quest_progress_view,
         has_defeated_entry, is_shared_entry, reachable_floor_ids, require_entry_unlocked, require_player_in_zone,
-        resolve_entry_state, roll_loot_table, compute_final_stats, current_hp, set_hp, settle_hp,
+        resolve_entry_state, roll_loot_table, compute_final_stats, current_hp, set_hp, settle_hp, zone_type,
     )
     from .models import *
     from .player_store import get_player, get_zone_dynamic_state, save_player, save_zone_dynamic_state
@@ -42,13 +42,13 @@ except ImportError:
         build_recipe_key, generate_craft_item_via_ai, get_cached_craft,
         save_craft_cache, save_new_craft_item,
     )
-    from balance import MAX_ACTIVE_SKILL_SLOTS, MAX_PASSIVE_SKILL_SLOTS, max_item_level_for, profession_action_xp, profession_level_for, profession_xp_to_next_level
+    from balance import MAX_ACTIVE_SKILL_SLOTS, MAX_PASSIVE_SKILL_SLOTS, max_item_level_for, respec_cost, profession_action_xp, profession_level_for, profession_xp_to_next_level
     from database import db
     from game_rules import (
         advance_quest_objectives, apply_player_level_ups, apply_profession_level_ups, deplete_entry_state,
         get_profession, is_entry_unlocked, is_zone_accessible, public_entry_state, quest_progress_view,
         has_defeated_entry, is_shared_entry, reachable_floor_ids, require_entry_unlocked, require_player_in_zone,
-        resolve_entry_state, roll_loot_table, compute_final_stats, current_hp, set_hp, settle_hp,
+        resolve_entry_state, roll_loot_table, compute_final_stats, current_hp, set_hp, settle_hp, zone_type,
     )
     from models import *
     from player_store import get_player, get_zone_dynamic_state, save_player, save_zone_dynamic_state
@@ -381,6 +381,8 @@ def _turn_in_quest_tx(transaction, req: TurnInQuestRequest, quest_def: dict, giv
 
 # Nombre maximal d'ingrédients différents dans un craft.
 MAX_CRAFT_INPUTS = 4
+# Recettes gardées dans le carnet privé de chaque joueur (les plus récentes).
+MAX_CRAFT_BOOK_ENTRIES = 100
 # Créations inédites (appels IA payants) autorisées par joueur sur une heure
 # glissante. Les recettes déjà connues ne sont pas limitées.
 MAX_NEW_RECIPES_PER_HOUR = 10
@@ -456,14 +458,15 @@ def craft(req: CraftRequest):
         save_craft_cache(recipe_key, output_item_id)
 
     output_item = load_template("item", output_item_id)
-    result = _craft_consume_tx(db.transaction(), req, profession_id, output_item, not from_cache)
+    result = _craft_consume_tx(db.transaction(), req, profession_id, output_item, not from_cache, recipe_key)
     result.update({"output_item_id": output_item_id, "output_item": output_item, "from_cache": from_cache})
     result["newly_unlocked"] = check_and_apply_unlocks(req.player_id)
     return result
 
 
 @firestore.transactional
-def _craft_consume_tx(transaction, req: CraftRequest, profession_id: str, output_item: dict, is_new_recipe: bool = False) -> dict:
+def _craft_consume_tx(transaction, req: CraftRequest, profession_id: str, output_item: dict, is_new_recipe: bool = False,
+                      recipe_key: str = "") -> dict:
     # L'inventaire est revérifié ici : il a pu changer pendant l'appel IA.
     player = get_player(req.player_id, transaction)
     if is_new_recipe:
@@ -476,6 +479,7 @@ def _craft_consume_tx(transaction, req: CraftRequest, profession_id: str, output
         if player["inventory"][inp.item_id] <= 0:
             del player["inventory"][inp.item_id]
     player["inventory"][output_item["id"]] = player["inventory"].get(output_item["id"], 0) + 1
+    record_in_craft_book(player, req, recipe_key, output_item["id"])
 
     # L'XP de craft est calculée à partir du niveau de l'item produit.
     player_prof = player["professions"].setdefault(profession_id, get_profession(player, profession_id))
@@ -495,6 +499,27 @@ def _craft_consume_tx(transaction, req: CraftRequest, profession_id: str, output
         },
         "player_inventory": player["inventory"],
     }
+
+
+def record_in_craft_book(player: dict, req: CraftRequest, recipe_key: str, output_item_id: str) -> None:
+    """Note la recette dans le carnet privé du joueur, en tête de liste.
+
+    Le carnet n'est jamais partagé : une bonne recette reste le secret de
+    celui qui l'a trouvée, tant qu'il ne la transmet pas lui-même."""
+    book = player.setdefault("craft_book", [])
+    previous = next((entry for entry in book if entry.get("key") == recipe_key), None)
+    if previous is not None:
+        book.remove(previous)
+    book.insert(0, {
+        "key": recipe_key,
+        "workshop_id": req.workshop_id,
+        "inputs": [{"item_id": inp.item_id, "quantity": inp.quantity} for inp in req.inputs],
+        "parameters": dict(req.parameters),
+        "output_item_id": output_item_id,
+        "times": (previous or {}).get("times", 0) + 1,
+        "last_at": datetime.now(timezone.utc),
+    })
+    del book[MAX_CRAFT_BOOK_ENTRIES:]
 
 
 @router.post("/actions/use_item")
@@ -554,6 +579,40 @@ def _allocate_stat_points_tx(transaction, req: AllocateStatPointsRequest) -> dic
     player["stat_points"]["available"] -= total_requested
     save_player(req.player_id, player, transaction)
     return {"stat_points": player["stat_points"]}
+
+
+@router.post("/actions/reset_stat_points")
+def reset_stat_points(req: ResetStatPointsRequest):
+    """Rend tous les points de stat dépensés, contre de l'or (la première fois
+    est gratuite). Seulement en ville."""
+    return _reset_stat_points_tx(db.transaction(), req)
+
+
+@firestore.transactional
+def _reset_stat_points_tx(transaction, req: ResetStatPointsRequest) -> dict:
+    player = get_player(req.player_id, transaction)
+    if zone_type(player.get("current_zone_id")) != "town":
+        raise HTTPException(403, "Tu dois être en ville pour réinitialiser tes points")
+    spent = player["stat_points"]["spent"]
+    refunded = sum(spent.values())
+    if refunded <= 0:
+        raise HTTPException(409, "Tu n'as aucun point à réinitialiser")
+    cost = respec_cost(player.get("level", 1), player.get("stat_resets", 0))
+    if player["currency"].get("or", 0) < cost:
+        raise HTTPException(400, f"Il te faut {cost} or pour réinitialiser tes points")
+
+    # Le maximum de PV change : le joueur garde la même proportion de PV.
+    old_max = compute_final_stats(player)["hp"]
+    hp_ratio = current_hp(player, old_max) / max(old_max, 1)
+    player["currency"]["or"] = player["currency"].get("or", 0) - cost
+    player["stat_points"]["available"] += refunded
+    player["stat_points"]["spent"] = {stat: 0 for stat in spent}
+    player["stat_resets"] = player.get("stat_resets", 0) + 1
+    new_max = compute_final_stats(player)["hp"]
+    set_hp(player, hp_ratio * new_max, new_max)
+    save_player(req.player_id, player, transaction)
+    return {"refunded": refunded, "cost": cost, "stat_points": player["stat_points"],
+            "player_currency": player["currency"]}
 
 
 # -----------------------------------------------------------------------------

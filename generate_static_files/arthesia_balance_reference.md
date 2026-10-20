@@ -119,8 +119,8 @@ simulateur aux niveaux 5 et 30) :
 | Rôle | PV × | ATK × | DEF × | AGI/INT × | Puissance P de l'attaque principale | XP |
 |---|---|---|---|---|---|---|
 | `normal` | 2,15 | 1,0 | 1,0 | 1,0 | 0,21 (× profondeur) | ×1 |
-| `elite` | 2,75 | 1,1 | 1,2 | 1,1 | 0,253 | ×4 |
-| `boss` | 5,63 | 1,2 | 1,4 | 1,2 | 0,129 | ×15 |
+| `elite` | 2,99 | 1,1 | 1,2 | 1,1 | 0,252 | ×4 |
+| `boss` | 6,0 | 1,2 | 1,4 | 1,2 | 0,13 | ×15 |
 
 Cibles qui ont servi à la calibration (joueur de référence au même niveau) :
 
@@ -243,8 +243,9 @@ d'or en boucle.
 | `normal` | 6 % du niveau | 6 × niveau | 6-10 |
 | `major` | 12 % du niveau | 15 × niveau | 12-20 |
 
-L'or vient surtout des quêtes et de la revente du butin. L'or se dépense en boutique, à l'Autel des
-Ventes et lors des défaites ; une réinitialisation des points de stat payante est prévue.
+L'or vient surtout des quêtes et de la revente du butin. Il se dépense en boutique, à l'Autel des Ventes,
+lors des défaites, et pour réinitialiser ses points de stat (gratuit la première fois, puis
+30 or × niveau, en ville).
 
 ---
 
@@ -271,7 +272,9 @@ Comme la base ne grandit pas, une compétence ancienne perd de son importance : 
 niveau 20, 66 contre 140. Les compétences des étages suivants prennent le relais, et les stats
 gardent leur intérêt par la part `power`, l'attaque de base, la défense et l'AGI. Le simulateur
 calibre les monstres avec un kit débloqué 3 niveaux plus tôt (`SKILL_KIT_LEVEL_LAG`), coûts fixes
-compris.
+compris. Contre les monstres normaux, ce kit est de palier simple ; contre les élites et les boss, la
+moitié est de palier difficile (`REFERENCE_KIT_TIERS`), car le joueur a déjà gagné des compétences
+d'étage quand il les affronte.
 
 **Compétences hybrides** (`damage_type: "hybrid"`) : leur stat vaut 2 × la plus faible d'ATK et d'INT
 (`combat_engine.HYBRID_STAT_FACTOR`). Pour un spécialiste, elle reste sous sa meilleure stat (aventurier
@@ -304,6 +307,5 @@ Le total `P` d'une compétence de dégâts vaut **`0,31 × recharge^0,75` × son
 
 ## Ce qui reste à faire
 
-- La réinitialisation des points de stat (une dépense d'or).
 - Le jeu en groupe : les élites `group_required` se battent encore en solo.
 - Les templates actuels ont été générés avec les anciennes règles ; ils seront régénérés.

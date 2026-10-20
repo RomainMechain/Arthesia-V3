@@ -9,9 +9,10 @@ try:
     from .auth import require_player
     from .database import db
     from .content_store import find_quest_givers, load_ordered_floors, load_template
-    from .balance import profession_xp_to_next_level
+    from .balance import profession_xp_to_next_level, respec_cost
     from .game_rules import (
         POINT_VALUE, compute_final_stats, health_view, quest_progress_view, reachable_floor_ids, xp_to_next_level,
+        zone_type,
     )
     from .models import CreatePlayerRequest
     from .player_store import build_new_player_state
@@ -20,9 +21,10 @@ except ImportError:
     from auth import require_player
     from database import db
     from content_store import find_quest_givers, load_ordered_floors, load_template
-    from balance import profession_xp_to_next_level
+    from balance import profession_xp_to_next_level, respec_cost
     from game_rules import (
         POINT_VALUE, compute_final_stats, health_view, quest_progress_view, reachable_floor_ids, xp_to_next_level,
+        zone_type,
     )
     from models import CreatePlayerRequest
     from player_store import build_new_player_state
@@ -102,6 +104,11 @@ def get_player_stats(player_id: str):
         "stats": compute_final_stats(player),
         "xp_to_next_level": xp_to_next_level(player["level"]),
         "point_value": POINT_VALUE,
+        # Réinitialisation des points : prix et disponibilité (en ville seulement).
+        "respec": {
+            "cost": respec_cost(player.get("level", 1), player.get("stat_resets", 0)),
+            "in_town": zone_type(player.get("current_zone_id")) == "town",
+        },
         "profession_xp_to_next_level": {
             profession_id: profession_xp_to_next_level(profession["level"])
             for profession_id, profession in player["professions"].items()

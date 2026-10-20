@@ -82,13 +82,14 @@ def reference_mana(level: int) -> float:
     return engine.compute_max_mana(balance.reference_player_stats(level, GEAR_SHARE, BUILDS[REFERENCE_BUILD])["int"], level)
 
 
-def reference_kit(level: int, build: str, hybrid_kit: bool = True) -> dict[str, dict]:
+def reference_kit(level: int, build: str, hybrid_kit: bool = True, role: str = "normal") -> dict[str, dict]:
     """Quatre compétences actives (balance.MAX_ACTIVE_SKILL_SLOTS) : une
     rapide, une moyenne, une lente et un soin, de palier simple. Elles ont été
     débloquées balance.SKILL_KIT_LEVEL_LAG niveaux plus tôt : leur base et
     leur coût en mana (fixe) sont ceux de ce niveau-là, comme pour un vrai
     joueur. Un build qui mise autant sur ATK que sur INT a des compétences des
-    deux types, ou des compétences hybrides (``hybrid_kit``)."""
+    deux types, ou des compétences hybrides (``hybrid_kit``). Leur palier dépend du
+    rôle du monstre affronté (balance.REFERENCE_KIT_TIERS)."""
     weights = BUILDS[build]
     main_type = "physical" if weights["atk"] >= weights["int"] else "magical"
     second_type = "magical" if weights["atk"] == weights["int"] else main_type
@@ -97,8 +98,10 @@ def reference_kit(level: int, build: str, hybrid_kit: bool = True) -> dict[str, 
         main_type = second_type = "hybrid"
     unlocked_at = max(1, level - balance.SKILL_KIT_LEVEL_LAG)
 
+    tiers = balance.REFERENCE_KIT_TIERS.get(role, balance.REFERENCE_KIT_TIERS["normal"])
+
     def skill(skill_id, damage_type, cooldown, effect_type="damage"):
-        effect = content_targets.skill_effect(unlocked_at, cooldown, support=effect_type != "damage")
+        effect = content_targets.skill_effect(unlocked_at, cooldown, tiers[skill_id], support=effect_type != "damage")
         return {"id": skill_id, "damage_type": damage_type, "cooldown_seconds": cooldown,
                 "mana_cost": content_targets.skill_mana_cost(unlocked_at, cooldown),
                 "effects": [{"type": effect_type, **effect}]}
@@ -166,7 +169,8 @@ def fight(monster: dict, level: int, build: str = REFERENCE_BUILD, potions: int 
     clock = Clock()
     engine.now = clock
     stats = stats or balance.reference_player_stats(level, GEAR_SHARE, BUILDS[build])
-    skills = skills if skills is not None else reference_kit(level, build)
+    # Le kit dépend du rôle : face aux élites et aux boss, le joueur a déjà des compétences difficiles.
+    skills = skills if skills is not None else reference_kit(level, build, role=monster.get("role", "normal"))
     session = engine.new_session("sim", "sim", "sim", monster, stats, list(skills), [], skills, level)
     potion = {"id": "potion", "consumable": {"effect_type": "heal", "amount": POTION_HEAL_SHARE * session["player_max_hp"]}}
     # Les plus puissantes d'abord.

@@ -16,6 +16,15 @@ POINT_VALUE = {"hp": 25, "atk": 2, "def": 2, "agi": 1, "int": 2, "sag": 2}
 # Points gagnés à chaque niveau.
 STAT_POINTS_PER_LEVEL = 6
 
+# Réinitialisation des points de stat, en ville : la première est gratuite
+# (pour essayer un autre build), les suivantes coûtent RESPEC_GOLD_PER_LEVEL ×
+# niveau, soit le prix d'une pièce d'équipement de ce niveau.
+RESPEC_GOLD_PER_LEVEL = 30
+
+
+def respec_cost(level: int, resets_done: int) -> int:
+    return 0 if resets_done == 0 else RESPEC_GOLD_PER_LEVEL * max(level, 1)
+
 # Compétences équipables. Les monstres sont calibrés pour un joueur qui utilise
 # MAX_ACTIVE_SKILL_SLOTS compétences actives : chaque compétence en plus
 # s'ajouterait au rythme de dégâts et rendrait le contenu trivial.
@@ -30,6 +39,15 @@ SKILL_BASE_SHARE = 0.6
 # Le kit du joueur de référence a été débloqué SKILL_KIT_LEVEL_LAG niveaux
 # plus tôt, en moyenne : la calibration des monstres en tient compte.
 SKILL_KIT_LEVEL_LAG = 3
+# Palier des compétences du kit de référence selon le rôle du monstre. Contre
+# les monstres normaux, le joueur n'a souvent que des compétences simples (de
+# départ ou d'étage) ; face aux élites et aux boss, il a déjà gagné des
+# compétences d'étage : la moitié de son kit est de palier difficile.
+REFERENCE_KIT_TIERS = {
+    "normal": {"frappe": "simple", "technique": "simple", "assaut": "simple", "soin": "simple"},
+    "elite": {"frappe": "simple", "technique": "difficile", "assaut": "difficile", "soin": "simple"},
+    "boss": {"frappe": "simple", "technique": "difficile", "assaut": "difficile", "soin": "simple"},
+}
 
 STATS = ("hp", "atk", "def", "agi", "int", "sag")
 
@@ -86,8 +104,8 @@ def monster_base_stats(level: int) -> dict:
 # Issues de ``calibrate`` (moyenne des niveaux 5 et 30).
 ROLE_PROFILES = {
     "normal": {"hp": 2.15, "atk": 1.0, "def": 1.0, "agi": 1.0, "int": 1.0, "sag": 1.0, "power": 0.21},
-    "elite": {"hp": 2.75, "atk": 1.1, "def": 1.2, "agi": 1.1, "int": 1.1, "sag": 1.0, "power": 0.253},
-    "boss": {"hp": 5.63, "atk": 1.2, "def": 1.4, "agi": 1.2, "int": 1.2, "sag": 1.0, "power": 0.129},
+    "elite": {"hp": 2.99, "atk": 1.1, "def": 1.2, "agi": 1.1, "int": 1.1, "sag": 1.0, "power": 0.252},
+    "boss": {"hp": 6.0, "atk": 1.2, "def": 1.4, "agi": 1.2, "int": 1.2, "sag": 1.0, "power": 0.13},
 }
 
 # Attaques télégraphiées (élites et boss) : la grosse attaque s'annonce

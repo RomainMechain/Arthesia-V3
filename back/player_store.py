@@ -30,6 +30,8 @@ def default_player_state(player_id: str) -> dict:
         "professions": {},
         "lifetime_counters": {"kills": {}, "gathers": {}, "deliveries": {}},
         "quests": {},
+        # Carnet de recettes privé (action_routes.record_in_craft_book).
+        "craft_book": [],
         "unlocks": {"zones": [], "entries": [], "skills": [], "titles": []},
         "current_zone_id": get_default_start_zone_id(),
         # PV hors combat (game_rules.current_hp) ; None : en pleine forme.

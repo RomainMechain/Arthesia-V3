@@ -14,6 +14,10 @@ class GatherStartRequest(BaseModel):
     entry_id: str
 
 
+class ResetStatPointsRequest(BaseModel):
+    player_id: str
+
+
 class UseItemRequest(BaseModel):
     player_id: str
     item_id: str
