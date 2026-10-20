@@ -1,0 +1,33 @@
+{
+  "id": "veilleur_oublie",
+  "name": "Veilleur Oublié",
+  "description": "La statue de la clairière a cessé de répéter ses consignes en ta présence. Peut-être qu'elle t'a pris pour l'un des sept.",
+  "unlock_condition": {
+    "type": "group",
+    "mode": "all",
+    "conditions": [
+      {
+        "type": "quest",
+        "quest_id": "le_dernier_releve",
+        "state": "completed"
+      },
+      {
+        "type": "kill_count",
+        "monster_id": "veilleur_fige",
+        "count": 10
+      }
+    ]
+  },
+  "effects": [
+    {
+      "type": "stat_bonus_percent",
+      "stat": "sag",
+      "amount_percent": 10
+    },
+    {
+      "type": "stat_bonus_percent",
+      "stat": "def",
+      "amount_percent": 4
+    }
+  ]
+}

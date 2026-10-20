@@ -302,6 +302,9 @@ Le total `P` d'une compétence de dégâts vaut **`0,31 × recharge^0,75` × son
   niveau de déblocage. Simple 4 %, difficile 8 %, exceptionnelle 15 % ; au moins 1,5 / 3 / 6 points
   équivalents.
 - **Passifs en pourcentage** (`stat_bonus_percent`) : 3-5 %, 6-10 % ou 12-20 % selon le palier.
+- **Titres** : un seul porté à la fois, des effets permanents de 6 à 12 % sur une ou deux stats, entre une
+  passive difficile et une exceptionnelle. Leur condition est un accomplissement composé et secret, jamais
+  un boss d'étage (vaincu une fois pour tout le serveur).
 
 ---
 

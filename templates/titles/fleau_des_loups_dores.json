@@ -1,0 +1,27 @@
+{
+  "id": "fleau_des_loups_dores",
+  "name": "Fléau des Loups Dorés",
+  "description": "Les loups de la lisière s'écartent quand tu passes. Ils ont appris ton odeur, et ce qu'elle annonce.",
+  "unlock_condition": {
+    "type": "group",
+    "mode": "all",
+    "conditions": [
+      {
+        "type": "kill_count",
+        "monster_id": "loup_dore",
+        "count": 100
+      },
+      {
+        "type": "level",
+        "min": 3
+      }
+    ]
+  },
+  "effects": [
+    {
+      "type": "stat_bonus_percent",
+      "stat": "atk",
+      "amount_percent": 6
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "id": "celui_qui_a_entendu",
+  "name": "Celui qui a Entendu",
+  "description": "Tu as entendu chanter sous le miroir, et depuis, tu entends aussi ce que les autres ne remarquent pas.",
+  "unlock_condition": {
+    "type": "group",
+    "mode": "all",
+    "conditions": [
+      {
+        "type": "quest",
+        "quest_id": "chant_du_lac",
+        "state": "completed"
+      },
+      {
+        "type": "kill_count",
+        "monster_id": "carpe_aux_yeux_vides",
+        "count": 60
+      }
+    ]
+  },
+  "effects": [
+    {
+      "type": "stat_bonus_percent",
+      "stat": "int",
+      "amount_percent": 8
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "id": "juge_de_l_aube",
+  "name": "Juge de l'Aube",
+  "description": "Le Héraut jugeait ceux qui faisaient tomber les dormants. Il est tombé, lui aussi, plus d'une fois. C'est toi qui juges, maintenant.",
+  "unlock_condition": {
+    "type": "group",
+    "mode": "all",
+    "conditions": [
+      {
+        "type": "kill_count",
+        "monster_id": "heraut_de_l_aube",
+        "count": 3
+      },
+      {
+        "type": "quest",
+        "quest_id": "cle_des_dormants",
+        "state": "completed"
+      }
+    ]
+  },
+  "effects": [
+    {
+      "type": "stat_bonus_percent",
+      "stat": "atk",
+      "amount_percent": 8
+    },
+    {
+      "type": "stat_bonus_percent",
+      "stat": "def",
+      "amount_percent": 6
+    }
+  ]
+}

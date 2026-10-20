@@ -2293,5 +2293,95 @@
     "tags": [],
     "description": "Les sentinelles de pierre s'animent quand leurs runes s'allument. À force de les briser, tu as appris à allumer une rune au bout de ta lame, juste le temps d'un coup bref et précis. Elle ne mord que si le bras et l'esprit frappent ensemble.",
     "floor_origin": 1
+  },
+  {
+    "id": "enfant_de_la_rive",
+    "name": "Enfant de la Rive",
+    "kind": "title",
+    "level": null,
+    "tags": [],
+    "description": "Les pêcheurs te saluent maintenant comme l'un des leurs. Tu sais attendre, et l'eau immobile ne te trouble plus.",
+    "floor_origin": 1
+  },
+  {
+    "id": "fleau_des_loups_dores",
+    "name": "Fléau des Loups Dorés",
+    "kind": "title",
+    "level": null,
+    "tags": [],
+    "description": "Les loups de la lisière s'écartent quand tu passes. Ils ont appris ton odeur, et ce qu'elle annonce.",
+    "floor_origin": 1
+  },
+  {
+    "id": "bucheron_des_anciens",
+    "name": "Bûcheron des Anciens",
+    "kind": "title",
+    "level": null,
+    "tags": [],
+    "description": "Isarn dit que tu as la main pour le bois qui ne pourrit pas. Venant de lui, c'est presque un compliment.",
+    "floor_origin": 1
+  },
+  {
+    "id": "celui_qui_a_entendu",
+    "name": "Celui qui a Entendu",
+    "kind": "title",
+    "level": null,
+    "tags": [],
+    "description": "Tu as entendu chanter sous le miroir, et depuis, tu entends aussi ce que les autres ne remarquent pas.",
+    "floor_origin": 1
+  },
+  {
+    "id": "traqueur_du_cerf_pale",
+    "name": "Traqueur du Cerf Pâle",
+    "kind": "title",
+    "level": null,
+    "tags": [],
+    "description": "Tu as suivi la piste jusqu'au bout, et tu as vu ce qui l'attendait. Rien de ce qui court dans ces bois ne t'échappe plus.",
+    "floor_origin": 1
+  },
+  {
+    "id": "ami_d_halvard",
+    "name": "Ami d'Halvard",
+    "kind": "title",
+    "level": null,
+    "tags": [],
+    "description": "Un homme perdu dans un seul matin t'a confié ce qu'il avait de plus précieux. Tu portes un peu de sa patience.",
+    "floor_origin": 1
+  },
+  {
+    "id": "briseur_de_sentinelles",
+    "name": "Briseur de Sentinelles",
+    "kind": "title",
+    "level": null,
+    "tags": [],
+    "description": "Les constructions des Architectes ne s'allument plus quand tu approches. Elles attendent, comme si elles te reconnaissaient.",
+    "floor_origin": 1
+  },
+  {
+    "id": "lame_et_rune",
+    "name": "Lame et Rune",
+    "kind": "title",
+    "level": null,
+    "tags": [],
+    "description": "Tu as appris des rouages ce que les érudits cherchent dans les livres : l'acier et la lumière ne s'opposent pas, ils se répondent.",
+    "floor_origin": 1
+  },
+  {
+    "id": "veilleur_oublie",
+    "name": "Veilleur Oublié",
+    "kind": "title",
+    "level": null,
+    "tags": [],
+    "description": "La statue de la clairière a cessé de répéter ses consignes en ta présence. Peut-être qu'elle t'a pris pour l'un des sept.",
+    "floor_origin": 1
+  },
+  {
+    "id": "juge_de_l_aube",
+    "name": "Juge de l'Aube",
+    "kind": "title",
+    "level": null,
+    "tags": [],
+    "description": "Le Héraut jugeait ceux qui faisaient tomber les dormants. Il est tombé, lui aussi, plus d'une fois. C'est toi qui juges, maintenant.",
+    "floor_origin": 1
   }
 ]

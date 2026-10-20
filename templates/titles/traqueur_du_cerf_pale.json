@@ -1,0 +1,28 @@
+{
+  "id": "traqueur_du_cerf_pale",
+  "name": "Traqueur du Cerf Pâle",
+  "description": "Tu as suivi la piste jusqu'au bout, et tu as vu ce qui l'attendait. Rien de ce qui court dans ces bois ne t'échappe plus.",
+  "unlock_condition": {
+    "type": "group",
+    "mode": "all",
+    "conditions": [
+      {
+        "type": "quest",
+        "quest_id": "piste_du_cerf_blanc",
+        "state": "completed"
+      },
+      {
+        "type": "kill_count",
+        "monster_id": "cerf_pale",
+        "count": 1
+      }
+    ]
+  },
+  "effects": [
+    {
+      "type": "stat_bonus_percent",
+      "stat": "agi",
+      "amount_percent": 10
+    }
+  ]
+}

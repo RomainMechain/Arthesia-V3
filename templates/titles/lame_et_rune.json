@@ -1,0 +1,37 @@
+{
+  "id": "lame_et_rune",
+  "name": "Lame et Rune",
+  "description": "Tu as appris des rouages ce que les érudits cherchent dans les livres : l'acier et la lumière ne s'opposent pas, ils se répondent.",
+  "unlock_condition": {
+    "type": "group",
+    "mode": "all",
+    "conditions": [
+      {
+        "type": "kill_count",
+        "monster_id": "rouage_errant",
+        "count": 60
+      },
+      {
+        "type": "kill_count",
+        "monster_id": "automate_sans_visage",
+        "count": 30
+      },
+      {
+        "type": "level",
+        "min": 8
+      }
+    ]
+  },
+  "effects": [
+    {
+      "type": "stat_bonus_percent",
+      "stat": "atk",
+      "amount_percent": 6
+    },
+    {
+      "type": "stat_bonus_percent",
+      "stat": "int",
+      "amount_percent": 6
+    }
+  ]
+}

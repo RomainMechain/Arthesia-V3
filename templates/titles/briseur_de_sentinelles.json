@@ -1,0 +1,28 @@
+{
+  "id": "briseur_de_sentinelles",
+  "name": "Briseur de Sentinelles",
+  "description": "Les constructions des Architectes ne s'allument plus quand tu approches. Elles attendent, comme si elles te reconnaissaient.",
+  "unlock_condition": {
+    "type": "group",
+    "mode": "all",
+    "conditions": [
+      {
+        "type": "kill_count",
+        "monster_id": "sentinelle_de_pierre",
+        "count": 100
+      },
+      {
+        "type": "kill_count",
+        "monster_id": "colosse_moussu",
+        "count": 40
+      }
+    ]
+  },
+  "effects": [
+    {
+      "type": "stat_bonus_percent",
+      "stat": "def",
+      "amount_percent": 10
+    }
+  ]
+}

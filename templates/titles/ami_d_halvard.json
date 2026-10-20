@@ -1,0 +1,33 @@
+{
+  "id": "ami_d_halvard",
+  "name": "Ami d'Halvard",
+  "description": "Un homme perdu dans un seul matin t'a confié ce qu'il avait de plus précieux. Tu portes un peu de sa patience.",
+  "unlock_condition": {
+    "type": "group",
+    "mode": "all",
+    "conditions": [
+      {
+        "type": "quest",
+        "quest_id": "des_defenses_de_verre",
+        "state": "completed"
+      },
+      {
+        "type": "quest",
+        "quest_id": "le_matin_d_halvard",
+        "state": "completed"
+      }
+    ]
+  },
+  "effects": [
+    {
+      "type": "stat_bonus_percent",
+      "stat": "hp",
+      "amount_percent": 6
+    },
+    {
+      "type": "stat_bonus_percent",
+      "stat": "sag",
+      "amount_percent": 6
+    }
+  ]
+}

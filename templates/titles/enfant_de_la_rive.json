@@ -1,0 +1,28 @@
+{
+  "id": "enfant_de_la_rive",
+  "name": "Enfant de la Rive",
+  "description": "Les pêcheurs te saluent maintenant comme l'un des leurs. Tu sais attendre, et l'eau immobile ne te trouble plus.",
+  "unlock_condition": {
+    "type": "group",
+    "mode": "all",
+    "conditions": [
+      {
+        "type": "gather_count",
+        "resource_id": "eaux_basses_de_la_rive",
+        "count": 40
+      },
+      {
+        "type": "kill_count",
+        "monster_id": "crabe_des_galets",
+        "count": 30
+      }
+    ]
+  },
+  "effects": [
+    {
+      "type": "stat_bonus_percent",
+      "stat": "sag",
+      "amount_percent": 6
+    }
+  ]
+}

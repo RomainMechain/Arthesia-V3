@@ -1,0 +1,28 @@
+{
+  "id": "bucheron_des_anciens",
+  "name": "Bûcheron des Anciens",
+  "description": "Isarn dit que tu as la main pour le bois qui ne pourrit pas. Venant de lui, c'est presque un compliment.",
+  "unlock_condition": {
+    "type": "group",
+    "mode": "all",
+    "conditions": [
+      {
+        "type": "gather_count",
+        "resource_id": "chene_ancien",
+        "count": 80
+      },
+      {
+        "type": "gather_count",
+        "resource_id": "if_millenaire",
+        "count": 40
+      }
+    ]
+  },
+  "effects": [
+    {
+      "type": "stat_bonus_percent",
+      "stat": "hp",
+      "amount_percent": 8
+    }
+  ]
+}
