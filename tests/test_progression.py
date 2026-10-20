@@ -104,6 +104,28 @@ class ProgressionTest(unittest.TestCase):
         player["level"] = 2
         self.assertTrue(quest_progress_view(quest, progress, player)["ready"])
 
+    # --- Carnet d'aventure ---------------------------------------------------
+
+    def test_carnet_ne_montre_que_les_decouvertes(self):
+        counters = {"kills": {"loup_dore": 12}, "gathers": {"bois_mort_de_lisiere": 3}, "deliveries": {}}
+        fakes.new_player(lifetime_counters=counters,
+                         unlocks={"zones": ["village_aube"], "entries": [], "skills": [], "titles": []})
+        page = pr_routes.get_player_carnet("joueur")["floors"][0]
+        self.assertEqual([m["id"] for m in page["bestiary"]], ["loup_dore"])
+        self.assertEqual(page["bestiary"][0]["kills"], 12)
+        self.assertGreater(page["unknown_monsters"], 20)
+        self.assertEqual([r["id"] for r in page["harvests"]], ["bois_mort_de_lisiere"])
+        # Les habitants des zones fermées restent inconnus.
+        zones = {n["zone_name"] for n in page["inhabitants"]}
+        self.assertIn("Val-de-l'Aube", zones)
+        self.assertNotIn("Camp des Pêcheurs du Soir", zones)
+        self.assertGreater(page["unknown_inhabitants"], 0)
+
+    def test_carnet_vide_pour_un_nouveau_venu(self):
+        fakes.new_player(unlocks={"zones": [], "entries": [], "skills": [], "titles": []}, current_zone_id="chambre_gardien")
+        floors = pr_routes.get_player_carnet("joueur")["floors"]
+        self.assertTrue(all(not f["bestiary"] and not f["harvests"] for f in floors))
+
     # --- Titres -----------------------------------------------------------
 
     def test_titre_debloque_au_seuil(self):

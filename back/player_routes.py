@@ -7,6 +7,7 @@ from firebase_admin import firestore
 
 try:
     from .auth import require_player
+    from .carnet import build_carnet
     from .database import db
     from .content_store import find_quest_givers, load_ordered_floors, load_template
     from .balance import profession_xp_to_next_level, respec_cost
@@ -19,6 +20,7 @@ try:
     from .progression import check_and_apply_unlocks
 except ImportError:
     from auth import require_player
+    from carnet import build_carnet
     from database import db
     from content_store import find_quest_givers, load_ordered_floors, load_template
     from balance import profession_xp_to_next_level, respec_cost
@@ -134,6 +136,15 @@ def get_player_quests(player_id: str):
             "givers": [{"zone_id": giver["zone_id"], "zone_name": giver["zone_name"]} for giver in find_quest_givers(quest_id)],
         })
     return {"quests": quests}
+
+
+@router.get("/players/{player_id}/carnet")
+def get_player_carnet(player_id: str):
+    """Carnet d'aventure : bestiaire, récoltes et habitants découverts, par étage."""
+    doc = db.collection("players").document(player_id).get()
+    if not doc.exists:
+        raise HTTPException(404, f"Joueur '{player_id}' introuvable")
+    return {"floors": build_carnet(doc.to_dict())}
 
 
 @router.get("/players/{player_id}/floors")
