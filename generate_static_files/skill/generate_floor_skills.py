@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Génère les compétences liées à un étage, à partir de son contenu RÉEL (lu directement dans les
+Génère les compétences et les titres liés à un étage, à partir de son contenu RÉEL (lu directement dans les
 fichiers de zones déjà générés, pas juste piochées dans l'index global) — garantit que chaque
 condition référencée existe vraiment dans cet étage, pas ailleurs dans la bibliothèque.
 
@@ -9,7 +9,7 @@ Prérequis :
     Toutes les zones de l'étage doivent déjà avoir été générées (generate_zone_content.py).
 
 Usage :
-    python generate_floor_skills.py --skeleton floor_1_skeleton.json --count 10
+    python generate_floor_skills.py --skeleton floor_1_skeleton.json --count 10 --title-count 8
 """
 
 import argparse
@@ -43,6 +43,7 @@ TEMPLATES_DIR = PROJECT_ROOT / "templates"
 ZONES_DIR = PROJECT_ROOT / "zones"
 INDEX_FILE = TEMPLATES_DIR / "index.json"
 SKILLS_DIR = TEMPLATES_DIR / "skills"
+TITLES_DIR = TEMPLATES_DIR / "titles"
 
 # dossier de stockage selon template_type d'Entry (quest_giver -> fichier "quest")
 ENTRY_TYPE_TO_KIND = {
@@ -155,13 +156,16 @@ def load_system_prompt() -> str:
     return PROMPT_FILE.read_text(encoding="utf-8")
 
 
-def build_user_message(floor_info: dict, inventory: list[dict], count: int, targets: dict) -> str:
+def build_user_message(floor_info: dict, inventory: list[dict], count: int, targets: dict,
+                       title_count: int) -> str:
     return (
-        "Génère les compétences de cet étage avec les paramètres suivants :\n\n"
+        "Génère les compétences et les titres de cet étage avec les paramètres suivants :\n\n"
         f"floor:\n{json.dumps(floor_info, ensure_ascii=False, indent=2)}\n\n"
         f"balance_targets:\n{json.dumps(targets, ensure_ascii=False)}\n\n"
+        f"title_targets:\n{json.dumps(content_targets.title_targets(), ensure_ascii=False)}\n\n"
         f"floor_content_inventory:\n{json.dumps(inventory, ensure_ascii=False, indent=2)}\n\n"
-        f"skill_count_target: {count}\n\n"
+        f"skill_count_target: {count}\n"
+        f"title_count_target: {title_count}\n\n"
         "Réponds uniquement avec le JSON demandé, sans aucun texte avant ou après."
     )
 
@@ -173,15 +177,16 @@ def extract_json(text: str) -> dict:
     return json.loads(cleaned)
 
 
-def generate_skills(floor_info: dict, inventory: list[dict], count: int, targets: dict) -> list[dict]:
+def generate_skills(floor_info: dict, inventory: list[dict], count: int, targets: dict,
+                    title_count: int) -> dict:
     if not API_KEY:
         sys.exit("❌ Variable d'environnement ANTHROPIC_API_KEY absente.")
     client = anthropic.Anthropic(api_key=API_KEY)
 
     system_prompt = load_system_prompt()
-    user_message = build_user_message(floor_info, inventory, count, targets)
+    user_message = build_user_message(floor_info, inventory, count, targets, title_count)
 
-    print(f"🌐 Appel à {MODEL} pour générer {count} compétences...")
+    print(f"🌐 Appel à {MODEL} pour générer {count} compétences et {title_count} titres...")
     # Streaming : le SDK refuse un appel non streamé au-delà d'environ 21 000
     # tokens de limite. La réflexion du modèle compte dans cette limite.
     with client.messages.stream(
@@ -200,7 +205,9 @@ def generate_skills(floor_info: dict, inventory: list[dict], count: int, targets
     raw_text = "".join(block.text for block in response.content if block.type == "text")
 
     try:
-        return extract_json(raw_text)["skills"]
+        answer = extract_json(raw_text)
+        answer["skills"]
+        return answer
     except (json.JSONDecodeError, KeyError):
         print("❌ Réponse invalide (pas un JSON avec une clé 'skills').")
         print("---- Réponse brute ----")
@@ -211,6 +218,18 @@ def generate_skills(floor_info: dict, inventory: list[dict], count: int, targets
 # =============================================================================
 # VALIDATION
 # =============================================================================
+
+def condition_reference(leaf: dict) -> Optional[str]:
+    """Id de contenu visé par une condition feuille (None pour un niveau)."""
+    return {
+        "kill_count": leaf.get("monster_id"),
+        "gather_count": leaf.get("resource_id"),
+        "deliver_item": leaf.get("item_id"),
+        "item": leaf.get("item_id"),
+        "quest": leaf.get("quest_id"),
+        "boss": leaf.get("zone_id"),
+    }.get(leaf.get("type"))
+
 
 def extract_leaf_conditions(cond: Optional[dict]) -> list[dict]:
     """Déplie récursivement un group pour récupérer toutes les conditions feuilles."""
@@ -248,27 +267,16 @@ def validate_skills(skills: list[dict], inventory: list[dict], full_index: list[
         # chaque référence de unlock_condition doit exister dans l'inventaire de CET étage
         for leaf in extract_leaf_conditions(skill.get("unlock_condition")):
             leaf_type = leaf.get("type")
-            target = None
-            if leaf_type == "kill_count":
-                target = leaf.get("monster_id")
-            elif leaf_type == "gather_count":
-                target = leaf.get("resource_id")
-            elif leaf_type in ("deliver_item", "item"):
-                target = leaf.get("item_id")
-            elif leaf_type == "quest":
-                target = leaf.get("quest_id")
-            elif leaf_type == "boss":
-                target = leaf.get("zone_id")
-
+            target = condition_reference(leaf)
             if target and target not in inventory_ids:
                 warnings.append(f"Compétence '{skill.get('id')}' référence '{target}' "
                                  f"({leaf_type}) absent de l'inventaire de cet étage.")
-
-            if leaf_type == "boss" or (leaf_type == "group" and len(extract_leaf_conditions(leaf)) > 1):
-                pass  # compté au niveau du group parent ci-dessous, pas ici
+            if leaf_type in content_targets.FORBIDDEN_UNLOCK_CONDITIONS:
+                warnings.append(f"Compétence '{skill.get('id')}' : condition « {leaf_type} » interdite "
+                                 f"(un boss d'étage est vaincu pour tout le serveur ; utiliser kill_count).")
 
         top_cond = skill.get("unlock_condition") or {}
-        if top_cond.get("type") == "group" or top_cond.get("type") == "boss":
+        if top_cond.get("type") == "group":
             exceptional_count += 1
 
         # collision d'id avec la bibliothèque de compétences existante
@@ -281,8 +289,32 @@ def validate_skills(skills: list[dict], inventory: list[dict], full_index: list[
 
     if exceptional_count > 2:
         warnings.append(f"{exceptional_count} compétences de palier 'Exceptionnelle' détectées "
-                         f"(condition group/boss) — la règle en demandait 1-2 maximum.")
+                         f"(condition group) — la règle en demandait 1-2 maximum.")
 
+    return warnings
+
+
+def validate_titles(titles: list[dict], inventory: list[dict], full_index: list[dict]) -> list[str]:
+    """Références réelles de l'étage, règles des titres (content_targets.check_title),
+    collisions avec les titres existants et redites entre titres du lot."""
+    warnings = []
+    inventory_ids = {t["id"] for t in inventory}
+    known_pairs = {(t.get("kind"), t["id"]) for t in full_index}
+    seen_conditions = set()
+    for title in titles:
+        leaves = extract_leaf_conditions(title.get("unlock_condition"))
+        for leaf in leaves:
+            target = condition_reference(leaf)
+            if target and target not in inventory_ids:
+                warnings.append(f"Titre '{title.get('id')}' référence '{target}' "
+                                 f"({leaf.get('type')}) absent de l'inventaire de cet étage.")
+        signature = frozenset((leaf.get("type"), condition_reference(leaf)) for leaf in leaves)
+        if signature in seen_conditions:
+            warnings.append(f"Titre '{title.get('id')}' : mêmes conditions qu'un autre titre du lot.")
+        seen_conditions.add(signature)
+        if ("title", title.get("id")) in known_pairs:
+            warnings.append(f"Collision : un titre '{title.get('id')}' existe déjà.")
+        warnings.extend(content_targets.check_title(title))
     return warnings
 
 
@@ -301,29 +333,33 @@ def save_index(index: list[dict]) -> None:
     INDEX_FILE.write_text(json.dumps(index, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
-def save_skills(skills: list[dict], full_index: list[dict], floor_number: int) -> list[dict]:
+def save_templates(templates: list[dict], kind: str, folder: Path, full_index: list[dict],
+                   floor_number: int) -> list[dict]:
+    """Écrit les compétences (kind "skill") ou les titres (kind "title") qui
+    n'existent pas encore, et renvoie leurs entrées d'index."""
     known_pairs = {(t.get("kind"), t["id"]) for t in full_index}
-    SKILLS_DIR.mkdir(parents=True, exist_ok=True)
+    folder.mkdir(parents=True, exist_ok=True)
+    label = "compétence" if kind == "skill" else "titre"
 
     new_index_entries = []
-    for skill in skills:
-        pair = ("skill", skill.get("id"))
-        if pair in known_pairs:
-            print(f"  ⏭️  Ignoré (collision) : skills/{skill.get('id')}.json")
+    for template in templates:
+        if (kind, template.get("id")) in known_pairs:
+            print(f"  ⏭️  Ignoré (collision) : {folder.name}/{template.get('id')}.json")
             continue
 
-        path = SKILLS_DIR / f"{skill['id']}.json"
-        path.write_text(json.dumps(skill, ensure_ascii=False, indent=2), encoding="utf-8")
-        print(f"  💾 Nouvelle compétence : skills/{skill['id']}.json")
+        path = folder / f"{template['id']}.json"
+        path.write_text(json.dumps(template, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(f"  💾 Nouveau {label} : {folder.name}/{template['id']}.json" if kind == "title"
+              else f"  💾 Nouvelle {label} : {folder.name}/{template['id']}.json")
 
         new_index_entries.append({
-            "id": skill["id"],
-            "name": skill.get("name"),
-            "kind": "skill",
+            "id": template["id"],
+            "name": template.get("name"),
+            "kind": kind,
             "level": None,
             "tags": [],
-            "description": skill.get("description", ""),
-            "floor_origin": floor_number,  # bookkeeping seulement, pas dans le schéma Skill lui-même
+            "description": template.get("description", ""),
+            "floor_origin": floor_number,  # bookkeeping seulement, pas dans le schéma du template
         })
 
     return new_index_entries
@@ -334,9 +370,10 @@ def save_skills(skills: list[dict], full_index: list[dict], floor_number: int) -
 # =============================================================================
 
 def main():
-    parser = argparse.ArgumentParser(description="Génère les compétences liées à un étage Arthesia.")
+    parser = argparse.ArgumentParser(description="Génère les compétences et les titres liés à un étage Arthesia.")
     parser.add_argument("--skeleton", type=str, required=True, help="Chemin du squelette d'étage")
-    parser.add_argument("--count", type=int, default=10)
+    parser.add_argument("--count", type=int, default=10, help="Nombre de compétences")
+    parser.add_argument("--title-count", type=int, default=8, help="Nombre de titres (0 : aucun)")
     # Génération sans l'API (par exemple avec Claude Code) : on écrit le message,
     # la réponse est produite ailleurs, puis validée et sauvegardée ici.
     parser.add_argument("--print-prompt", type=str, metavar="FICHIER",
@@ -377,19 +414,22 @@ def main():
     targets = content_targets.skill_targets(level_range)
 
     if args.print_prompt:
-        Path(args.print_prompt).write_text(build_user_message(floor_info, inventory, args.count, targets),
-                                           encoding="utf-8")
+        Path(args.print_prompt).write_text(
+            build_user_message(floor_info, inventory, args.count, targets, args.title_count), encoding="utf-8")
         print(f"\n📝 Message écrit dans {args.print_prompt} (prompt système : {PROMPT_FILE}).")
         return
 
     if args.from_response:
-        skills = extract_json(Path(args.from_response).read_text(encoding="utf-8"))["skills"]
+        answer = extract_json(Path(args.from_response).read_text(encoding="utf-8"))
     else:
-        skills = generate_skills(floor_info, inventory, args.count, targets)
+        answer = generate_skills(floor_info, inventory, args.count, targets, args.title_count)
+    skills = answer["skills"]
+    titles = answer.get("titles") or []
 
     full_index = load_index()
     zone_ids = {zone["id"] for zone in skeleton.get("zones", [])}
     warnings = validate_skills(skills, inventory, full_index, zone_ids)
+    warnings += validate_titles(titles, inventory, full_index)
     if warnings:
         print("\n⚠️  Points à vérifier :")
         for w in warnings:
@@ -401,11 +441,13 @@ def main():
         print("\n🧪 --dry-run : rien n'est sauvegardé.")
         return
 
-    new_entries = save_skills(skills, full_index, floor_number)
-    if new_entries:
-        save_index(full_index + new_entries)
+    new_skills = save_templates(skills, "skill", SKILLS_DIR, full_index, floor_number)
+    new_titles = save_templates(titles, "title", TITLES_DIR, full_index, floor_number)
+    if new_skills or new_titles:
+        save_index(full_index + new_skills + new_titles)
 
-    print(f"\n💾 {len(new_entries)} compétence(s) sauvegardée(s) pour l'étage {floor_number}.")
+    print(f"\n💾 {len(new_skills)} compétence(s) et {len(new_titles)} titre(s) sauvegardés "
+          f"pour l'étage {floor_number}.")
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
-# Prompt : génération des compétences liées à un étage — Arthesia
+# Prompt : génération des compétences et des titres liés à un étage — Arthesia
 
-> À utiliser comme system prompt pour générer un lot de compétences (`Skill`) rattachées à un étage
+> À utiliser comme system prompt pour générer un lot de compétences (`Skill`) et de titres (`Title`) rattachés à un étage
 > **déjà entièrement généré** (squelette + contenu de toutes ses zones). Ne concerne pas les
 > compétences "classiques" (starter, débloquées par niveau seul) — celles-ci sont générées à part,
 > une seule fois, indépendamment de tout étage. Ce prompt est autonome : tout ce dont le modèle a
@@ -31,7 +31,12 @@ paliers :
 |---|---|---|
 | **Simple** | `kill_count`/`gather_count` à seuil modéré (environ 5-15), ou `deliver_item` d'un objet courant | Effet clairement utile mais mesuré — un bonus solide, pas transformateur |
 | **Difficile** | `kill_count`/`gather_count` à seuil élevé (30+), un `item` rare, ou une `quest` complétée | Effet marquant — un passif à fort impact ou une active qui change vraiment une rotation |
-| **Exceptionnelle** | `group` combinant plusieurs conditions dures, ou `boss` vaincu | Effet build-defining — réserve ça à 1-2 compétences maximum sur tout le lot, jamais plus |
+| **Exceptionnelle** | `group` combinant plusieurs conditions dures (dont, par exemple, une victoire sur le boss) | Effet build-defining — réserve ça à 1-2 compétences maximum sur tout le lot, jamais plus |
+
+**Jamais de condition `boss`.** Le boss d'un étage est vaincu une seule fois pour tout le serveur :
+une condition `boss` serait offerte à tous les joueurs dès la première victoire. Pour récompenser
+une victoire sur le boss, utilise `{"type": "kill_count", "monster_id": "<id du boss>", "count": 1}` :
+elle compte la vraie victoire comme celle contre son écho, que chaque joueur peut affronter une fois.
 
 Ne jamais inverser cette logique (une condition triviale ne donne jamais un effet fort, une condition
 énorme ne donne jamais un effet anecdotique).
@@ -66,13 +71,12 @@ Sur l'ensemble du lot généré :
 { "type": "level", "min": 5 }
 { "type": "quest", "quest_id": "...", "state": "completed" }
 { "type": "item", "item_id": "...", "state": "owned" }
-{ "type": "boss", "zone_id": "...", "state": "defeated" }
 { "type": "kill_count", "monster_id": "...", "count": 10 }
 { "type": "gather_count", "resource_id": "...", "count": 10 }
 { "type": "deliver_item", "item_id": "...", "count": 3 }
 { "type": "group", "mode": "all" | "any", "conditions": [ ... ] }
 ```
-Chaque `monster_id`/`resource_id`/`item_id`/`quest_id`/`zone_id` doit exister dans
+Chaque `monster_id`/`resource_id`/`item_id`/`quest_id` doit exister dans
 `floor_content_inventory` fourni plus bas — jamais un id inventé.
 
 ### Condition "temps réel combat" (pour un passif `trigger: "conditional"`)
@@ -184,10 +188,46 @@ une compétence doit être « grosse », monte d'un palier, allonge la recharge,
 
 `telegraph_seconds`/`avoidable_by` : toujours `0`/`null` en V1 (non fonctionnels, placeholders V2).
 
+## TITRES
+
+Un titre est un accomplissement de l'étage que le joueur affiche sous son nom, avec un petit bonus
+permanent. Un joueur n'en porte qu'un à la fois. Les conditions restent **secrètes** : le jeu n'indique
+jamais comment obtenir un titre, les joueurs le découvrent et se le racontent. Génère
+`title_count_target` titres.
+
+- **Un accomplissement composite.** `unlock_condition` est toujours un `group` de mode `"all"` qui
+  réunit `title_targets.conditions_per_title` conditions (2 ou 3) : des actes qui racontent ensemble
+  une histoire (finir la quête d'un PNJ et vaincre ce qui le menaçait ; récolter beaucoup d'une
+  ressource et battre ce qui la garde). Une condition `level` peut compléter, jamais seule.
+- **Des seuils durs**, plus élevés que ceux des compétences : `title_targets.kill_count_by_role`
+  (monstres normaux 30 à 100, élites 1 à 5, boss 1), `title_targets.gather_count` (30 à 80), une quête
+  importante. Pas de condition `boss` (voir plus haut).
+- **Effets** : 1 ou 2 `{"type": "stat_bonus_percent", "stat": "...", "amount_percent": N}`, chacun dans
+  `title_targets.percent_per_stat` (4 à 12 %), `title_targets.max_total_percent` (14 %) au total. Le
+  bonus suit l'accomplissement : un tueur de loups gagne de l'ATK, un veilleur de la SAG, un bûcheron
+  des PV. Pas d'autre type d'effet.
+- **Nom** : court, ce que les autres liront sous le nom du joueur (« Fléau des Loups Dorés »,
+  « Enfant de la Rive »). **Description** : une ou deux phrases qui évoquent l'accomplissement sans
+  dévoiler ses conditions chiffrées.
+- **Variété** : chaque titre vise un autre pan de l'étage (combat, récolte, pêche, quêtes, élites,
+  boss) ; deux titres n'ont jamais les mêmes conditions. Mélange les stats sur l'ensemble des titres.
+
+### Title — format attendu
+
+```json
+{
+  "id": "identifiant_court_unique",
+  "name": "...",
+  "description": "...",
+  "unlock_condition": { "type": "group", "mode": "all", "conditions": [ /* 2 ou 3 Conditions */ ] },
+  "effects": [ { "type": "stat_bonus_percent", "stat": "atk", "amount_percent": 8 } ]
+}
+```
+
 ## FORMAT DE SORTIE (JSON strict, rien d'autre)
 
 ```json
-{ "skills": [ /* Skill[] */ ] }
+{ "skills": [ /* Skill[] */ ], "titles": [ /* Title[] */ ] }
 ```
 
 ## CHECKLIST AVANT DE RÉPONDRE
@@ -196,7 +236,10 @@ une compétence doit être « grosse », monte d'un palier, allonge la recharge,
 - [ ] Puissance de l'effet cohérente avec la difficulté de la condition (jamais inversée).
 - [ ] `level` renseigné sur chaque compétence ; `base`, `power`, `amount_power`, `mana_cost` et bonus
       de passifs repris de `balance_targets` pour ce niveau, le palier et la recharge.
-- [ ] Au maximum 1-2 compétences de palier "Exceptionnelle" (conditions composites ou liées au boss).
+- [ ] Au maximum 1-2 compétences de palier "Exceptionnelle" (conditions composites).
+- [ ] Aucune condition `boss`, ni dans les compétences ni dans les titres.
+- [ ] `title_count_target` titres, chacun un `group` « all » de 2-3 conditions dures, 1-2 bonus en %
+      dans les bornes de `title_targets`, conditions différentes d'un titre à l'autre.
 - [ ] Thème/nom de chaque compétence directement inspiré de ce que sa condition référence.
 - [ ] Mélange passif/actif et mélange des types d'`effects` sur l'ensemble du lot.
 - [ ] Conditions réparties sur différents monstres/ressources/items/quêtes, pas concentrées sur un seul.
@@ -210,6 +253,8 @@ une compétence doit être « grosse », monte d'un palier, allonge la recharge,
 - `floor_content_inventory` : liste allégée (id, name, kind, level, description, role si pertinent) de
   tous les monstres/ressources/items/quêtes/boss réellement présents dans les zones de cet étage.
 - `skill_count_target` : nombre de compétences à générer (défaut 10).
+- `title_count_target` : nombre de titres à générer (défaut 8 ; 0 : pas de titres, `"titles": []`).
+- `title_targets` : bornes des bonus des titres et seuils de leurs conditions.
 - `balance_targets` : `passive_percent`, et pour chaque niveau de l'étage : `damage_by_cooldown` et
   `support_by_cooldown` (`base` et `power` par palier et recharge), `mana_cost_by_cooldown`,
   `passive_points` par palier.

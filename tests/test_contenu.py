@@ -7,8 +7,8 @@ from collections import defaultdict
 
 from fakes import ROOT
 from back import balance
-from back.content_targets import check_skill, check_template, zone_difficulty_tier
-from back.content_routes import get_template
+from back.content_targets import check_skill, check_template, check_title, zone_difficulty_tier
+from back.content_routes import get_floor, get_template
 
 TEMPLATES = ROOT / "templates"
 FOLDER = {"monster": "monsters", "resource": "resources", "npc": "npcs", "quest_giver": "quests",
@@ -111,6 +111,12 @@ class ContenuTest(unittest.TestCase):
             warnings += check_skill(load_json(path))
         self.assertFalse(warnings, "\n".join(warnings))
 
+    def test_titres_dans_leurs_regles(self):
+        warnings = []
+        for path in (TEMPLATES / "titles").glob("*.json"):
+            warnings += check_title(load_json(path))
+        self.assertFalse(warnings, "\n".join(warnings))
+
     def test_conditions_des_competences_et_titres_visent_du_contenu_reel(self):
         targets = {"kill_count": ("monster_id", "monsters"), "gather_count": ("resource_id", "resources"),
                    "quest": ("quest_id", "quests"), "item": ("item_id", "items"), "deliver_item": ("item_id", "items")}
@@ -147,6 +153,12 @@ class ContenuTest(unittest.TestCase):
         for folder, kind in (("skills", "skill"), ("titles", "title")):
             for path in (TEMPLATES / folder).glob("*.json"):
                 self.assertNotIn("unlock_condition", get_template(kind, path.stem))
+
+    def test_etage_servi_avec_les_niveaux_sans_les_consignes(self):
+        for number, skeleton, _ in floors():
+            for zone in get_floor(skeleton["id"])["zones"]:
+                self.assertNotIn("generation_brief", zone)
+                self.assertEqual(len(zone["level_range"]), 2, zone["id"])
 
 
 if __name__ == "__main__":

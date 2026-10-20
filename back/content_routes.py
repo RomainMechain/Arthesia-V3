@@ -71,9 +71,18 @@ def get_floor(floor_id: str) -> dict:
         "description": floor.get("description"),
         "start_zone_id": floor.get("start_zone_id"),
         "boss_zone_id": floor.get("boss_zone_id"),
-        "zones": floor.get("zones", []),
+        "zones": [public_zone(zone) for zone in floor.get("zones", [])],
         "connections": floor.get("connections", []),
     }
+
+
+def public_zone(zone: dict) -> dict:
+    """Zone telle que le client la voit : sa plage de niveaux, mais pas le
+    ``generation_brief``, qui contient les consignes de génération (et donc
+    des secrets de l'étage)."""
+    view = {key: value for key, value in zone.items() if key != "generation_brief"}
+    view["level_range"] = (zone.get("generation_brief") or {}).get("level_range")
+    return view
 
 
 @router.get("/zones")

@@ -56,6 +56,19 @@ PASSIVE_POWER_SHARE = {"simple": 0.04, "difficile": 0.08, "exceptionnelle": 0.15
 PASSIVE_MIN_POINTS = {"simple": 1.5, "difficile": 3, "exceptionnelle": 6}
 PASSIVE_PERCENT = {"simple": [3, 5], "difficile": [6, 10], "exceptionnelle": [12, 20]}
 
+# Titres : un seul se porte à la fois, et ses bonus sont permanents. Chaque
+# titre récompense un accomplissement composite (2 ou 3 conditions dures), avec
+# 1 ou 2 bonus en % de 4 à 12 %, 14 % au total au plus.
+TITLE_PERCENT_BOUNDS = (4, 12)
+TITLE_MAX_TOTAL_PERCENT = 14
+TITLE_CONDITION_COUNT = (2, 3)
+TITLE_KILL_THRESHOLDS = {"normal": [30, 100], "elite": [1, 5], "boss": [1, 1]}
+TITLE_GATHER_THRESHOLDS = [30, 80]
+# Un boss d'étage est vaincu une fois pour tout le serveur : une condition
+# « boss » serait offerte à tous. Une victoire (ou son écho) compte dans les
+# kill_count du monstre, c'est par là qu'on vise un boss.
+FORBIDDEN_UNLOCK_CONDITIONS = {"boss"}
+
 
 def floor_level_range(floor_number: int) -> list[int]:
     first = (floor_number - 1) * LEVELS_PER_FLOOR + 1
@@ -208,6 +221,17 @@ def skill_targets(level_range: list[int]) -> dict:
             }
             for level in range(max(level_range[0], 1), max(level_range[-1], level_range[0], 1) + 1)
         ],
+    }
+
+
+def title_targets() -> dict:
+    """Règles des titres, jointes au message du générateur de compétences."""
+    return {
+        "percent_per_stat": list(TITLE_PERCENT_BOUNDS),
+        "max_total_percent": TITLE_MAX_TOTAL_PERCENT,
+        "conditions_per_title": list(TITLE_CONDITION_COUNT),
+        "kill_count_by_role": TITLE_KILL_THRESHOLDS,
+        "gather_count": TITLE_GATHER_THRESHOLDS,
     }
 
 
@@ -366,6 +390,44 @@ def check_skill(skill: dict) -> list[str]:
             warnings.append(f"{name} : {kind} de {effect.get('amount_percent')} % (10 à 30 % attendus)")
         elif kind == "stat_bonus_percent" and effect.get("amount_percent", 0) > PASSIVE_PERCENT["exceptionnelle"][1]:
             warnings.append(f"{name} : bonus de {effect.get('amount_percent')} % (au plus 20 %)")
+    return warnings
+
+
+def condition_leaves(condition) -> list[dict]:
+    """Conditions feuilles d'une condition, groupes dépliés."""
+    if not isinstance(condition, dict):
+        return []
+    if condition.get("type") == "group":
+        return [leaf for sub in condition.get("conditions", []) for leaf in condition_leaves(sub)]
+    return [condition]
+
+
+def check_title(title: dict) -> list[str]:
+    """Écarts d'un titre : condition trop simple ou interdite, bonus hors des
+    bornes ou d'un autre type que ``stat_bonus_percent``."""
+    name = title.get("id", "?")
+    warnings = []
+    condition = title.get("unlock_condition") or {}
+    leaves = condition_leaves(condition)
+    low, high = TITLE_CONDITION_COUNT
+    if condition.get("type") != "group" or condition.get("mode") != "all" or not low <= len(leaves) <= high:
+        warnings.append(f"{name} : la condition doit être un groupe « all » de {low} à {high} conditions")
+    for leaf in leaves:
+        if leaf.get("type") in FORBIDDEN_UNLOCK_CONDITIONS:
+            warnings.append(f"{name} : condition « {leaf['type']} » interdite (passer par kill_count du boss)")
+    effects = title.get("effects") or []
+    if not 1 <= len(effects) <= 2:
+        warnings.append(f"{name} : {len(effects)} effets (1 ou 2 attendus)")
+    total = 0
+    for effect in effects:
+        percent = effect.get("amount_percent", 0)
+        total += percent
+        if effect.get("type") != "stat_bonus_percent":
+            warnings.append(f"{name} : effet {effect.get('type')} (seul stat_bonus_percent est permis)")
+        elif not TITLE_PERCENT_BOUNDS[0] <= percent <= TITLE_PERCENT_BOUNDS[1]:
+            warnings.append(f"{name} : bonus de {percent} % ({TITLE_PERCENT_BOUNDS[0]} à {TITLE_PERCENT_BOUNDS[1]} % attendus)")
+    if total > TITLE_MAX_TOTAL_PERCENT:
+        warnings.append(f"{name} : {total} % de bonus au total (au plus {TITLE_MAX_TOTAL_PERCENT} %)")
     return warnings
 
 
