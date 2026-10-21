@@ -16,5 +16,39 @@
         "distillation lente"
       ]
     }
+  ],
+  "item_types": [
+    {
+      "id": "potion_soin",
+      "label": "Potion de soin",
+      "category": "consumable",
+      "effect_type": "heal",
+      "names": [
+        "Potion",
+        "Élixir",
+        "Tonique"
+      ]
+    },
+    {
+      "id": "potion_mana",
+      "label": "Potion de mana",
+      "category": "consumable",
+      "effect_type": "restore_mana",
+      "names": [
+        "Philtre",
+        "Élixir",
+        "Essence"
+      ]
+    },
+    {
+      "id": "reactif",
+      "label": "Réactif",
+      "category": "material",
+      "names": [
+        "Réactif",
+        "Distillat",
+        "Sel alchimique"
+      ]
+    }
   ]
 }

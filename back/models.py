@@ -60,6 +60,8 @@ class CraftRequest(BaseModel):
     workshop_id: str
     inputs: list[CraftInput]
     parameters: dict[str, str]
+    # Type d'objet choisi dans l'atelier (orientation pour un enchantement).
+    item_type: str | None = None
     # Nombre de fois d'affilée : plus d'une fois seulement pour une recette connue.
     times: int = Field(1, ge=1, le=20)
 

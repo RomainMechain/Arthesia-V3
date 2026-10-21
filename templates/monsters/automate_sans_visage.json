@@ -51,6 +51,12 @@
       "quantity_min": 1,
       "quantity_max": 1,
       "weight": 1
+    },
+    {
+      "item_id": "noyau_d_aube_intact",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "chance": 0.004
     }
   ]
 }

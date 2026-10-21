@@ -1,0 +1,18 @@
+{
+  "id": "coeur_d_ecorce",
+  "name": "Cœur d'Écorce",
+  "category": "equipment",
+  "level": 6,
+  "rarity": "epique",
+  "base_value": 720,
+  "stack_size": 1,
+  "description": "Une plaque d'écorce vivante arrachée au Veilleur, portée sur la poitrine. Elle se resserre d'elle-même quand un coup approche.",
+  "equipment": {
+    "slot": "chest",
+    "level_required": 6,
+    "stat_bonuses": {
+      "def": 8,
+      "hp": 60
+    }
+  }
+}

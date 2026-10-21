@@ -1,0 +1,10 @@
+{
+  "id": "croc_d_or_pur",
+  "name": "Croc d'Or Pur",
+  "category": "material",
+  "level": 1,
+  "rarity": "epique",
+  "base_value": 20,
+  "stack_size": 10,
+  "description": "Un croc où la lumière de l'aube s'est figée tout entière. Les loups dorés n'en portent qu'un, rarement, et ne le perdent qu'en mourant."
+}

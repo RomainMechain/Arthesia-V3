@@ -1,0 +1,10 @@
+{
+  "id": "perle_du_lac_miroir",
+  "name": "Perle du Lac-Miroir",
+  "category": "material",
+  "level": 4,
+  "rarity": "epique",
+  "base_value": 80,
+  "stack_size": 10,
+  "description": "Une perle lisse qui ne reflète rien de ce qui l'entoure, seulement un ciel qui n'est pas celui de l'étage. Les carpes la gardent sous leur langue."
+}

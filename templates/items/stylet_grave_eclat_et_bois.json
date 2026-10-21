@@ -9,5 +9,6 @@
   "equipment": {
     "slot": "tool",
     "level_required": 2
-  }
+  },
+  "generation": 1
 }

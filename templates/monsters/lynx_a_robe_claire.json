@@ -39,6 +39,12 @@
       "quantity_min": 1,
       "quantity_max": 1,
       "weight": 10
+    },
+    {
+      "item_id": "griffes_du_lynx_clair",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "chance": 0.006
     }
   ]
 }

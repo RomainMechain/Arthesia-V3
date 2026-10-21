@@ -1,0 +1,10 @@
+{
+  "id": "plume_d_avant_l_aube",
+  "name": "Plume d'avant l'Aube",
+  "category": "material",
+  "level": 7,
+  "rarity": "epique",
+  "base_value": 140,
+  "stack_size": 10,
+  "description": "Une plume qui ne projette aucune ombre, quelle que soit la lumière. On dit qu'elle se souvient de la nuit d'avant l'aube éternelle."
+}

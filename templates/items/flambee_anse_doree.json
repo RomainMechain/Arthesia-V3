@@ -10,5 +10,6 @@
     "effect_type": "heal",
     "amount": 41,
     "duration_seconds": 0
-  }
+  },
+  "generation": 1
 }

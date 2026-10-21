@@ -2383,5 +2383,85 @@
     "tags": [],
     "description": "Le Héraut jugeait ceux qui faisaient tomber les dormants. Il est tombé, lui aussi, plus d'une fois. C'est toi qui juges, maintenant.",
     "floor_origin": 1
+  },
+  {
+    "id": "croc_d_or_pur",
+    "name": "Croc d'Or Pur",
+    "kind": "item",
+    "level": 1,
+    "tags": [],
+    "description": "Un croc où la lumière de l'aube s'est figée tout entière. Les loups dorés n'en portent qu'un, rarement, et ne le perdent qu'en mourant.",
+    "base_value": 20,
+    "floor_origin": 1
+  },
+  {
+    "id": "perle_du_lac_miroir",
+    "name": "Perle du Lac-Miroir",
+    "kind": "item",
+    "level": 4,
+    "tags": [],
+    "description": "Une perle lisse qui ne reflète rien de ce qui l'entoure, seulement un ciel qui n'est pas celui de l'étage. Les carpes la gardent sous leur langue.",
+    "base_value": 80,
+    "floor_origin": 1
+  },
+  {
+    "id": "griffes_du_lynx_clair",
+    "name": "Griffes du Lynx clair",
+    "kind": "item",
+    "level": 5,
+    "tags": [],
+    "description": "Des gants de cuir pâle où l'on a serti les griffes d'un lynx. Ils ne font aucun bruit, même quand on frappe.",
+    "base_value": 600,
+    "floor_origin": 1
+  },
+  {
+    "id": "coeur_d_ecorce",
+    "name": "Cœur d'Écorce",
+    "kind": "item",
+    "level": 6,
+    "tags": [],
+    "description": "Une plaque d'écorce vivante arrachée au Veilleur, portée sur la poitrine. Elle se resserre d'elle-même quand un coup approche.",
+    "base_value": 720,
+    "floor_origin": 1
+  },
+  {
+    "id": "plume_d_avant_l_aube",
+    "name": "Plume d'avant l'Aube",
+    "kind": "item",
+    "level": 7,
+    "tags": [],
+    "description": "Une plume qui ne projette aucune ombre, quelle que soit la lumière. On dit qu'elle se souvient de la nuit d'avant l'aube éternelle.",
+    "base_value": 140,
+    "floor_origin": 1
+  },
+  {
+    "id": "noyau_d_aube_intact",
+    "name": "Noyau d'Aube intact",
+    "kind": "item",
+    "level": 9,
+    "tags": [],
+    "description": "Le cœur d'un automate des Architectes, encore entier et tiède. Ses runes battent lentement, comme s'il attendait un ordre qui ne vient plus.",
+    "base_value": 315,
+    "floor_origin": 1
+  },
+  {
+    "id": "ramure_du_cerf_pale",
+    "name": "Ramure du Cerf Pâle",
+    "kind": "item",
+    "level": 9,
+    "tags": [],
+    "description": "Un fragment de la ramure du Cerf, taillé en pendentif. Celui qui le porte entend le sous-bois se taire à son passage.",
+    "base_value": 1890,
+    "floor_origin": 1
+  },
+  {
+    "id": "sceau_du_heraut",
+    "name": "Sceau du Héraut",
+    "kind": "item",
+    "level": 10,
+    "tags": [],
+    "description": "L'anneau qui scellait les sentences du Héraut. Son métal ne refroidit jamais tout à fait, et il pèse plus lourd au doigt des indécis.",
+    "base_value": 2100,
+    "floor_origin": 1
   }
 ]

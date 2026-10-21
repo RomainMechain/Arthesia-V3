@@ -222,8 +222,36 @@ partagent la part de l'équipement. Une pièce de niveau L vaut donc environ **0
 complète au niveau du joueur donne les 45 % prévus.
 
 - Un objet ordinaire (butin, boutique) suit ce budget.
-- Un craft très cohérent avec le lore peut aller de ×1,5 à ×2, jamais au-delà.
 - L'outil (`tool`) ne donne pas de stats de combat.
+
+### Rareté
+
+Cinq rangs (`balance.RARITIES`). Le rang multiplie les bonus, l'effet d'un consommable et la valeur :
+
+| Rang | Stats | Consommable | Valeur |
+|---|---|---|---|
+| commun | ×1 | ×1 | ×1 |
+| peu commun | ×1,15 | ×1,1 | ×1,5 |
+| rare | ×1,3 | ×1,2 | ×2,5 |
+| épique | ×1,5 | ×1,35 | ×4 |
+| légendaire | ×1,8 | ×1,5 | ×7 |
+
+Le butin et les boutiques ont un rang fixe ; presque tout est commun. Le butin très rare (épique,
+légendaire) est une entrée à chance indépendante : 0,4 à 1 % sur un monstre normal, 3 à 5 % sur une
+élite, jamais sur un boss.
+
+### Craft
+
+- Le joueur choisit le type d'objet. L'objet de base d'une recette vaut 70 % du budget de son niveau
+  si les ingrédients n'ont aucun rapport, 100 % normalement, 115 % s'ils partagent un même lore, et
+  jamais plus de 120 %. Sa valeur est d'environ 85 % de celle des ingrédients (dans 70-130 % de la
+  cible du niveau) : un craft commun fait perdre un peu.
+- Chaque fabrication tire un rang (`craft_rules.rarity_odds`). Cohérence normale : 70 % commun, 22 %
+  peu commun, 7 % rare, 1 % épique. Sans rapport : 92 / 7 / 1. Cohérence de lore : 25 / 35 / 27 / 10 / 3.
+  Chaque rang de rareté d'un ingrédient et chaque niveau de métier d'avance font monter une part des
+  chances d'un cran (au plus 60 %) ; un ingrédient épique garantit au moins un rare.
+- Générations : un objet crafté ne sert d'ingrédient que s'il est de génération 1 ; un objet enchanté
+  ne sert plus jamais. L'enchantement ajoute 20 à 40 % du budget de stats de l'équipement.
 
 ### Valeur de base
 

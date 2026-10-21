@@ -23,7 +23,7 @@ try:
     from .database import db
     from .game_rules import (
         advance_quest_objectives, apply_player_level_ups, compute_final_stats, compute_kill_xp, defeated_entry_key,
-        evaluate_condition, has_defeated_entry, has_fought_echo, is_one_time_per_player, is_shared_entry, respawn_cooldown_seconds,
+        evaluate_condition, has_defeated_entry, has_fought_echo, is_one_time_per_player, is_shared_entry, respawn_cooldown_seconds, roll_rare_drops,
         roll_loot_table, set_hp,
     )
     from .player_store import get_player, get_zone_dynamic_state, save_player, save_zone_dynamic_state
@@ -34,7 +34,7 @@ except ImportError:
     from database import db
     from game_rules import (
         advance_quest_objectives, apply_player_level_ups, compute_final_stats, compute_kill_xp, defeated_entry_key,
-        evaluate_condition, has_defeated_entry, has_fought_echo, is_one_time_per_player, is_shared_entry, respawn_cooldown_seconds,
+        evaluate_condition, has_defeated_entry, has_fought_echo, is_one_time_per_player, is_shared_entry, respawn_cooldown_seconds, roll_rare_drops,
         roll_loot_table, set_hp,
     )
     from player_store import get_player, get_zone_dynamic_state, save_player, save_zone_dynamic_state
@@ -208,6 +208,9 @@ def _apply_monster_kill_rewards_tx(transaction, player_id: str, zone_id: str, en
         # roll_loot_table renvoie au plus un item et une quantité pour ce kill.
         item_id, quantity = loot
         player["inventory"][item_id] = player["inventory"].get(item_id, 0) + quantity
+    rare_loot = [] if echo else roll_rare_drops(monster.get("loot_table", []))
+    for item_id, quantity in rare_loot:
+        player["inventory"][item_id] = player["inventory"].get(item_id, 0) + quantity
 
     xp_gained = compute_kill_xp(monster["level"], monster.get("role", "normal"), player["level"])
     player["xp"] += xp_gained
@@ -226,6 +229,7 @@ def _apply_monster_kill_rewards_tx(transaction, player_id: str, zone_id: str, en
     save_player(player_id, player, transaction)
     return {
         "loot": loot,
+        "rare_loot": rare_loot,
         "echo": echo,
         "xp_gagne": xp_gained,
         "levels_gained": levels_gained,

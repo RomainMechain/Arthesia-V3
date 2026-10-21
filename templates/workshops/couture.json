@@ -16,5 +16,74 @@
         "matelassage"
       ]
     }
+  ],
+  "item_types": [
+    {
+      "id": "plastron",
+      "label": "Plastron",
+      "category": "equipment",
+      "slot": "chest",
+      "stats": [
+        "def",
+        "hp"
+      ],
+      "names": [
+        "Tunique",
+        "Veste",
+        "Mantelet"
+      ]
+    },
+    {
+      "id": "bottes",
+      "label": "Bottes",
+      "category": "equipment",
+      "slot": "boots",
+      "stats": [
+        "agi",
+        "def"
+      ],
+      "names": [
+        "Bottes",
+        "Chausses"
+      ]
+    },
+    {
+      "id": "gants",
+      "label": "Gants",
+      "category": "equipment",
+      "slot": "gloves",
+      "stats": [
+        "agi",
+        "atk"
+      ],
+      "names": [
+        "Gants",
+        "Mitaines"
+      ]
+    },
+    {
+      "id": "capuche",
+      "label": "Capuche",
+      "category": "equipment",
+      "slot": "head",
+      "stats": [
+        "sag",
+        "def"
+      ],
+      "names": [
+        "Capuche",
+        "Bonnet"
+      ]
+    },
+    {
+      "id": "etoffe",
+      "label": "Étoffe",
+      "category": "material",
+      "names": [
+        "Étoffe",
+        "Cuir travaillé",
+        "Toile"
+      ]
+    }
   ]
 }

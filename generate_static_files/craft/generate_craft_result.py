@@ -1,308 +1,64 @@
 #!/usr/bin/env python3
 """
-Tente un craft dans un atelier donné. Vérifie d'abord le cache de recettes (craft_cache.json) :
-si la combinaison exacte (atelier + items triés + paramètres triés) existe déjà, renvoie
-directement le résultat connu, sans appel API. Sinon, appelle l'IA pour générer le nouvel item,
-le sauvegarde comme nouveau template, et enregistre la recette dans le cache pour la prochaine fois.
+Essaie une recette de craft hors du jeu : affiche l'objet de base qu'elle donnerait et les chances de
+chaque rang de rareté, sans rien écrire (ni fichier, ni Firestore, ni cache).
 
-Prérequis :
-    pip install anthropic
+Passe par le vrai service du serveur (back/craft_service.py) : Gemini si GEMINI_API_KEY est définie,
+puis Claude si ANTHROPIC_API_KEY l'est, sinon le générateur sans IA. Pratique pour régler le prompt de
+craft (arthesia_craft_prompt.md) ou vérifier l'équilibrage d'une recette.
 
-Structure de dossiers attendue :
-    templates/workshops/<id>.json      <- définitions des 6 ateliers, à créer à la main (pas générées)
-    templates/items/<id>.json          <- définitions des items (générées par ce script ou par les zones)
-    templates/index.json               <- résumé léger de tous les templates (partagé avec generate_zone_content.py)
-    craft_cache.json                   <- { recipe_key: output_item_id }
+Prérequis : firebase_key.json à la racine du dépôt (le serveur l'exige pour s'importer).
 
 Usage :
-    python generate_craft_result.py --workshop forge --inputs "minerai_fer:1,bois_brut:2" --params "temperature=haute"
+    python generate_craft_result.py --workshop forge --type arme --inputs "branche_morte:2,poil_de_loup_dore:1" --params "temperature=haute"
+    python generate_craft_result.py --workshop forge --type arme --inputs "branche_morte:2" --profession-level 4
 """
 
 import argparse
 import json
-import os
-import re
 import sys
 from pathlib import Path
-from typing import Optional
 
-import anthropic
-
-# Le script est dans generate_static_files/craft/, tandis que templates/ et
-# craft_cache.json sont à la racine du projet. Ces chemins ne dépendent donc
-# pas du dossier depuis lequel la commande est lancée.
-SCRIPT_DIR = Path(__file__).resolve().parent
-PROJECT_ROOT = SCRIPT_DIR.parent.parent
-
-# Chiffres cibles d'équilibrage, calculés par le serveur (back/content_targets.py).
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
-from back import content_targets  # noqa: E402
 
-API_KEY = os.environ.get("ANTHROPIC_API_KEY")
-if not API_KEY:
-    sys.exit("❌ Variable d'environnement ANTHROPIC_API_KEY absente.")
-
-MODEL = "claude-sonnet-5"
-MAX_TOKENS = 16000
-PROMPT_FILE = SCRIPT_DIR / "arthesia_craft_prompt.md"
-TEMPLATES_DIR = PROJECT_ROOT / "templates"
-WORKSHOPS_DIR = TEMPLATES_DIR / "workshops"
-ITEMS_DIR = TEMPLATES_DIR / "items"
-INDEX_FILE = TEMPLATES_DIR / "index.json"
-CRAFT_CACHE_FILE = PROJECT_ROOT / "craft_cache.json"
+from back.balance import RARITIES  # noqa: E402
+from back.content_store import load_template  # noqa: E402
+from back.content_targets import check_template  # noqa: E402
+from back.craft_rules import CraftRuleError, check_output_type, find_item_type, output_generation, rarity_odds  # noqa: E402
+from back.craft_service import build_recipe_key, generate_craft_item  # noqa: E402
 
 
-# =============================================================================
-# CHARGEMENT
-# =============================================================================
+def parse_pairs(text: str | None, separator: str) -> list[tuple[str, str]]:
+    return [tuple(part.split(separator, 1)) for part in (text or "").split(",") if part.strip()]
 
-def load_workshop(workshop_id: str) -> dict:
-    path = WORKSHOPS_DIR / f"{workshop_id}.json"
-    if not path.exists():
-        sys.exit(f"❌ Atelier introuvable : {path}\n"
-                  f"   Les ateliers sont définis à la main (voir Workshop dans le modèle de données), "
-                  f"pas générés par l'IA.")
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
-def load_item(item_id: str) -> dict:
-    path = ITEMS_DIR / f"{item_id}.json"
-    if not path.exists():
-        sys.exit(f"❌ Item introuvable dans templates/items/ : '{item_id}'")
-    item = json.loads(path.read_text(encoding="utf-8"))
-    item["id"] = item.get("id", item_id)
-    return item
-
-
-def load_index() -> list[dict]:
-    if not INDEX_FILE.exists():
-        return []
-    return json.loads(INDEX_FILE.read_text(encoding="utf-8"))
-
-
-def save_index(index: list[dict]) -> None:
-    TEMPLATES_DIR.mkdir(parents=True, exist_ok=True)
-    INDEX_FILE.write_text(json.dumps(index, ensure_ascii=False, indent=2), encoding="utf-8")
-
-
-def load_craft_cache() -> dict:
-    if not CRAFT_CACHE_FILE.exists():
-        return {}
-    return json.loads(CRAFT_CACHE_FILE.read_text(encoding="utf-8"))
-
-
-def save_craft_cache(cache: dict) -> None:
-    CRAFT_CACHE_FILE.write_text(json.dumps(cache, ensure_ascii=False, indent=2), encoding="utf-8")
-
-
-# =============================================================================
-# PARSING DES ARGUMENTS INPUTS/PARAMS
-# =============================================================================
-
-def parse_inputs(raw: str) -> list[dict]:
-    """'minerai_fer:1,bois_brut:2' -> [{'item_id': 'minerai_fer', 'quantity': 1}, ...]"""
-    result = []
-    for part in raw.split(","):
-        item_id, _, qty = part.strip().partition(":")
-        result.append({"item_id": item_id.strip(), "quantity": int(qty) if qty else 1})
-    return result
-
-
-def parse_params(raw: Optional[str]) -> dict:
-    """'temperature=haute,autre=valeur' -> {'temperature': 'haute', 'autre': 'valeur'}"""
-    if not raw:
-        return {}
-    result = {}
-    for part in raw.split(","):
-        key, _, value = part.strip().partition("=")
-        result[key.strip()] = value.strip()
-    return result
-
-
-# =============================================================================
-# CLÉ DE RECETTE CANONIQUE
-# =============================================================================
-
-def build_recipe_key(workshop_id: str, inputs: list[dict], params: dict) -> str:
-    sorted_inputs = sorted(inputs, key=lambda i: i["item_id"])
-    inputs_part = ",".join(f"{i['item_id']}:{i['quantity']}" for i in sorted_inputs)
-    sorted_params = sorted(params.items())
-    params_part = ",".join(f"{k}={v}" for k, v in sorted_params)
-    return f"{workshop_id}|{inputs_part}|{params_part}"
-
-
-# =============================================================================
-# VALIDATION DES PARAMÈTRES DEMANDÉS CONTRE L'ATELIER
-# =============================================================================
-
-def validate_params_against_workshop(workshop: dict, params: dict) -> list[str]:
-    errors = []
-    declared = {p["id"]: p.get("options", []) for p in workshop.get("parameters", [])}
-    for key, value in params.items():
-        if key not in declared:
-            errors.append(f"Paramètre inconnu pour l'atelier '{workshop['id']}' : '{key}'")
-        elif value not in declared[key]:
-            errors.append(f"Valeur '{value}' invalide pour '{key}' — options valides : {declared[key]}")
-    missing = set(declared) - set(params)
-    if missing:
-        errors.append(f"Paramètre(s) manquant(s) : {sorted(missing)}")
-    return errors
-
-
-# =============================================================================
-# APPEL API (uniquement si la combinaison est inédite)
-# =============================================================================
-
-def load_system_prompt() -> str:
-    if not PROMPT_FILE.exists():
-        sys.exit(f"❌ Prompt introuvable : {PROMPT_FILE}")
-    return PROMPT_FILE.read_text(encoding="utf-8")
-
-
-def build_user_message(workshop: dict, params: dict, inputs_full: list[dict]) -> str:
-    workshop_info = {
-        "id": workshop["id"],
-        "name": workshop.get("name"),
-        "description": workshop.get("description"),
-        "parameters_choisis": params,
-    }
-    return (
-        "Génère le résultat de ce craft inédit :\n\n"
-        f"workshop:\n{json.dumps(workshop_info, ensure_ascii=False, indent=2)}\n\n"
-        f"inputs:\n{json.dumps(inputs_full, ensure_ascii=False, indent=2)}\n\n"
-        f"balance_targets:\n{json.dumps(content_targets.craft_inputs_targets(inputs_full), ensure_ascii=False)}\n\n"
-        "Réponds uniquement avec le JSON demandé, sans aucun texte avant ou après."
-    )
-
-
-def extract_json(text: str) -> dict:
-    cleaned = text.strip()
-    cleaned = re.sub(r"^```(?:json)?\s*", "", cleaned)
-    cleaned = re.sub(r"\s*```$", "", cleaned)
-    return json.loads(cleaned)
-
-
-def generate_craft_item(workshop: dict, params: dict, inputs_full: list[dict]) -> dict:
-    client = anthropic.Anthropic(api_key=API_KEY)
-
-    system_prompt = load_system_prompt()
-    user_message = build_user_message(workshop, params, inputs_full)
-
-    print(f"🌐 Combinaison inédite — appel à {MODEL}...")
-    # Streaming : le SDK refuse un appel non streamé au-delà d'environ 21 000
-    # tokens de limite. La réflexion du modèle compte dans cette limite.
-    with client.messages.stream(
-        model=MODEL,
-        max_tokens=MAX_TOKENS,
-        system=system_prompt,
-        messages=[{"role": "user", "content": user_message}],
-    ) as stream:
-        response = stream.get_final_message()
-
-    # Une réponse coupée donne un JSON inutilisable : on s'arrête sans rien écrire.
-    if response.stop_reason == "max_tokens":
-        sys.exit(f"❌ Réponse coupée à {MAX_TOKENS} tokens : rien n'est sauvegardé. "
-                 f"Augmente MAX_TOKENS ou relance.")
-
-    raw_text = "".join(block.text for block in response.content if block.type == "text")
-
-    try:
-        return extract_json(raw_text)["item"]
-    except (json.JSONDecodeError, KeyError):
-        print("❌ Réponse invalide (pas un JSON avec une clé 'item').")
-        print("---- Réponse brute ----")
-        print(raw_text)
-        raise
-
-
-# =============================================================================
-# SAUVEGARDE
-# =============================================================================
-
-def save_new_item(item: dict, full_index: list[dict]) -> Optional[str]:
-    """Sauvegarde le nouvel item si son id ne collisionne pas déjà avec un item existant.
-    Retourne l'id sauvegardé, ou None si la sauvegarde a été refusée."""
-    known_item_ids = {t["id"] for t in full_index if t.get("kind") == "item"}
-    if item["id"] in known_item_ids:
-        print(f"⚠️  Collision : un item '{item['id']}' existe déjà — craft refusé, rien n'est sauvegardé.")
-        print(f"   (Si l'IA a réutilisé un id existant par erreur, relance : la clé de recette est "
-              f"toujours inconnue donc un nouvel appel sera fait.)")
-        return None
-
-    ITEMS_DIR.mkdir(parents=True, exist_ok=True)
-    item_path = ITEMS_DIR / f"{item['id']}.json"
-    item_path.write_text(json.dumps(item, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"  💾 Nouvel item : items/{item['id']}.json")
-
-    full_index.append({
-        "id": item["id"],
-        "name": item.get("name"),
-        "kind": "item",
-        "level": item.get("level"),
-        "tags": item.get("tags", []),
-        "description": item.get("description", ""),
-        "base_value": item.get("base_value"),
-    })
-    save_index(full_index)
-    return item["id"]
-
-
-# =============================================================================
-# MAIN
-# =============================================================================
 
 def main():
-    parser = argparse.ArgumentParser(description="Tente un craft dans un atelier Arthesia.")
-    parser.add_argument("--workshop", type=str, required=True)
-    parser.add_argument("--inputs", type=str, required=True,
-                         help="Format: 'item_id:quantite,item_id:quantite'")
-    parser.add_argument("--params", type=str, default=None,
-                         help="Format: 'param=valeur,param=valeur'")
+    parser = argparse.ArgumentParser(description="Essaie une recette de craft Arthesia, sans rien écrire.")
+    parser.add_argument("--workshop", required=True, help="Id de l'atelier (forge, couture, ...)")
+    parser.add_argument("--type", required=True, help="Type d'objet de l'atelier (arme, potion_soin, ...)")
+    parser.add_argument("--inputs", required=True, help="Format : 'item_id:quantite,item_id:quantite'")
+    parser.add_argument("--params", default=None, help="Format : 'param=valeur,param=valeur'")
+    parser.add_argument("--profession-level", type=int, default=1, help="Niveau du métier, pour les chances de rareté")
     args = parser.parse_args()
 
-    workshop = load_workshop(args.workshop)
-    inputs = parse_inputs(args.inputs)
-    params = parse_params(args.params)
+    workshop = load_template("workshop", args.workshop)
+    parameters = dict(parse_pairs(args.params, "="))
+    inputs = [{**load_template("item", item_id), "quantity": int(quantity)} for item_id, quantity in parse_pairs(args.inputs, ":")]
+    try:
+        item_type = find_item_type(workshop, args.type)
+        generation = output_generation(inputs)
+        check_output_type(item_type, generation)
+    except CraftRuleError as exc:
+        sys.exit(f"❌ {exc}")
 
-    param_errors = validate_params_against_workshop(workshop, params)
-    if param_errors:
-        for e in param_errors:
-            print(f"❌ {e}")
-        sys.exit(1)
-
-    recipe_key = build_recipe_key(args.workshop, inputs, params)
-    cache = load_craft_cache()
-
-    if recipe_key in cache:
-        output_item_id = cache[recipe_key]
-        print(f"✅ Combinaison déjà connue — aucun appel API.")
-        print(f"   Résultat : {output_item_id}")
-        item_path = ITEMS_DIR / f"{output_item_id}.json"
-        if item_path.exists():
-            print(f"\n{item_path.read_text(encoding='utf-8')}")
-        return
-
-    # combinaison inédite : charger le détail complet des items en entrée pour donner du contexte à l'IA
-    inputs_full = []
-    for inp in inputs:
-        item = load_item(inp["item_id"])
-        inputs_full.append({**item, "quantity": inp["quantity"]})
-
-    new_item = generate_craft_item(workshop, params, inputs_full)
-
-    full_index = load_index()
-    for warning in content_targets.check_template({**new_item, "kind": "item"}):
+    recipe_key = build_recipe_key(args.workshop, [{"item_id": i["id"], "quantity": i["quantity"]} for i in inputs], parameters, args.type)
+    item = generate_craft_item(workshop, item_type, parameters, inputs, recipe_key, generation)
+    print(json.dumps(item, ensure_ascii=False, indent=2))
+    for warning in check_template({**item, "kind": "item"}):
         print(f"⚠️  {warning}")
-    saved_id = save_new_item(new_item, full_index)
-
-    if saved_id:
-        cache[recipe_key] = saved_id
-        save_craft_cache(cache)
-        print(f"\n💾 Recette mise en cache : {recipe_key} → {saved_id}")
-        print(f"   Toute combinaison identique donnera désormais ce résultat, sans repasser par l'IA.")
-    else:
-        print(f"\n⚠️  Résultat généré mais non sauvegardé (collision). Recette non mise en cache — "
-              f"relance la commande pour réessayer.")
+    odds = rarity_odds(item["coherence"], inputs, item["level"], args.profession_level)
+    print("\nChances par fabrication : " + " · ".join(f"{rarity} {chance:.1f} %" for rarity, chance in zip(RARITIES, odds)))
 
 
 if __name__ == "__main__":

@@ -3,6 +3,10 @@ import json
 
 from fastapi import APIRouter, HTTPException
 
+try:
+    from .content_store import load_template
+except ImportError:
+    from content_store import load_template
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 SKELETONS_DIR = PROJECT_ROOT / "zone_skeletons"
@@ -133,7 +137,8 @@ def get_template(kind: str, template_id: str) -> dict:
     folder = KIND_TO_FOLDER.get(kind)
     if folder is None:
         raise HTTPException(400, f"Type de template inconnu : {kind}")
-    template = read_json(TEMPLATES_DIR / folder / f"{template_id}.json")
+    # Les objets passent par content_store, qui calcule les variantes de rang.
+    template = load_template(kind, template_id) if kind == "item" else read_json(TEMPLATES_DIR / folder / f"{template_id}.json")
     if kind in SECRET_CONDITION_KINDS:
         # Comment débloquer une compétence ou un titre reste un secret à
         # découvrir (ou à se transmettre entre joueurs) : le serveur seul

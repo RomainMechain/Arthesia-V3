@@ -23,10 +23,13 @@ except ImportError:
     from database import db
 
 
-def build_recipe_key(workshop_id: str, inputs: list[dict], parameters: dict) -> str:
+def build_recipe_key(workshop_id: str, inputs: list[dict], parameters: dict, item_type: str | None = None) -> str:
+    """Clé canonique d'une recette : atelier, ingrédients triés, paramètres et
+    type d'objet choisi (mêmes ingrédients, autre type : autre recette)."""
     sorted_inputs = sorted(inputs, key=lambda item: item["item_id"])
     inputs_part = ",".join(f"{item['item_id']}:{item['quantity']}" for item in sorted_inputs)
-    params_part = ",".join(f"{key}={value}" for key, value in sorted(parameters.items()))
+    choices = {**parameters, **({"type": item_type} if item_type else {})}
+    params_part = ",".join(f"{key}={value}" for key, value in sorted(choices.items()))
     return f"{workshop_id}|{inputs_part}|{params_part}"
 
 
@@ -59,17 +62,24 @@ class CraftAIUnavailable(Exception):
     panne, réponse invalide) : on passe à la suivante."""
 
 
-def craft_user_message(workshop: dict, parameters: dict, inputs_full: list[dict]) -> str:
+# Champs d'un ingrédient utiles à l'IA (le reste de la fiche est du bruit).
+INPUT_FIELDS = ("id", "name", "description", "category", "level", "rarity", "base_value", "quantity", "equipment", "consumable")
+
+
+def craft_user_message(workshop: dict, item_type: dict, parameters: dict, inputs_full: list[dict]) -> str:
     workshop_info = {
         "id": workshop["id"],
         "name": workshop.get("name"),
         "description": workshop.get("description"),
         "parameters_choisis": parameters,
     }
+    requested = {key: item_type[key] for key in ("label", "category", "slot", "effect_type", "stats") if key in item_type}
+    inputs = [{key: item[key] for key in INPUT_FIELDS if key in item} for item in inputs_full]
     return (
         "Génère le résultat de ce craft inédit :\n\n"
         f"workshop:\n{json.dumps(workshop_info, ensure_ascii=False, indent=2)}\n\n"
-        f"inputs:\n{json.dumps(inputs_full, ensure_ascii=False, indent=2)}\n\n"
+        f"type_demande:\n{json.dumps(requested, ensure_ascii=False)}\n\n"
+        f"inputs:\n{json.dumps(inputs, ensure_ascii=False, indent=2)}\n\n"
         f"balance_targets:\n{json.dumps(craft_inputs_targets(inputs_full), ensure_ascii=False)}\n\n"
         "Réponds uniquement avec le JSON demandé, sans aucun texte avant ou après."
     )
@@ -127,7 +137,7 @@ def parse_craft_item(raw_text: str) -> dict:
         item = json.loads(cleaned)["item"]
     except (json.JSONDecodeError, KeyError, TypeError) as exc:
         raise CraftAIUnavailable("JSON de craft invalide") from exc
-    if not isinstance(item, dict) or not item.get("name") or item.get("category") not in ("material", "equipment", "consumable"):
+    if not isinstance(item, dict) or not item.get("name"):
         raise CraftAIUnavailable("objet de craft incomplet")
     return item
 
@@ -135,12 +145,14 @@ def parse_craft_item(raw_text: str) -> dict:
 CRAFT_AI_PROVIDERS = (("gemini", ask_gemini), ("claude", ask_claude))
 
 
-def generate_craft_item(workshop: dict, parameters: dict, inputs_full: list[dict], recipe_key: str) -> dict:
-    """Objet d'un craft inédit : la première IA disponible l'invente, sinon le
-    générateur sans IA le compose. Le craft ne tombe donc jamais en panne.
-    Le résultat est toujours ramené dans les bornes d'équilibrage."""
+def generate_craft_item(workshop: dict, item_type: dict, parameters: dict, inputs_full: list[dict], recipe_key: str,
+                        generation: int) -> dict:
+    """Objet de base d'un craft inédit, du type choisi : la première IA
+    disponible l'invente, sinon le générateur sans IA le compose. Le craft ne
+    tombe donc jamais en panne. Le résultat est toujours ramené dans les bornes
+    d'équilibrage (normalize_craft_item)."""
     system = load_craft_system_prompt()
-    message = craft_user_message(workshop, parameters, inputs_full)
+    message = craft_user_message(workshop, item_type, parameters, inputs_full)
     for name, ask in CRAFT_AI_PROVIDERS:
         try:
             item = parse_craft_item(ask(system, message))
@@ -149,8 +161,8 @@ def generate_craft_item(workshop: dict, parameters: dict, inputs_full: list[dict
         except CraftAIUnavailable as exc:
             print(f"⚠ Craft IA ({name}) indisponible : {exc}")
     else:
-        item = procedural_craft_item(workshop, parameters, inputs_full, recipe_key)
-    return normalize_craft_item(item, inputs_full)
+        item = procedural_craft_item(workshop, item_type, parameters, inputs_full, recipe_key)
+    return normalize_craft_item(item, inputs_full, item_type, generation)
 
 
 # Les objets inventés par un craft sont écrits comme templates locaux, et aussi

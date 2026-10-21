@@ -2,8 +2,75 @@
   "id": "forge",
   "name": "Forge",
   "description": "Fond et façonne les métaux et alliages.",
-  "profession_required": { "profession_id": "forgeron" },
+  "profession_required": {
+    "profession_id": "forgeron"
+  },
   "parameters": [
-    { "id": "temperature", "label": "Température", "type": "choice", "options": ["basse", "moyenne", "haute", "extreme"] }
+    {
+      "id": "temperature",
+      "label": "Température",
+      "type": "choice",
+      "options": [
+        "basse",
+        "moyenne",
+        "haute",
+        "extreme"
+      ]
+    }
+  ],
+  "item_types": [
+    {
+      "id": "arme",
+      "label": "Arme",
+      "category": "equipment",
+      "slot": "weapon",
+      "stats": [
+        "atk",
+        "agi"
+      ],
+      "names": [
+        "Lame",
+        "Épée courte",
+        "Hachette",
+        "Masse"
+      ]
+    },
+    {
+      "id": "casque",
+      "label": "Casque",
+      "category": "equipment",
+      "slot": "head",
+      "stats": [
+        "def",
+        "hp"
+      ],
+      "names": [
+        "Heaume",
+        "Casque"
+      ]
+    },
+    {
+      "id": "gants",
+      "label": "Gantelets",
+      "category": "equipment",
+      "slot": "gloves",
+      "stats": [
+        "atk",
+        "def"
+      ],
+      "names": [
+        "Gantelets"
+      ]
+    },
+    {
+      "id": "alliage",
+      "label": "Alliage",
+      "category": "material",
+      "names": [
+        "Alliage",
+        "Lingot",
+        "Barre forgée"
+      ]
+    }
   ]
 }

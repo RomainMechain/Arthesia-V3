@@ -16,5 +16,59 @@
         "gravée"
       ]
     }
+  ],
+  "item_types": [
+    {
+      "id": "amulette",
+      "label": "Amulette",
+      "category": "equipment",
+      "slot": "amulet",
+      "stats": [
+        "def",
+        "sag"
+      ],
+      "names": [
+        "Talisman",
+        "Médaillon"
+      ]
+    },
+    {
+      "id": "anneau",
+      "label": "Anneau",
+      "category": "equipment",
+      "slot": "ring",
+      "stats": [
+        "agi",
+        "def"
+      ],
+      "names": [
+        "Anneau taillé",
+        "Chevalière"
+      ]
+    },
+    {
+      "id": "diademe",
+      "label": "Diadème",
+      "category": "equipment",
+      "slot": "head",
+      "stats": [
+        "int",
+        "def"
+      ],
+      "names": [
+        "Diadème",
+        "Couronne de bois"
+      ]
+    },
+    {
+      "id": "composant",
+      "label": "Composant",
+      "category": "material",
+      "names": [
+        "Pièce taillée",
+        "Ornement",
+        "Composant sculpté"
+      ]
+    }
   ]
 }

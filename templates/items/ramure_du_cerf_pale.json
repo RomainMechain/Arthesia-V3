@@ -1,0 +1,19 @@
+{
+  "id": "ramure_du_cerf_pale",
+  "name": "Ramure du Cerf Pâle",
+  "category": "equipment",
+  "level": 9,
+  "rarity": "legendaire",
+  "base_value": 1890,
+  "stack_size": 1,
+  "description": "Un fragment de la ramure du Cerf, taillé en pendentif. Celui qui le porte entend le sous-bois se taire à son passage.",
+  "equipment": {
+    "slot": "amulet",
+    "level_required": 9,
+    "stat_bonuses": {
+      "agi": 5,
+      "sag": 8,
+      "hp": 50
+    }
+  }
+}

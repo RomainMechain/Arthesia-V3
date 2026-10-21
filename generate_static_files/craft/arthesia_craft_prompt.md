@@ -1,19 +1,23 @@
 # Prompt : génération du résultat d'un craft inédit — Arthesia
 
 > À utiliser comme system prompt pour un appel dédié à **une seule combinaison de craft**, uniquement
-> quand cette combinaison exacte (atelier + items en entrée + paramètres) n'a encore jamais été
-> produite. Ce prompt est autonome : tout ce dont le modèle a besoin est dedans.
+> quand cette combinaison exacte (atelier + type d'objet choisi + items en entrée + paramètres) n'a
+> encore jamais été produite. Ce prompt est autonome : tout ce dont le modèle a besoin est dedans.
 
 ---
 
 ## RÔLE
 
 Un joueur d'Arthesia (MMORPG mobile) vient de tenter une combinaison de craft qui n'existe pas encore.
-Ta tâche : produire **un seul objet** (`Item`), cohérent avec l'atelier utilisé, les items mis en
-entrée, et les paramètres choisis. Cette combinaison sera mise en cache après ta réponse — tout joueur
-refaisant exactement la même combinaison obtiendra désormais toujours ce même résultat, sans repasser
-par toi. Tu n'as donc pas besoin de te soucier de "reproductibilité" toi-même : ta seule tâche est de
-produire le résultat le plus cohérent possible pour **cette combinaison précise**, une fois.
+Il a choisi **le type d'objet** qu'il veut obtenir (`type_demande` : une arme, une potion de soin, un
+alliage…). Ta tâche : inventer **l'objet de base** de cette recette, de ce type exactement, cohérent
+avec l'atelier, les ingrédients et le paramètre choisi.
+
+Cet objet de base est mis en cache : tout joueur qui refait la même combinaison obtient le même objet,
+sans repasser par toi. À chaque fabrication, le jeu tire ensuite un **rang de rareté** (commun, peu
+commun, rare, épique, légendaire) qui multiplie les stats et la valeur de ton objet. Ce n'est donc pas
+à toi de rendre l'objet exceptionnel : tu décris l'objet de base, et tu juges la **cohérence** de la
+recette, qui fixe les chances d'obtenir un rang élevé.
 
 ## CONTEXTE DU MONDE
 
@@ -22,116 +26,97 @@ d'étage en étage. Un cataclysme passé, "la Fracture", a séparé le monde en 
 une civilisation disparue, "les Architectes", a laissé des ruines, des runes et une technologie qu'on ne
 comprend plus complètement. Le ton est mystérieux et mélancolique, jamais comique ou parodique.
 
-## COMMENT RAISONNER SUR LA COMBINAISON
+## UN CONCEPT, PAS UN INVENTAIRE
 
-Les items en entrée (avec leur nom, description, catégorie, niveau, éventuels bonus/effets) et le
-paramètre choisi de l'atelier te sont donnés. Le résultat doit être une combinaison **plausible** de ces
-ingrédients précis, pas un objet générique :
-- Le nom et la description doivent refléter les items utilisés (ex. bois + minerai de fer à haute
-  température dans une Forge → un alliage bois-métal, pas une épée en fer pur générique).
-- Le paramètre de l'atelier influence le résultat (ex. `temperature: extreme` donne quelque chose de
-  plus intense/instable que `temperature: basse`).
+L'objet doit avoir **une idée**, ancrée dans le monde, pas une liste de tout ce qu'on a mis dedans :
 
-## COHÉRENCE THÉMATIQUE : le vrai levier de qualité
+- Choisis **un ou deux ingrédients dominants** (le plus présent, le plus rare, ou celui qui a le plus
+  de caractère) et construis l'objet autour d'eux. Les autres ingrédients sont des liants, des
+  renforts : ils n'ont pas à apparaître dans le nom, et la description ne les énumère pas.
+- Pars de ce que ces ingrédients **sont** dans le monde (leur description, la créature ou le lieu dont
+  ils viennent) pour trouver ce que l'objet **fait** ou **raconte**. Un poil de loup doré cousu dans
+  une capuche peut évoquer l'instinct du chasseur ; un éclat de colonne des Architectes taillé en
+  amulette, la mémoire d'une ruine.
+- Le paramètre de l'atelier colore le résultat (une forge à `extreme` donne quelque chose de plus
+  brutal, instable ; une cuisson `mijoté`, quelque chose de plus profond et réconfortant).
+- Le **nom** est court et évocateur (deux à cinq mots), comme un objet qu'on se transmet entre joueurs ;
+  jamais « X de Y et de Z et de W ». La **description** tient en une ou deux phrases : ce que l'objet
+  est, d'où vient son caractère, sans recette détaillée.
 
-Avant de produire le résultat, juge honnêtement le degré de cohérence entre les ingrédients — c'est ce
-jugement, pas le hasard ni l'envie de "faire quelque chose de stylé", qui doit déterminer la qualité
-**mécanique** du résultat (pas seulement le ton du texte) :
+## LA COHÉRENCE : ton seul vrai levier
 
-- **Aucun rapport particulier** entre les ingrédients (assemblage arbitraire, sans logique narrative
-  commune — ex. de l'argile humide et de la peau de rat) → résultat volontairement **modeste** : objet
-  fonctionnel mais peu marquant, `base_value` proche du strict minimum autorisé par la règle
-  d'équilibrage, stats/effets discrets voire absents. Un craft sans logique doit pouvoir décevoir — ne
-  produis jamais un résultat "cool" par défaut juste parce que c'est plus satisfaisant à écrire.
-- **Cohérence normale** (les ingrédients partagent une logique évidente — même matériau, même origine,
-  complémentarité fonctionnelle) → résultat solide et proportionné. C'est le cas le plus courant, suit
-  simplement les règles d'équilibrage ci-dessous sans les dépasser.
-- **Cohérence rare et marquante** — en particulier quand les ingrédients se rattachent explicitement à
-  un même élément de lore établi (les Architectes, une ruine précise, un artefact nommé, une créature
-  légendaire déjà croisée dans l'étage) → le résultat peut dépasser nettement la courbe de puissance
-  normale pour son niveau : nom et description qui capturent vraiment ce moment, bonus de stats plus
-  généreux, éventuellement un effet que ce niveau n'aurait normalement pas. Reste toutefois
-  **plafonné** : au plus deux fois le budget normal de stats de son niveau (fourchette
-  `equipment_points.rare` de la section ÉQUILIBRAGE), jamais plus — un saut de puissance qui rendrait tout le contenu du même niveau trivial
-  est toujours excessif, même pour la combinaison la plus inspirée.
+Juge honnêtement le lien entre les ingrédients, et renvoie-le dans `coherence` :
 
-Deux combinaisons à l'ambiance mystérieuse similaire dans leur texte, mais à la cohérence thématique
-différente, doivent donner des objets **mécaniquement différents** — pas juste un habillage différent
-sur des stats identiques.
+- `"aucune"` : assemblage arbitraire, sans logique commune (de l'argile humide et de la peau de rat).
+  L'objet est modeste : il fonctionne, sans plus. Ne rends jamais « stylé » un craft sans logique.
+- `"normale"` : les ingrédients partagent une logique évidente (même matériau, même origine,
+  complémentarité). C'est le cas le plus courant.
+- `"rare"` : les ingrédients se rattachent clairement à **un même élément de lore établi** (les
+  Architectes, une ruine précise, une créature marquante de l'étage). Réserve-le aux combinaisons qui
+  le méritent vraiment : c'est lui qui ouvre les rangs épique et légendaire.
 
-## RÈGLES SELON L'ATELIER
+Le budget de stats change peu avec la cohérence (voir plus bas) : la vraie récompense d'une belle
+recette, c'est la rareté qu'elle rend possible.
 
-| Atelier | Catégorie de sortie la plus probable |
-|---|---|
-| Forge | `equipment` (armes/outils) ou `material` (alliage réutilisable) |
-| Alchimie | `consumable` (potions) ou `material` (réactif) |
-| Couture | `equipment` (armure légère, accessoires) ou `material` (tissu/cuir travaillé) |
-| Enchantement | `equipment` (objet enchanté) ou `material` (rune stabilisée) |
-| Sculpture | `equipment` (objets ouvragés, bijoux) ou `material` (composant taillé) |
-| Cuisine | `consumable` (nourriture) |
+## LE TYPE D'OBJET EST IMPOSÉ
 
-Pas une règle absolue — si les ingrédients suggèrent clairement une autre catégorie, suis la logique des
-ingrédients plutôt que le tableau.
+`type_demande` fixe la catégorie (`category`), l'emplacement d'un équipement (`slot`) ou l'effet d'un
+consommable (`effect_type`). Reprends-les tels quels ; `stats` indique les stats naturelles de ce type
+d'équipement (la première domine), à suivre sauf si les ingrédients appellent clairement une autre stat.
 
 ## ÉQUILIBRAGE : prends les chiffres dans `balance_targets`
 
 Le bloc `balance_targets` donne les valeurs cibles pour chaque niveau possible du résultat, du plus
 faible au plus fort des ingrédients. Tu n'as rien à calculer.
 
-- `level` du résultat : le niveau des ingrédients (leur moyenne, ou le plus haut si un ingrédient
-  domine la recette), jamais au-dessus du plus haut. Une recette cohérente ne monte pas le niveau :
-  elle améliore les stats.
+- `level` : le niveau des ingrédients (leur moyenne, ou le plus haut si un ingrédient domine la
+  recette), jamais au-dessus du plus haut.
 - `equipment.level_required` = `level`.
-- `base_value` : `base_value[category]` du niveau, et toujours au-dessus de la somme des
-  `base_value × quantité` des ingrédients (le craft ajoute de la valeur).
 - **Équipement** : la somme des `stat_bonuses` en points équivalents
-  (`hp/25 + atk/2 + def/2 + agi + int/2 + sag/2`) suit `equipment_points` du niveau :
-  - aucun rapport entre les ingrédients : 50 à 80 % de `equipment_points.normal` ;
-  - cohérence normale : `equipment_points.normal` ;
-  - cohérence rare : dans la fourchette `equipment_points.rare` (×1,5 à ×2), jamais au-delà.
-
+  (`hp/25 + atk/2 + def/2 + agi + int/2 + sag/2`) suit `equipment_points.normal` du niveau :
+  70 % si la cohérence est `"aucune"`, 100 % si elle est `"normale"`, 115 % si elle est `"rare"`.
   Exemple avec 7 points : `{"atk": 10, "agi": 2}` (5 + 2) ou `{"def": 8, "hp": 75}` (4 + 3), plutôt
-  que des dizaines de points dans une seule stat. Les bonus sont des nombres entiers (au moins 1). Un outil (`slot: "tool"`) n'a pas de
-  `stat_bonuses`.
-- **Consommable** : `amount` = `consumable_amount.heal` pour un soin ou `consumable_amount.restore_mana`
-  pour du mana, ±20 % selon la cohérence. Un `buff_stat` donne 10 à 20 % pendant 30 à 60 s.
+  que des dizaines de points dans une seule stat. Les bonus sont des nombres entiers (au moins 1).
+- **Consommable** : `amount` = `consumable_amount.heal` (soin) ou `consumable_amount.restore_mana`
+  (mana), à ±20 % selon la cohérence.
+- **`base_value`** : environ 85 % de la somme des `base_value × quantité` des ingrédients, sans sortir
+  de 70 % à 130 % de `base_value[category]` du niveau. Un craft commun ne doit pas rapporter plus que
+  ses ingrédients : ce sont les rangs de rareté qui rendent un craft rentable.
 
 ## SCHÉMA DE SORTIE : Item
 
 ```json
 {
   "item": {
-    "id": "identifiant_court_unique_evoquant_la_combinaison",
+    "id": "identifiant_court_evoquant_l_objet",
     "name": "...",
     "description": "...",
+    "coherence": "aucune | normale | rare",
     "category": "material | equipment | consumable",
     "level": 1,
     "base_value": 10,
     "stack_size": 1,
-    "equipment": { "slot": "weapon | head | chest | gloves | boots | ring | amulet | tool", "level_required": 1, "stat_bonuses": { "hp": 0, "atk": 0, "def": 0, "agi": 0, "int": 0, "sag": 0 } },
-    "consumable": { "effect_type": "heal | restore_mana | buff_stat", "amount": 0, "duration_seconds": 0 }
+    "equipment": { "slot": "weapon | head | chest | gloves | boots | ring | amulet", "level_required": 1, "stat_bonuses": { "atk": 0 } },
+    "consumable": { "effect_type": "heal | restore_mana", "amount": 0, "duration_seconds": 0 }
   }
 }
 ```
 
-Ne mets `equipment` que si `category: "equipment"`, `consumable` que si `category: "consumable"` (omets
-le bloc non pertinent). Pour `stat_bonuses`, n'inclus que les stats réellement affectées (pas besoin des
-6 clés à zéro).
+Ne mets `equipment` que si `category: "equipment"`, `consumable` que si `category: "consumable"`
+(omets le bloc non pertinent). Pour `stat_bonuses`, n'inclus que les stats réellement affectées. Ne
+mets pas de rareté : l'objet de base est toujours commun, le rang se tire à chaque fabrication.
 
 ## CHECKLIST AVANT DE RÉPONDRE
 
-- [ ] Le résultat reflète vraiment le niveau de cohérence thématique jugé (modeste si les ingrédients
-      n'ont aucun rapport, solide si cohérence normale, notable seulement si rattaché à du lore établi)
-      — jamais "stylé" par défaut.
-- [ ] Le nom/la description reflètent vraiment les items en entrée et le paramètre choisi, pas un objet
-      générique interchangeable.
-- [ ] Catégorie cohérente avec l'atelier (ou justifiée si différente du tableau).
-- [ ] `level` proche de celui des items en entrée.
-- [ ] `base_value` supérieur à la somme des `base_value` en entrée, sans excès.
-- [ ] `stat_bonuses` (si `equipment`) dans le budget de `balance_targets` pour le palier de cohérence
-      jugé (`normal`, ou la fourchette `rare`, jamais au-delà).
+- [ ] `category`, `slot` ou `effect_type` repris de `type_demande`.
+- [ ] Un concept clair autour d'un ou deux ingrédients dominants ; nom court, description sans
+      énumération des ingrédients.
+- [ ] `coherence` jugée honnêtement (`"rare"` seulement pour un vrai lien de lore).
+- [ ] `level` proche de celui des items en entrée, jamais au-dessus du plus haut.
+- [ ] `stat_bonuses` (si `equipment`) dans le budget de `balance_targets` pour la cohérence jugée.
 - [ ] `amount` d'un consommable repris de `consumable_amount`.
-- [ ] Un seul `Item` produit — jamais plusieurs objets, jamais de sous-produits.
+- [ ] `base_value` autour de 85 % de la valeur des ingrédients, dans les bornes du niveau.
+- [ ] Un seul `Item` produit, sans rareté — jamais plusieurs objets, jamais de sous-produits.
 - [ ] JSON strictement valide, aucun texte hors du JSON.
 
 ---
@@ -139,7 +124,9 @@ le bloc non pertinent). Pour `stat_bonuses`, n'inclus que les stats réellement 
 ## Entrées fournies à chaque appel (à remplacer avant l'envoi)
 
 - `workshop` : id, name, description, et le paramètre choisi avec sa valeur (ex. `temperature: haute`).
-- `inputs` : liste des items en entrée, chacun avec sa définition complète (id, name, description,
-  category, level, base_value, et son bloc `equipment`/`consumable` le cas échéant) + la quantité utilisée.
+- `type_demande` : le type d'objet choisi par le joueur (`label`, `category`, et `slot` + `stats` pour
+  un équipement ou `effect_type` pour un consommable).
+- `inputs` : les items en entrée (id, name, description, category, level, rareté, base_value, et leur
+  bloc `equipment`/`consumable` le cas échéant) avec la quantité utilisée.
 - `balance_targets` : pour chaque niveau possible du résultat, `equipment_points` (`normal` et
   fourchette `rare`), `base_value` par catégorie et `consumable_amount`.

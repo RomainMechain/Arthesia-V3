@@ -1,7 +1,7 @@
 {
   "id": "enchantement",
   "name": "Enchantement",
-  "description": "Grave et éveille les runes pour lier une force aux objets.",
+  "description": "Grave une rune dans un équipement pour le renforcer. Un objet ne s'enchante qu'une fois.",
   "profession_required": {
     "profession_id": "enchanteur"
   },
@@ -15,6 +15,45 @@
         "stable",
         "instable",
         "profonde"
+      ]
+    }
+  ],
+  "mode": "enchant",
+  "item_types": [
+    {
+      "id": "force",
+      "label": "Force",
+      "stats": [
+        "atk"
+      ]
+    },
+    {
+      "id": "arcane",
+      "label": "Arcane",
+      "stats": [
+        "int"
+      ]
+    },
+    {
+      "id": "garde",
+      "label": "Garde",
+      "stats": [
+        "def",
+        "hp"
+      ]
+    },
+    {
+      "id": "vivacite",
+      "label": "Vivacité",
+      "stats": [
+        "agi"
+      ]
+    },
+    {
+      "id": "sagesse",
+      "label": "Sagesse",
+      "stats": [
+        "sag"
       ]
     }
   ]

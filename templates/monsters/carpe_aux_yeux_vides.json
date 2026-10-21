@@ -45,6 +45,12 @@
       "quantity_min": 1,
       "quantity_max": 2,
       "weight": 4
+    },
+    {
+      "item_id": "perle_du_lac_miroir",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "chance": 0.007
     }
   ]
 }

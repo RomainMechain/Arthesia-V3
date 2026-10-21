@@ -1,0 +1,10 @@
+{
+  "id": "noyau_d_aube_intact",
+  "name": "Noyau d'Aube intact",
+  "category": "material",
+  "level": 9,
+  "rarity": "legendaire",
+  "base_value": 315,
+  "stack_size": 10,
+  "description": "Le cœur d'un automate des Architectes, encore entier et tiède. Ses runes battent lentement, comme s'il attendait un ordre qui ne vient plus."
+}

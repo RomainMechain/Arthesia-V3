@@ -6,8 +6,10 @@ from fastapi import HTTPException
 
 try:
     from .config import KIND_TO_FOLDER, SKELETONS_DIR, TEMPLATES_DIR, ZONES_DIR
+    from .rarity import apply_rarity, split_variant_id
 except ImportError:
     from config import KIND_TO_FOLDER, SKELETONS_DIR, TEMPLATES_DIR, ZONES_DIR
+    from rarity import apply_rarity, split_variant_id
 
 
 def load_static_zone_content(zone_id: str) -> dict:
@@ -37,6 +39,11 @@ def find_quest_givers(quest_id: str) -> list[dict]:
 
 
 def load_template(kind: str, template_id: str) -> dict:
+    # Une variante de rang (« lame~rare ») se calcule depuis sa fiche de base.
+    if kind == "item":
+        base_id, rarity = split_variant_id(template_id)
+        if rarity is not None:
+            return apply_rarity(load_template("item", base_id), rarity)
     folder = KIND_TO_FOLDER.get(kind)
     if folder is None:
         raise HTTPException(404, f"Type de template introuvable en local : {kind}")

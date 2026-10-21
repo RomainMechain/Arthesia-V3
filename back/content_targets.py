@@ -185,11 +185,24 @@ def level_targets(level: int, tier: str = "coeur") -> dict:
     }
 
 
+# Rareté d'un objet de zone : ses stats, l'effet d'un consommable et sa valeur
+# se multiplient selon son rang. Le butin très rare est une entrée à « chance »
+# indépendante (probabilité par victoire), selon le rôle du monstre.
+RARITY_TARGETS = {
+    rarity: {"stats": balance.RARITY_STAT_MULTIPLIER[rarity], "consumable": balance.RARITY_CONSUMABLE_MULTIPLIER[rarity],
+             "base_value": balance.RARITY_VALUE_MULTIPLIER[rarity]}
+    for rarity in balance.RARITIES
+}
+RARE_LOOT_CHANCE = {"normal": [0.004, 0.01], "elite": [0.03, 0.05]}
+
+
 def zone_targets(level_range: list[int], tier: str = "coeur") -> dict:
     low, high = level_range[0], level_range[-1]
     return {
         "difficulty_tier": tier,
         "quest_objective_counts": QUEST_OBJECTIVE_COUNTS,
+        "rarity_multipliers": RARITY_TARGETS,
+        "rare_loot_chance": RARE_LOOT_CHANCE,
         "levels": [level_targets(level, tier) for level in range(max(low, 1), max(high, low, 1) + 1)],
     }
 
@@ -344,19 +357,23 @@ def check_template(template: dict, tier: str = "coeur") -> list[str]:
             warnings.append(f"{name} : {found} attaque(s) télégraphiée(s), {expected} attendue(s) pour un {role}")
 
     elif kind == "item" or template.get("category"):
+        # Les cibles d'un objet dépendent de son rang de rareté (balance.RARITY_*).
         category = template.get("category")
-        if category in BASE_VALUE_PER_LEVEL and _off(template.get("base_value", 0), base_value(level, category), 0.5):
-            warnings.append(f"{name} : base_value {template.get('base_value')} (cible {base_value(level, category)})")
+        rarity = template.get("rarity") if template.get("rarity") in balance.RARITIES else "commun"
+        target_value = round(base_value(level, category) * balance.RARITY_VALUE_MULTIPLIER[rarity]) if category in BASE_VALUE_PER_LEVEL else 0
+        if category in BASE_VALUE_PER_LEVEL and _off(template.get("base_value", 0), target_value, 0.5):
+            warnings.append(f"{name} : base_value {template.get('base_value')} (cible {target_value})")
         equipment = template.get("equipment") or {}
         if category == "equipment" and equipment.get("slot") in COMBAT_SLOTS:
             points = equipment_points_of(equipment.get("stat_bonuses", {}))
-            budget = equipment_points(level)
+            budget = round(equipment_points(level) * balance.RARITY_STAT_MULTIPLIER[rarity], 1)
             if points > budget * EQUIPMENT_POINTS_MAX_MULTIPLIER * (1 + TOLERANCE) or points < budget * 0.5:
                 warnings.append(f"{name} : {points} points de stats (cible {budget}, max {round(budget * EQUIPMENT_POINTS_MAX_MULTIPLIER, 1)})")
         consumable = template.get("consumable") or {}
         effect = consumable.get("effect_type")
-        if category == "consumable" and effect in CONSUMABLE_SHARE and _off(consumable.get("amount", 0), consumable_amount(level, effect), 0.5):
-            warnings.append(f"{name} : {effect} {consumable.get('amount')} (cible {consumable_amount(level, effect)})")
+        target_amount = round(consumable_amount(level, effect) * balance.RARITY_CONSUMABLE_MULTIPLIER[rarity]) if effect in CONSUMABLE_SHARE else 0
+        if category == "consumable" and effect in CONSUMABLE_SHARE and _off(consumable.get("amount", 0), target_amount, 0.5):
+            warnings.append(f"{name} : {effect} {consumable.get('amount')} (cible {target_amount})")
 
     return warnings
 

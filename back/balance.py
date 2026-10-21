@@ -269,3 +269,18 @@ def defeat_penalty(level: int, xp: int, gold: int) -> dict:
     xp_lost = min(xp, round(xp_to_next_level(level) * DEFEAT_XP_SHARE))
     gold_lost = min(gold, round(gold * DEFEAT_GOLD_SHARE), DEFEAT_GOLD_CAP_PER_LEVEL * max(level, 1))
     return {"xp_lost": max(0, xp_lost), "gold_lost": max(0, gold_lost)}
+
+
+# -----------------------------------------------------------------------------
+# Rareté des objets
+#
+# Cinq rangs. Un rang multiplie les bonus d'un équipement, l'effet d'un
+# consommable et la valeur de revente. Le butin et les boutiques ont un rang
+# fixe (champ ``rarity`` de la fiche, « commun » par défaut) ; un craft tire le
+# sien à chaque fabrication (voir rarity.py).
+# -----------------------------------------------------------------------------
+
+RARITIES = ("commun", "peu_commun", "rare", "epique", "legendaire")
+RARITY_STAT_MULTIPLIER = {"commun": 1.0, "peu_commun": 1.15, "rare": 1.3, "epique": 1.5, "legendaire": 1.8}
+RARITY_CONSUMABLE_MULTIPLIER = {"commun": 1.0, "peu_commun": 1.1, "rare": 1.2, "epique": 1.35, "legendaire": 1.5}
+RARITY_VALUE_MULTIPLIER = {"commun": 1.0, "peu_commun": 1.5, "rare": 2.5, "epique": 4.0, "legendaire": 7.0}

@@ -54,6 +54,12 @@
       "quantity_min": 1,
       "quantity_max": 1,
       "weight": 2
+    },
+    {
+      "item_id": "coeur_d_ecorce",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "chance": 0.04
     }
   ]
 }

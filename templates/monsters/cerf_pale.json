@@ -60,6 +60,12 @@
       "quantity_min": 1,
       "quantity_max": 1,
       "weight": 2
+    },
+    {
+      "item_id": "ramure_du_cerf_pale",
+      "quantity_min": 1,
+      "quantity_max": 1,
+      "chance": 0.03
     }
   ]
 }

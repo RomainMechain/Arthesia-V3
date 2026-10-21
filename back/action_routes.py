@@ -24,6 +24,11 @@ try:
         build_recipe_key, generate_craft_item, get_cached_craft,
         save_craft_cache, save_new_craft_item,
     )
+    from .craft_rules import (
+        CraftRuleError, check_output_type, enchant_item, find_item_type, is_enchant_workshop, output_generation,
+        rarity_odds, roll_rarity, split_enchant_inputs,
+    )
+    from .rarity import item_rarity, rarity_rank, variant_id
     from .balance import MAX_ACTIVE_SKILL_SLOTS, MAX_PASSIVE_SKILL_SLOTS, max_item_level_for, respec_cost, profession_action_xp, profession_level_for, profession_xp_to_next_level
     from .database import db
     from .game_rules import (
@@ -43,6 +48,11 @@ except ImportError:
         build_recipe_key, generate_craft_item, get_cached_craft,
         save_craft_cache, save_new_craft_item,
     )
+    from craft_rules import (
+        CraftRuleError, check_output_type, enchant_item, find_item_type, is_enchant_workshop, output_generation,
+        rarity_odds, roll_rarity, split_enchant_inputs,
+    )
+    from rarity import item_rarity, rarity_rank, variant_id
     from balance import MAX_ACTIVE_SKILL_SLOTS, MAX_PASSIVE_SKILL_SLOTS, max_item_level_for, respec_cost, profession_action_xp, profession_level_for, profession_xp_to_next_level
     from database import db
     from game_rules import (
@@ -404,12 +414,14 @@ def recent_new_recipes(player: dict) -> list:
 
 @router.post("/actions/craft")
 def craft(req: CraftRequest):
-    """Fabrique un item après validation de l'atelier, des paramètres et de l'inventaire.
+    """Fabrique un objet du type choisi, ou enchante un équipement (craft_rules).
 
     Une recette connue est servie depuis le cache Firestore ; une recette
-    inédite appelle Claude, sauvegarde le nouvel item et enregistre le résultat
-    dans le cache. Les ingrédients ne sont consommés qu'une fois le résultat
-    connu, dans une transaction.
+    inédite fait inventer son objet de base (une IA, sinon le générateur sans
+    IA), sauvegardé puis mis en cache. Chaque fabrication tire ensuite son rang
+    de rareté : le joueur reçoit des variantes (« id~rare ») de l'objet de base.
+    Les ingrédients ne sont consommés qu'une fois le résultat connu, dans une
+    transaction.
     """
     # L'atelier fournit à la fois la profession requise et les paramètres
     # autorisés pour cette recette.
@@ -449,34 +461,67 @@ def craft(req: CraftRequest):
             raise HTTPException(403, f"'{item.get('name', inp.item_id)}' (niveau {item.get('level', 1)}) demande le niveau {profession_level_for(item.get('level', 1))} en {profession_id}")
         inputs_full.append({**item, "quantity": inp.quantity})
 
+    # Type choisi, générations, enchantement : les règles de craft_rules.
+    enchanting = is_enchant_workshop(workshop)
+    try:
+        item_type = find_item_type(workshop, req.item_type)
+        if enchanting:
+            target, materials = split_enchant_inputs(inputs_full)
+        else:
+            generation = output_generation(inputs_full)
+            check_output_type(item_type, generation)
+    except CraftRuleError as exc:
+        raise HTTPException(400, str(exc)) from exc
+
     # La clé canonique garantit que l'ordre des inputs/paramètres ne crée pas
     # artificiellement plusieurs recettes équivalentes.
     inputs_for_key = [{"item_id": i.item_id, "quantity": i.quantity} for i in req.inputs]
-    recipe_key = build_recipe_key(req.workshop_id, inputs_for_key, req.parameters)
+    recipe_key = build_recipe_key(req.workshop_id, inputs_for_key, req.parameters, item_type["id"])
     from_cache = True
-    output_item_id = get_cached_craft(recipe_key)
-    if output_item_id is None:
+    base_id = get_cached_craft(recipe_key)
+    if base_id is None:
         if req.times > 1:
             raise HTTPException(400, "Une recette inédite se fabrique une fois : tu pourras ensuite la refaire plusieurs fois d'un coup")
-        if len(recent_new_recipes(player)) >= MAX_NEW_RECIPES_PER_HOUR:
-            raise HTTPException(429, f"Tu as déjà inventé {MAX_NEW_RECIPES_PER_HOUR} objets dans l'heure : reviens plus tard, ou refais une recette connue")
-        # Une recette inconnue déclenche l'IA une seule fois. Le résultat est
-        # sauvegardé avant de consommer les ingrédients du joueur.
+        if enchanting:
+            # Un enchantement se calcule sans IA : il n'entre pas dans la limite horaire.
+            base = enchant_item(target, materials, item_type, req.parameters.get("intensite_rune", "stable"))
+        else:
+            if len(recent_new_recipes(player)) >= MAX_NEW_RECIPES_PER_HOUR:
+                raise HTTPException(429, f"Tu as déjà inventé {MAX_NEW_RECIPES_PER_HOUR} objets dans l'heure : reviens plus tard, ou refais une recette connue")
+            # Une recette inconnue fait inventer son objet de base une seule fois,
+            # sauvegardé avant de consommer les ingrédients du joueur.
+            base = generate_craft_item(workshop, item_type, req.parameters, inputs_full, recipe_key, generation)
         from_cache = False
-        new_item = generate_craft_item(workshop, req.parameters, inputs_full, recipe_key)
-        output_item_id = save_new_craft_item(new_item)
-        save_craft_cache(recipe_key, output_item_id)
+        base_id = save_new_craft_item(base)
+        save_craft_cache(recipe_key, base_id)
 
-    output_item = load_template("item", output_item_id)
-    result = _craft_consume_tx(db.transaction(), req, profession_id, output_item, not from_cache, recipe_key)
-    result.update({"output_item_id": output_item_id, "output_item": output_item, "from_cache": from_cache, "times": req.times})
+    base_item = load_template("item", base_id)
+    # Chaque fabrication tire son rang ; un enchantement garde celui de l'équipement.
+    if enchanting:
+        produced = [base_id] * req.times
+    else:
+        odds = rarity_odds(base_item.get("coherence", "normale"), inputs_full, base_item.get("level", 1), profession_level)
+        produced = [variant_id(base_id, roll_rarity(odds)) for _ in range(req.times)]
+
+    result = _craft_consume_tx(db.transaction(), req, profession_id, base_item, produced,
+                               not from_cache and not enchanting, recipe_key)
+    output_items = {item_id: load_template("item", item_id) for item_id in set(produced)}
+    best = max(produced, key=lambda item_id: rarity_rank(item_rarity(output_items[item_id])))
+    result.update({
+        "output_item_id": best,
+        "output_item": output_items[best],
+        "produced": {item_id: produced.count(item_id) for item_id in output_items},
+        "output_items": output_items,
+        "from_cache": from_cache,
+        "times": req.times,
+    })
     result["newly_unlocked"] = check_and_apply_unlocks(req.player_id)
     return result
 
 
 @firestore.transactional
-def _craft_consume_tx(transaction, req: CraftRequest, profession_id: str, output_item: dict, is_new_recipe: bool = False,
-                      recipe_key: str = "") -> dict:
+def _craft_consume_tx(transaction, req: CraftRequest, profession_id: str, base_item: dict, produced: list[str],
+                      is_new_recipe: bool = False, recipe_key: str = "") -> dict:
     # L'inventaire est revérifié ici : il a pu changer pendant l'appel IA.
     player = get_player(req.player_id, transaction)
     if is_new_recipe:
@@ -488,16 +533,17 @@ def _craft_consume_tx(transaction, req: CraftRequest, profession_id: str, output
         player["inventory"][inp.item_id] -= inp.quantity * req.times
         if player["inventory"][inp.item_id] <= 0:
             del player["inventory"][inp.item_id]
-    player["inventory"][output_item["id"]] = player["inventory"].get(output_item["id"], 0) + req.times
-    record_in_craft_book(player, req, recipe_key, output_item["id"])
+    for item_id in produced:
+        player["inventory"][item_id] = player["inventory"].get(item_id, 0) + 1
+    record_in_craft_book(player, req, recipe_key, base_item["id"])
 
-    # L'XP de craft est calculée à partir du niveau de l'item produit, craft par
-    # craft : une montée de niveau en cours de série réduit les suivants.
+    # L'XP de craft est calculée à partir du niveau de l'objet produit, craft
+    # par craft : une montée de niveau en cours de série réduit les suivants.
     player_prof = player["professions"].setdefault(profession_id, get_profession(player, profession_id))
     level_before = player_prof["level"]
     craft_xp_gained = 0
     for _ in range(req.times):
-        xp = profession_action_xp(output_item.get("level", 1), "craft", player_prof["level"])
+        xp = profession_action_xp(base_item.get("level", 1), "craft", player_prof["level"])
         craft_xp_gained += xp
         player_prof["xp"] += xp
         apply_profession_level_ups(player_prof)
@@ -519,7 +565,8 @@ def record_in_craft_book(player: dict, req: CraftRequest, recipe_key: str, outpu
     """Note la recette dans le carnet privé du joueur, en tête de liste.
 
     Le carnet n'est jamais partagé : une bonne recette reste le secret de
-    celui qui l'a trouvée, tant qu'il ne la transmet pas lui-même."""
+    celui qui l'a trouvée, tant qu'il ne la transmet pas lui-même. Il garde
+    l'objet de base de la recette, pas le rang tiré."""
     book = player.setdefault("craft_book", [])
     previous = next((entry for entry in book if entry.get("key") == recipe_key), None)
     if previous is not None:
@@ -527,6 +574,7 @@ def record_in_craft_book(player: dict, req: CraftRequest, recipe_key: str, outpu
     book.insert(0, {
         "key": recipe_key,
         "workshop_id": req.workshop_id,
+        "item_type": req.item_type,
         "inputs": [{"item_id": inp.item_id, "quantity": inp.quantity} for inp in req.inputs],
         "parameters": dict(req.parameters),
         "output_item_id": output_item_id,

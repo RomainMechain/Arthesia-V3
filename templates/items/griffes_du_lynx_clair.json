@@ -1,0 +1,18 @@
+{
+  "id": "griffes_du_lynx_clair",
+  "name": "Griffes du Lynx clair",
+  "category": "equipment",
+  "level": 5,
+  "rarity": "epique",
+  "base_value": 600,
+  "stack_size": 1,
+  "description": "Des gants de cuir pâle où l'on a serti les griffes d'un lynx. Ils ne font aucun bruit, même quand on frappe.",
+  "equipment": {
+    "slot": "gloves",
+    "level_required": 5,
+    "stat_bonuses": {
+      "agi": 3,
+      "atk": 4
+    }
+  }
+}

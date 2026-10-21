@@ -236,6 +236,24 @@ Intentions de jeu, pour comprendre ce que produisent ces chiffres :
 - **Consommables** : `consumable.amount` = `consumable_amount.heal` (soin) ou
   `consumable_amount.restore_mana` (mana) du niveau. Un `buff_stat` donne 10 à 20 % pendant 30 à 60 s.
 
+### Rareté des objets
+
+À ne pas confondre avec la rareté d'apparition d'une entry (`common`/`rare`/`very_rare`, en anglais) :
+ici, c'est le rang de l'objet lui-même, en français.
+
+Chaque objet a un `rarity` : `commun` (par défaut, presque tout), `peu_commun`, `rare`, `epique`,
+`legendaire`. Le rang multiplie les chiffres de base du niveau (`balance_targets.rarity_multipliers` :
+`stats` pour les `stat_bonuses`, `consumable` pour `amount`, `base_value` pour la valeur). Une boutique
+vend du `commun`, parfois du `peu_commun` ; jamais d'épique ni de légendaire.
+
+**Butin très rare.** Au plus un ou deux par zone : un objet `epique` ou `legendaire` lié de près à la
+créature qui le porte (son croc, son cœur, ce qu'elle gardait), qui raconte quelque chose de l'étage.
+Il s'ajoute au `loot_table` du monstre comme une entrée à **chance indépendante**, tirée en plus du
+butin normal : `{ "item_id": "...", "quantity_min": 1, "quantity_max": 1, "chance": 0.007 }`, avec une
+`chance` dans `balance_targets.rare_loot_chance` selon le rôle (0,4 à 1 % sur un monstre normal, 3 à
+5 % sur une élite ; jamais sur un boss, dont le butin revient déjà au seul premier vainqueur). Un
+matériau très rare est précieux au craft : il augmente les chances d'obtenir un rang élevé.
+
 ### Quêtes
 
 - **Récompenses** : `levels[niveau].quest_rewards[ampleur]`, où l'ampleur est `small`, `normal` ou
@@ -296,7 +314,8 @@ Chaque élément de `new_templates` porte un champ `kind` qui indique lequel de 
   ],
   "phases": null,
   "loot_table": [
-    { "item_id": "id_d_un_item", "quantity_min": 1, "quantity_max": 1, "weight": 5 }
+    { "item_id": "id_d_un_item", "quantity_min": 1, "quantity_max": 1, "weight": 5 },
+    { "item_id": "id_d_un_butin_tres_rare", "quantity_min": 1, "quantity_max": 1, "chance": 0.007 }
   ]
 }
 ```
@@ -380,6 +399,7 @@ ceux d'une quête `normal` de niveau 5 (`quest_rewards.normal`).
   "name": "Épée Rouillée",
   "description": "...",
   "category": "material | equipment | consumable",
+  "rarity": "commun | peu_commun | rare | epique | legendaire",
   "level": 1,
   "base_value": 25,
   "stack_size": 1,
@@ -428,6 +448,8 @@ le bloc non pertinent plutôt que de le laisser vide).
 - [ ] Zone `town` : 4-6 `quest_giver` minimum, au moins une partie `conditional` (chaîne de progression).
 - [ ] Aucun `npc` réutilisé dans une zone où sa description ne le justifie pas.
 - [ ] Aucun `sell_offers.price` en dessous du `base_value` de l'item vendu.
+- [ ] `rarity` sur chaque nouvel objet (presque tous `commun`) ; au plus 1-2 butins très rares par zone,
+      en entrée `chance` du `loot_table`, chiffres multipliés selon `rarity_multipliers`.
 - [ ] Stats des monstres, `power` des attaques, `stat_bonuses`, `base_value`, montants des
       consommables et récompenses de quête repris de `balance_targets` au niveau de chaque template
       (±15 % au plus).

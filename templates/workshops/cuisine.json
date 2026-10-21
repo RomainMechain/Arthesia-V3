@@ -17,5 +17,30 @@
         "flambé"
       ]
     }
+  ],
+  "item_types": [
+    {
+      "id": "plat",
+      "label": "Plat",
+      "category": "consumable",
+      "effect_type": "heal",
+      "names": [
+        "Ragoût",
+        "Galette",
+        "Brochette",
+        "Tourte"
+      ]
+    },
+    {
+      "id": "infusion",
+      "label": "Infusion",
+      "category": "consumable",
+      "effect_type": "restore_mana",
+      "names": [
+        "Infusion",
+        "Bouillon",
+        "Tisane"
+      ]
+    }
   ]
 }

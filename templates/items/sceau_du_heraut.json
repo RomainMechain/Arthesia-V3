@@ -1,0 +1,19 @@
+{
+  "id": "sceau_du_heraut",
+  "name": "Sceau du Héraut",
+  "category": "equipment",
+  "level": 10,
+  "rarity": "legendaire",
+  "base_value": 2100,
+  "stack_size": 1,
+  "description": "L'anneau qui scellait les sentences du Héraut. Son métal ne refroidit jamais tout à fait, et il pèse plus lourd au doigt des indécis.",
+  "equipment": {
+    "slot": "ring",
+    "level_required": 10,
+    "stat_bonuses": {
+      "atk": 12,
+      "def": 8,
+      "hp": 40
+    }
+  }
+}

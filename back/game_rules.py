@@ -39,6 +39,9 @@ def roll_loot_table(loot_table: list[dict]) -> tuple[str, int] | None:
     ``quantity_min`` et ``quantity_max``. Une table vide ne donne aucune
     récompense et retourne ``None``.
     """
+    # Les entrées à chance indépendante (butin très rare) sont tirées à part,
+    # par roll_rare_drops.
+    loot_table = [entry for entry in loot_table or [] if "weight" in entry]
     if not loot_table:
         return None
 
@@ -58,6 +61,16 @@ def roll_loot_table(loot_table: list[dict]) -> tuple[str, int] | None:
     # Ce cas ne devrait pas arriver avec des poids positifs, mais garder un
     # retour explicite rend la fonction sûre si une table mal formée est reçue.
     return None
+
+
+def roll_rare_drops(loot_table: list[dict]) -> list[tuple[str, int]]:
+    """Butin très rare : chaque entrée à ``chance`` (probabilité de 0 à 1) est
+    tirée indépendamment, en plus du butin pondéré de roll_loot_table."""
+    drops = []
+    for entry in loot_table or []:
+        if "chance" in entry and random.random() < entry["chance"]:
+            drops.append((entry["item_id"], random.randint(entry.get("quantity_min", 1), entry.get("quantity_max", 1))))
+    return drops
 
 
 # Délai de réapparition par défaut d'une entry partagée épuisée.

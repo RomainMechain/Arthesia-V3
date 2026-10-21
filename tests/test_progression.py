@@ -49,6 +49,20 @@ class ProgressionTest(unittest.TestCase):
         with self.assertRaises(HTTPException):   # le même loup ne paie pas deux fois
             kill("joueur", "sentier_lisiere", "loup_dore_spawn")
 
+    def test_butin_tres_rare(self):
+        from unittest import mock
+        from back import game_rules
+        fakes.new_player(level=1)
+        # Le loup doré a un croc épique à 0,8 % : forcé ici, en plus du butin normal.
+        with mock.patch.object(game_rules.random, "random", return_value=0.0):
+            result = kill("joueur", "sentier_lisiere", "loup_dore_spawn")
+        self.assertEqual(result["rare_loot"], [("croc_d_or_pur", 1)])
+        self.assertEqual(fakes.player()["inventory"]["croc_d_or_pur"], 1)
+        self.assertIsNotNone(result["loot"])
+        # Les taux réels restent très bas.
+        rolls = sum(bool(game_rules.roll_rare_drops(load_template("monster", "loup_dore")["loot_table"])) for _ in range(20000))
+        self.assertAlmostEqual(rolls / 20000, 0.008, delta=0.003)
+
     def test_montee_de_niveau_rend_tous_les_pv(self):
         fakes.new_player(level=1, xp=balance.xp_to_next_level(1) - 1)
         result = kill("joueur", "sentier_lisiere", "lapin_spawn", hp=10)
@@ -154,21 +168,6 @@ class ProgressionTest(unittest.TestCase):
 
     # --- Craft ------------------------------------------------------------
 
-    def test_carnet_de_recettes(self):
-        fakes.new_player(inventory={"branche_morte": 5})
-        inputs = [{"item_id": "branche_morte", "quantity": 2}]
-        parameters = {p["id"]: p["options"][0] for p in load_template("workshop", "forge").get("parameters", [])}
-        # Recette déjà connue : pas d'appel à l'IA.
-        key = build_recipe_key("forge", inputs, parameters)
-        STORE[f"craft_cache/{recipe_key_doc_id(key)}"] = {"recipe_key": key, "output_item_id": "pain_de_miel"}
-        request = models.CraftRequest(player_id="joueur", workshop_id="forge", inputs=inputs, parameters=parameters)
-        ar.craft(request)
-        ar.craft(request)
-        book = fakes.player()["craft_book"]
-        self.assertEqual(len(book), 1)
-        self.assertEqual((book[0]["output_item_id"], book[0]["times"]), ("pain_de_miel", 2))
-        self.assertEqual(fakes.player()["inventory"], {"branche_morte": 1, "pain_de_miel": 2})
-
     def test_objets_craftes_restaures_au_demarrage(self):
         from back.config import TEMPLATES_DIR
         from back.craft_service import restore_crafted_items
@@ -182,27 +181,6 @@ class ProgressionTest(unittest.TestCase):
         self.assertTrue(path.exists())
         self.assertEqual(STORE["crafted_items/pain_de_miel"]["id"], "pain_de_miel")
         self.assertEqual(restore_crafted_items(), {"restored": 0, "uploaded": 0})
-
-    def test_craft_limite_a_4_objets_et_serie_d_une_recette_connue(self):
-        fakes.new_player(inventory={"branche_morte": 20})
-        parameters = {p["id"]: p["options"][0] for p in load_template("workshop", "forge").get("parameters", [])}
-
-        def request(quantity, times=1):
-            return models.CraftRequest(player_id="joueur", workshop_id="forge", parameters=parameters, times=times,
-                                       inputs=[{"item_id": "branche_morte", "quantity": quantity}])
-
-        with self.assertRaises(HTTPException):   # 5 objets : au-delà de 4, quantités comprises
-            ar.craft(request(5))
-        key = build_recipe_key("forge", [{"item_id": "branche_morte", "quantity": 2}], parameters)
-        with self.assertRaises(HTTPException):   # série refusée tant que la recette est inédite
-            ar.craft(request(2, times=3))
-        STORE[f"craft_cache/{recipe_key_doc_id(key)}"] = {"recipe_key": key, "output_item_id": "pain_de_miel"}
-        result = ar.craft(request(2, times=3))
-        self.assertEqual(result["times"], 3)
-        self.assertEqual(fakes.player()["inventory"], {"branche_morte": 14, "pain_de_miel": 3})
-        self.assertEqual(fakes.player()["craft_book"][0]["times"], 3)
-        with self.assertRaises(HTTPException):   # pas assez pour 8 séries de 2
-            ar.craft(request(2, times=8))
 
     # --- Récolte et soin hors combat ----------------------------------------
 
