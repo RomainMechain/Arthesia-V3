@@ -200,9 +200,16 @@ def quest_xp(level: int, size: str = "normal") -> int:
 # donc le niveau 5 dans le métier.
 ITEM_LEVELS_PER_PROFESSION_LEVEL = 2
 
-PROFESSION_XP_BASE = 5
-PROFESSION_XP_GROWTH = 1.06
-PROFESSION_ACTIONS_PER_LEVEL = 120
+# XP d'une action : elle suit le niveau de l'objet récolté ou fabriqué
+# (ITEM_XP_GROWTH par niveau d'objet), et baisse de PROFESSION_GAP_XP_PENALTY
+# par niveau de métier d'avance sur l'objet (au plus bas PROFESSION_GAP_XP_FLOOR),
+# comme l'XP des monstres trop faibles.
+PROFESSION_XP_BASE = 10
+ITEM_XP_GROWTH = 1.1
+PROFESSION_GAP_XP_PENALTY = 0.25
+PROFESSION_GAP_XP_FLOOR = 0.25
+# Actions sur les objets de sa tranche pour monter un niveau de métier.
+PROFESSION_ACTIONS_PER_LEVEL = 50
 CRAFT_XP_MULTIPLIER = 4
 
 
@@ -216,17 +223,28 @@ def max_item_level_for(profession_level: int) -> int:
     return max(profession_level, 1) * ITEM_LEVELS_PER_PROFESSION_LEVEL
 
 
-def profession_action_xp(content_level: int, action: str = "gather") -> int:
-    """XP d'une action ; ``content_level`` est à l'échelle du métier
-    (``profession_level_for`` du niveau de l'objet)."""
-    base = PROFESSION_XP_BASE * PROFESSION_XP_GROWTH ** (max(content_level, 1) - 1)
-    return max(1, round(base * (CRAFT_XP_MULTIPLIER if action == "craft" else 1)))
+def item_action_xp(item_level: float) -> float:
+    return PROFESSION_XP_BASE * ITEM_XP_GROWTH ** (max(item_level, 1) - 1)
+
+
+def profession_action_xp(item_level: int, action: str = "gather", profession_level: int | None = None) -> int:
+    """XP d'une récolte ou d'une fabrication d'un objet de niveau ``item_level``
+    (à l'échelle du personnage), pour un métier au niveau ``profession_level``."""
+    xp = item_action_xp(item_level) * (CRAFT_XP_MULTIPLIER if action == "craft" else 1)
+    if profession_level is not None:
+        lead = profession_level - profession_level_for(item_level)
+        if lead > 0:
+            xp *= max(PROFESSION_GAP_XP_FLOOR, 1 - PROFESSION_GAP_XP_PENALTY * lead)
+    return max(1, round(xp))
 
 
 def profession_xp_to_next_level(level: int) -> int:
+    """XP pour passer au niveau suivant : PROFESSION_ACTIONS_PER_LEVEL actions
+    sur les objets de la tranche du niveau, la durée s'allongeant comme celle
+    des niveaux du personnage."""
     level = max(level, 1)
-    per_action = PROFESSION_XP_BASE * PROFESSION_XP_GROWTH ** (level - 1)
-    return round(per_action * PROFESSION_ACTIONS_PER_LEVEL * HOURS_PER_LEVEL_GROWTH ** (level - 1))
+    middle_of_band = max_item_level_for(level) - (ITEM_LEVELS_PER_PROFESSION_LEVEL - 1) / 2
+    return round(item_action_xp(middle_of_band) * PROFESSION_ACTIONS_PER_LEVEL * HOURS_PER_LEVEL_GROWTH ** (level - 1))
 
 
 # -----------------------------------------------------------------------------

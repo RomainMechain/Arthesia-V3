@@ -183,6 +183,27 @@ class ProgressionTest(unittest.TestCase):
         self.assertEqual(STORE["crafted_items/pain_de_miel"]["id"], "pain_de_miel")
         self.assertEqual(restore_crafted_items(), {"restored": 0, "uploaded": 0})
 
+    def test_craft_limite_a_4_objets_et_serie_d_une_recette_connue(self):
+        fakes.new_player(inventory={"branche_morte": 20})
+        parameters = {p["id"]: p["options"][0] for p in load_template("workshop", "forge").get("parameters", [])}
+
+        def request(quantity, times=1):
+            return models.CraftRequest(player_id="joueur", workshop_id="forge", parameters=parameters, times=times,
+                                       inputs=[{"item_id": "branche_morte", "quantity": quantity}])
+
+        with self.assertRaises(HTTPException):   # 5 objets : au-delà de 4, quantités comprises
+            ar.craft(request(5))
+        key = build_recipe_key("forge", [{"item_id": "branche_morte", "quantity": 2}], parameters)
+        with self.assertRaises(HTTPException):   # série refusée tant que la recette est inédite
+            ar.craft(request(2, times=3))
+        STORE[f"craft_cache/{recipe_key_doc_id(key)}"] = {"recipe_key": key, "output_item_id": "pain_de_miel"}
+        result = ar.craft(request(2, times=3))
+        self.assertEqual(result["times"], 3)
+        self.assertEqual(fakes.player()["inventory"], {"branche_morte": 14, "pain_de_miel": 3})
+        self.assertEqual(fakes.player()["craft_book"][0]["times"], 3)
+        with self.assertRaises(HTTPException):   # pas assez pour 8 séries de 2
+            ar.craft(request(2, times=8))
+
     # --- Récolte et soin hors combat ----------------------------------------
 
     def test_recolte_xp_de_metier(self):
@@ -192,7 +213,18 @@ class ProgressionTest(unittest.TestCase):
         fakes.player()["gathering"]["ready_at"] = datetime.now(timezone.utc) - timedelta(seconds=1)
         ar.report_resource_gather(request)
         profession = fakes.player()["professions"]["bucheronnage"]
-        self.assertEqual(profession["xp"], balance.profession_action_xp(1))
+        self.assertEqual(profession["xp"], balance.profession_action_xp(1, "gather", 1))
+
+    def test_xp_de_metier_suit_le_niveau_de_l_objet(self):
+        xp = [balance.profession_action_xp(level, "gather", 1) for level in (1, 2)]
+        self.assertLess(xp[0], xp[1])                           # niveau 2 > niveau 1
+        # Un objet sous le niveau du métier rapporte moins, sans tomber à rien.
+        self.assertLess(balance.profession_action_xp(1, "gather", 3), xp[0])
+        self.assertGreater(balance.profession_action_xp(1, "gather", 10), 0)
+        # Environ 50 actions de sa tranche par niveau de métier.
+        for level in (1, 5, 10):
+            top = balance.profession_action_xp(balance.max_item_level_for(level), "gather", level)
+            self.assertAlmostEqual(balance.profession_xp_to_next_level(level) / top, 50, delta=10)
 
     def test_soin_hors_combat(self):
         player = fakes.new_player(inventory={"pain_de_miel": 1})

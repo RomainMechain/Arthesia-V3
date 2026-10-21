@@ -6,16 +6,19 @@ import re
 import unicodedata
 
 import anthropic
+import httpx
 from fastapi import HTTPException
 
 try:
-    from .config import ANTHROPIC_API_KEY, CRAFT_MODEL, CRAFT_PROMPT_FILE, TEMPLATES_DIR
+    from .config import ANTHROPIC_API_KEY, CRAFT_MODEL, CRAFT_PROMPT_FILE, GEMINI_API_KEY, GEMINI_MODEL, TEMPLATES_DIR
     from .content_store import load_template
+    from .craft_procedural import normalize_craft_item, procedural_craft_item
     from .content_targets import craft_inputs_targets
     from .database import db
 except ImportError:
-    from config import ANTHROPIC_API_KEY, CRAFT_MODEL, CRAFT_PROMPT_FILE, TEMPLATES_DIR
+    from config import ANTHROPIC_API_KEY, CRAFT_MODEL, CRAFT_PROMPT_FILE, GEMINI_API_KEY, GEMINI_MODEL, TEMPLATES_DIR
     from content_store import load_template
+    from craft_procedural import normalize_craft_item, procedural_craft_item
     from content_targets import craft_inputs_targets
     from database import db
 
@@ -51,49 +54,103 @@ def load_craft_system_prompt() -> str:
     return CRAFT_PROMPT_FILE.read_text(encoding="utf-8")
 
 
-def generate_craft_item_via_ai(workshop: dict, parameters: dict, inputs_full: list[dict]) -> dict:
-    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+class CraftAIUnavailable(Exception):
+    """Une IA de craft n'a pas pu répondre (clé absente ou refusée, quota,
+    panne, réponse invalide) : on passe à la suivante."""
+
+
+def craft_user_message(workshop: dict, parameters: dict, inputs_full: list[dict]) -> str:
     workshop_info = {
         "id": workshop["id"],
         "name": workshop.get("name"),
         "description": workshop.get("description"),
         "parameters_choisis": parameters,
     }
-    user_message = (
+    return (
         "Génère le résultat de ce craft inédit :\n\n"
         f"workshop:\n{json.dumps(workshop_info, ensure_ascii=False, indent=2)}\n\n"
         f"inputs:\n{json.dumps(inputs_full, ensure_ascii=False, indent=2)}\n\n"
         f"balance_targets:\n{json.dumps(craft_inputs_targets(inputs_full), ensure_ascii=False)}\n\n"
         "Réponds uniquement avec le JSON demandé, sans aucun texte avant ou après."
     )
+
+
+def ask_gemini(system: str, message: str) -> str:
+    """Appel REST à Gemini (Google AI Studio, offre gratuite), en mode JSON."""
+    if not GEMINI_API_KEY:
+        raise CraftAIUnavailable("GEMINI_API_KEY absente")
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
+    body = {
+        "systemInstruction": {"parts": [{"text": system}]},
+        "contents": [{"role": "user", "parts": [{"text": message}]}],
+        "generationConfig": {"responseMimeType": "application/json", "temperature": 0.9, "maxOutputTokens": 8192},
+    }
+    try:
+        response = httpx.post(url, json=body, headers={"x-goog-api-key": GEMINI_API_KEY}, timeout=60)
+    except httpx.HTTPError as exc:
+        raise CraftAIUnavailable(f"Gemini injoignable ({exc})") from exc
+    if response.status_code != 200:
+        # 429 : quota gratuit atteint ; 400/403 : clé refusée ; 404 : modèle inconnu.
+        raise CraftAIUnavailable(f"Gemini HTTP {response.status_code} : {response.text[:200]}")
+    try:
+        candidate = response.json()["candidates"][0]
+        if candidate.get("finishReason") not in (None, "STOP"):
+            raise CraftAIUnavailable(f"Gemini a arrêté sa réponse ({candidate.get('finishReason')})")
+        return "".join(part.get("text", "") for part in candidate["content"]["parts"])
+    except (KeyError, IndexError, ValueError) as exc:
+        raise CraftAIUnavailable("réponse Gemini inattendue") from exc
+
+
+def ask_claude(system: str, message: str) -> str:
+    if not ANTHROPIC_API_KEY:
+        raise CraftAIUnavailable("ANTHROPIC_API_KEY absente")
     try:
         # La réflexion du modèle compte dans max_tokens : une limite trop basse
         # coupe le JSON avant la fin.
-        response = client.messages.create(
+        response = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY).messages.create(
             model=CRAFT_MODEL,
             max_tokens=16000,
-            system=load_craft_system_prompt(),
-            messages=[{"role": "user", "content": user_message}],
+            system=system,
+            messages=[{"role": "user", "content": message}],
         )
-    except anthropic.AuthenticationError as exc:
-        # Erreur de configuration du serveur, pas du joueur : on la signale clairement.
-        print(f"❌ Craft IA : clé ANTHROPIC_API_KEY refusée par l'API ({exc})")
-        raise HTTPException(503, "La création d'objets inédits est indisponible : la clé API du serveur est invalide.") from exc
     except anthropic.APIError as exc:
-        print(f"❌ Craft IA : erreur de l'API ({type(exc).__name__} : {exc})")
-        raise HTTPException(503, "La création d'un objet inédit est indisponible pour l'instant — réessaie plus tard.") from exc
+        raise CraftAIUnavailable(f"Claude : {type(exc).__name__} ({exc})") from exc
     if response.stop_reason in ("max_tokens", "refusal"):
-        raise HTTPException(502, "Réponse IA incomplète pour le craft — réessaie.")
-    raw_text = "".join(block.text for block in response.content if block.type == "text")
+        raise CraftAIUnavailable(f"réponse Claude incomplète ({response.stop_reason})")
+    return "".join(block.text for block in response.content if block.type == "text")
+
+
+def parse_craft_item(raw_text: str) -> dict:
     cleaned = re.sub(r"^```(?:json)?\s*", "", raw_text.strip())
     cleaned = re.sub(r"\s*```$", "", cleaned)
     try:
         item = json.loads(cleaned)["item"]
     except (json.JSONDecodeError, KeyError, TypeError) as exc:
-        raise HTTPException(502, "Réponse IA invalide pour le craft — réessaie.") from exc
-    if not isinstance(item, dict) or not item.get("name") or not item.get("category"):
-        raise HTTPException(502, "Réponse IA invalide pour le craft — réessaie.")
+        raise CraftAIUnavailable("JSON de craft invalide") from exc
+    if not isinstance(item, dict) or not item.get("name") or item.get("category") not in ("material", "equipment", "consumable"):
+        raise CraftAIUnavailable("objet de craft incomplet")
     return item
+
+
+CRAFT_AI_PROVIDERS = (("gemini", ask_gemini), ("claude", ask_claude))
+
+
+def generate_craft_item(workshop: dict, parameters: dict, inputs_full: list[dict], recipe_key: str) -> dict:
+    """Objet d'un craft inédit : la première IA disponible l'invente, sinon le
+    générateur sans IA le compose. Le craft ne tombe donc jamais en panne.
+    Le résultat est toujours ramené dans les bornes d'équilibrage."""
+    system = load_craft_system_prompt()
+    message = craft_user_message(workshop, parameters, inputs_full)
+    for name, ask in CRAFT_AI_PROVIDERS:
+        try:
+            item = parse_craft_item(ask(system, message))
+            item["origin"] = name
+            break
+        except CraftAIUnavailable as exc:
+            print(f"⚠ Craft IA ({name}) indisponible : {exc}")
+    else:
+        item = procedural_craft_item(workshop, parameters, inputs_full, recipe_key)
+    return normalize_craft_item(item, inputs_full)
 
 
 # Les objets inventés par un craft sont écrits comme templates locaux, et aussi

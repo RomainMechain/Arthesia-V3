@@ -21,7 +21,7 @@ try:
     from .auth import require_player
     from .content_store import find_entry, find_quest_givers, load_ordered_floors, load_static_zone_content, load_template
     from .craft_service import (
-        build_recipe_key, generate_craft_item_via_ai, get_cached_craft,
+        build_recipe_key, generate_craft_item, get_cached_craft,
         save_craft_cache, save_new_craft_item,
     )
     from .balance import MAX_ACTIVE_SKILL_SLOTS, MAX_PASSIVE_SKILL_SLOTS, max_item_level_for, respec_cost, profession_action_xp, profession_level_for, profession_xp_to_next_level
@@ -40,7 +40,7 @@ except ImportError:
     from auth import require_player
     from content_store import find_entry, find_quest_givers, load_ordered_floors, load_static_zone_content, load_template
     from craft_service import (
-        build_recipe_key, generate_craft_item_via_ai, get_cached_craft,
+        build_recipe_key, generate_craft_item, get_cached_craft,
         save_craft_cache, save_new_craft_item,
     )
     from balance import MAX_ACTIVE_SKILL_SLOTS, MAX_PASSIVE_SKILL_SLOTS, max_item_level_for, respec_cost, profession_action_xp, profession_level_for, profession_xp_to_next_level
@@ -206,8 +206,10 @@ def _resource_gather_tx(transaction, req: ResourceGatherRequest, entry: dict, re
         profession_id = prof_req["profession_id"]
         player_prof = player["professions"].setdefault(profession_id, get_profession(player, profession_id))
         level_before = player_prof["level"]
-        # L'XP dépend du niveau de la ressource (balance.profession_action_xp).
-        xp_gained = profession_action_xp(prof_req["min_level"])
+        # L'XP suit le niveau de la ressource, et baisse si le métier la dépasse
+        # (balance.profession_action_xp).
+        resource_level = resource.get("level") or max_item_level_for(prof_req["min_level"])
+        xp_gained = profession_action_xp(resource_level, "gather", player_prof["level"])
         player_prof["xp"] += xp_gained
         apply_profession_level_ups(player_prof)
         profession = {
@@ -385,8 +387,8 @@ def _turn_in_quest_tx(transaction, req: TurnInQuestRequest, quest_def: dict, giv
 # Craft et progression des statistiques
 # -----------------------------------------------------------------------------
 
-# Nombre maximal d'ingrédients différents dans un craft.
-MAX_CRAFT_INPUTS = 4
+# Nombre maximal d'objets dans un craft, quantités comprises.
+MAX_CRAFT_ITEMS = 4
 # Recettes gardées dans le carnet privé de chaque joueur (les plus récentes).
 MAX_CRAFT_BOOK_ENTRIES = 100
 # Créations inédites (appels IA payants) autorisées par joueur sur une heure
@@ -425,8 +427,8 @@ def craft(req: CraftRequest):
         raise HTTPException(400, f"Paramètre(s) inconnu(s) : {sorted(unknown)}")
 
     item_ids = [inp.item_id for inp in req.inputs]
-    if not req.inputs or len(req.inputs) > MAX_CRAFT_INPUTS:
-        raise HTTPException(400, f"Choisis entre 1 et {MAX_CRAFT_INPUTS} ingrédients")
+    if not req.inputs or sum(inp.quantity for inp in req.inputs) > MAX_CRAFT_ITEMS:
+        raise HTTPException(400, f"Un craft prend de 1 à {MAX_CRAFT_ITEMS} objets, quantités comprises")
     if len(set(item_ids)) != len(item_ids):
         raise HTTPException(400, "Un même ingrédient ne peut apparaître qu'une fois (augmente sa quantité)")
     if any(inp.quantity < 1 for inp in req.inputs):
@@ -439,7 +441,7 @@ def craft(req: CraftRequest):
     profession_level = get_profession(player, profession_id)["level"]
     inputs_full = []
     for inp in req.inputs:
-        if player["inventory"].get(inp.item_id, 0) < inp.quantity:
+        if player["inventory"].get(inp.item_id, 0) < inp.quantity * req.times:
             raise HTTPException(400, f"Pas assez de '{inp.item_id}' en inventaire")
         item = load_template("item", inp.item_id)
         # Un niveau de métier couvre plusieurs niveaux d'objet (balance.profession_level_for).
@@ -454,18 +456,20 @@ def craft(req: CraftRequest):
     from_cache = True
     output_item_id = get_cached_craft(recipe_key)
     if output_item_id is None:
+        if req.times > 1:
+            raise HTTPException(400, "Une recette inédite se fabrique une fois : tu pourras ensuite la refaire plusieurs fois d'un coup")
         if len(recent_new_recipes(player)) >= MAX_NEW_RECIPES_PER_HOUR:
             raise HTTPException(429, f"Tu as déjà inventé {MAX_NEW_RECIPES_PER_HOUR} objets dans l'heure : reviens plus tard, ou refais une recette connue")
         # Une recette inconnue déclenche l'IA une seule fois. Le résultat est
         # sauvegardé avant de consommer les ingrédients du joueur.
         from_cache = False
-        new_item = generate_craft_item_via_ai(workshop, req.parameters, inputs_full)
+        new_item = generate_craft_item(workshop, req.parameters, inputs_full, recipe_key)
         output_item_id = save_new_craft_item(new_item)
         save_craft_cache(recipe_key, output_item_id)
 
     output_item = load_template("item", output_item_id)
     result = _craft_consume_tx(db.transaction(), req, profession_id, output_item, not from_cache, recipe_key)
-    result.update({"output_item_id": output_item_id, "output_item": output_item, "from_cache": from_cache})
+    result.update({"output_item_id": output_item_id, "output_item": output_item, "from_cache": from_cache, "times": req.times})
     result["newly_unlocked"] = check_and_apply_unlocks(req.player_id)
     return result
 
@@ -478,21 +482,25 @@ def _craft_consume_tx(transaction, req: CraftRequest, profession_id: str, output
     if is_new_recipe:
         player["craft_ai_log"] = recent_new_recipes(player) + [datetime.now(timezone.utc)]
     for inp in req.inputs:
-        if player["inventory"].get(inp.item_id, 0) < inp.quantity:
+        if player["inventory"].get(inp.item_id, 0) < inp.quantity * req.times:
             raise HTTPException(409, f"'{inp.item_id}' n'est plus en quantité suffisante dans ton inventaire")
     for inp in req.inputs:
-        player["inventory"][inp.item_id] -= inp.quantity
+        player["inventory"][inp.item_id] -= inp.quantity * req.times
         if player["inventory"][inp.item_id] <= 0:
             del player["inventory"][inp.item_id]
-    player["inventory"][output_item["id"]] = player["inventory"].get(output_item["id"], 0) + 1
+    player["inventory"][output_item["id"]] = player["inventory"].get(output_item["id"], 0) + req.times
     record_in_craft_book(player, req, recipe_key, output_item["id"])
 
-    # L'XP de craft est calculée à partir du niveau de l'item produit.
+    # L'XP de craft est calculée à partir du niveau de l'item produit, craft par
+    # craft : une montée de niveau en cours de série réduit les suivants.
     player_prof = player["professions"].setdefault(profession_id, get_profession(player, profession_id))
     level_before = player_prof["level"]
-    craft_xp_gained = profession_action_xp(profession_level_for(output_item.get("level", 1)), "craft")
-    player_prof["xp"] += craft_xp_gained
-    apply_profession_level_ups(player_prof)
+    craft_xp_gained = 0
+    for _ in range(req.times):
+        xp = profession_action_xp(output_item.get("level", 1), "craft", player_prof["level"])
+        craft_xp_gained += xp
+        player_prof["xp"] += xp
+        apply_profession_level_ups(player_prof)
     save_player(req.player_id, player, transaction)
     return {
         "profession": {
@@ -522,7 +530,7 @@ def record_in_craft_book(player: dict, req: CraftRequest, recipe_key: str, outpu
         "inputs": [{"item_id": inp.item_id, "quantity": inp.quantity} for inp in req.inputs],
         "parameters": dict(req.parameters),
         "output_item_id": output_item_id,
-        "times": (previous or {}).get("times", 0) + 1,
+        "times": (previous or {}).get("times", 0) + req.times,
         "last_at": datetime.now(timezone.utc),
     })
     del book[MAX_CRAFT_BOOK_ENTRIES:]

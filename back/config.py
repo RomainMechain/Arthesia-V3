@@ -11,6 +11,10 @@ ZONES_DIR = PROJECT_ROOT / "zones"
 SERVICE_ACCOUNT_PATH = Path(os.environ.get("FIREBASE_KEY_PATH") or PROJECT_ROOT / "firebase_key.json")
 CRAFT_PROMPT_FILE = PROJECT_ROOT / "generate_static_files" / "craft" / "arthesia_craft_prompt.md"
 
+# Craft inédit : Gemini (offre gratuite de Google) d'abord, Claude si une clé
+# est fournie, sinon le générateur sans IA (craft_procedural).
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 CRAFT_MODEL = "claude-sonnet-5"
 

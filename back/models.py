@@ -60,6 +60,8 @@ class CraftRequest(BaseModel):
     workshop_id: str
     inputs: list[CraftInput]
     parameters: dict[str, str]
+    # Nombre de fois d'affilée : plus d'une fois seulement pour une recette connue.
+    times: int = Field(1, ge=1, le=20)
 
 
 class AllocateStatPointsRequest(BaseModel):

@@ -1,6 +1,9 @@
 # Déploiement sur Render (offre gratuite) : New > Blueprint, puis ce dépôt.
-# Les deux secrets se renseignent dans le tableau de bord de Render :
-# - ANTHROPIC_API_KEY (variable d'environnement), pour le craft ;
+# Les secrets se renseignent dans le tableau de bord de Render :
+# - GEMINI_API_KEY (variable d'environnement), pour inventer les objets des
+#   crafts inédits (offre gratuite de Google AI Studio) ; sans elle, ou quota
+#   atteint, un générateur sans IA prend le relais ;
+# - ANTHROPIC_API_KEY (facultative), essayée après Gemini ;
 # - firebase_key.json (Secret Files), monté dans /etc/secrets/.
 services:
   - type: web
@@ -17,5 +20,5 @@ services:
         value: 3.12.8
       - key: FIREBASE_KEY_PATH
         value: /etc/secrets/firebase_key.json
-      - key: ANTHROPIC_API_KEY
+      - key: GEMINI_API_KEY
         sync: false

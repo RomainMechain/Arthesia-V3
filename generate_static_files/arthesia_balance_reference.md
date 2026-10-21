@@ -197,9 +197,11 @@ Un étage complet prend environ 6 h de jeu (étage 1), 17 h (étage 5) et 31 h (
 
 ### Métiers
 
-Les métiers ont une courbe à part, plus lente : environ 120 récoltes par niveau au début. Une
-fabrication vaut 4 récoltes. **Le serveur calcule l'XP d'une action** à partir du niveau de la
-ressource ou de l'objet fabriqué ; le `xp_reward` des templates n'est plus lu.
+Les métiers ont une courbe à part : environ 50 récoltes de sa tranche par niveau de métier, à tous
+les niveaux. Une fabrication vaut 4 récoltes. **Le serveur calcule l'XP d'une action** à partir du
+niveau de la ressource ou de l'objet fabriqué (+10 % par niveau d'objet), le `xp_reward` des
+templates n'est plus lu. Un objet sous le niveau du métier rapporte 25 % de moins par niveau de
+métier d'écart, 25 % au minimum : récolter sans fin la ressource la plus facile ne paie pas.
 
 ### PV hors combat et défaite
 
