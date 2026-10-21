@@ -252,7 +252,7 @@ class CraftTest(unittest.TestCase):
 
     def test_une_serie_donne_des_rangs_varies_plus_forts(self):
         fakes.new_player(inventory={"branche_morte": 40}, professions={"forgeron": {"level": 10, "xp": 0}})
-        self.known_recipe({"branche_morte": 2}, "arme", "amulette_chance_gravee")
+        self.known_recipe({"branche_morte": 2}, "arme", "dague_villageoise")
         result = ar.craft(request({"branche_morte": 2}, times=20))
         self.assertGreater(len(result["produced"]), 1)
         ranks = {RARITIES.index(item.get("rarity", "commun")): item for item in result["output_items"].values()}
@@ -263,17 +263,17 @@ class CraftTest(unittest.TestCase):
     # --- Enchantement ---------------------------------------------------------------
 
     def test_enchantement_unique(self):
-        fakes.new_player(inventory={"amulette_chance_gravee": 1, "branche_morte": 4})
+        fakes.new_player(inventory={"dague_villageoise": 1, "branche_morte": 4})
         enchant = lambda inputs, orientation="force": ar.craft(request(inputs, item_type=orientation, workshop="enchantement",
                                                                        parameters={"intensite_rune": "stable"}))
         with self.assertRaises(HTTPException):   # il faut un équipement
             enchant({"branche_morte": 2})
-        result = enchant({"amulette_chance_gravee": 1, "branche_morte": 2})
+        result = enchant({"dague_villageoise": 1, "branche_morte": 2})
         enchanted = result["output_item"]
         self.forget_item(enchanted["id"])
         self.assertTrue(enchanted["enchanted"])
         self.assertTrue(enchanted["name"].endswith("✦ Force"))
-        before = load_template("item", "amulette_chance_gravee")["equipment"]["stat_bonuses"]
+        before = load_template("item", "dague_villageoise")["equipment"]["stat_bonuses"]
         self.assertGreater(enchanted["equipment"]["stat_bonuses"].get("atk", 0), before.get("atk", 0))
         self.assertEqual(fakes.player()["inventory"], {enchanted["id"]: 1, "branche_morte": 2})
         # Un objet enchanté ne s'enchante plus et ne sert plus dans aucun craft.
