@@ -85,20 +85,67 @@ def craft_user_message(workshop: dict, item_type: dict, parameters: dict, inputs
     )
 
 
+GEMINI_API = "https://generativelanguage.googleapis.com/v1beta"
+# Modèle retenu pour ce processus : GEMINI_MODEL, sinon découvert à la demande.
+_gemini_model: str | None = None
+# Variantes de « flash » qu'on écarte : moins bonnes en texte, ou spécialisées.
+GEMINI_EXCLUDED_WORDS = ("lite", "image", "tts", "live", "audio", "embedding", "exp", "thinking", "8b")
+
+
+def gemini_version(name: str) -> tuple:
+    """``models/gemini-3.6-flash`` → ``(3, 6)`` ; sans version lisible → ``()``."""
+    match = re.search(r"gemini-(\d+(?:\.\d+)*)", name)
+    return tuple(int(part) for part in match.group(1).split(".")) if match else ()
+
+
+def discover_gemini_model() -> str:
+    """Meilleur modèle « flash » que la clé peut utiliser pour générer du texte :
+    stable plutôt qu'en aperçu, puis la version la plus récente."""
+    try:
+        response = httpx.get(f"{GEMINI_API}/models", params={"pageSize": 1000},
+                             headers={"x-goog-api-key": GEMINI_API_KEY}, timeout=30)
+    except httpx.HTTPError as exc:
+        raise CraftAIUnavailable(f"liste des modèles Gemini injoignable ({exc})") from exc
+    if response.status_code != 200:
+        raise CraftAIUnavailable(f"liste des modèles Gemini : HTTP {response.status_code} : {response.text[:200]}")
+    candidates = []
+    for model in response.json().get("models", []):
+        name = model.get("name", "")
+        if ("flash" in name and "generateContent" in model.get("supportedGenerationMethods", [])
+                and not any(word in name for word in GEMINI_EXCLUDED_WORDS)):
+            candidates.append(name)
+    if not candidates:
+        raise CraftAIUnavailable("aucun modèle Gemini « flash » disponible pour cette clé")
+    best = max(candidates, key=lambda name: ("preview" not in name, gemini_version(name), "latest" not in name))
+    return best.removeprefix("models/")
+
+
+def gemini_model(refresh: bool = False) -> str:
+    global _gemini_model
+    if refresh or _gemini_model is None:
+        _gemini_model = GEMINI_MODEL if GEMINI_MODEL and not refresh else discover_gemini_model()
+        print(f"Craft IA : modèle Gemini retenu « {_gemini_model} »")
+    return _gemini_model
+
+
 def ask_gemini(system: str, message: str) -> str:
-    """Appel REST à Gemini (Google AI Studio, offre gratuite), en mode JSON."""
+    """Appel REST à Gemini (Google AI Studio, offre gratuite), en mode JSON. Un
+    modèle inconnu (404, retiré par Google) fait choisir un autre modèle, une fois."""
     if not GEMINI_API_KEY:
         raise CraftAIUnavailable("GEMINI_API_KEY absente")
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
     body = {
         "systemInstruction": {"parts": [{"text": system}]},
         "contents": [{"role": "user", "parts": [{"text": message}]}],
         "generationConfig": {"responseMimeType": "application/json", "temperature": 0.9, "maxOutputTokens": 8192},
     }
-    try:
-        response = httpx.post(url, json=body, headers={"x-goog-api-key": GEMINI_API_KEY}, timeout=60)
-    except httpx.HTTPError as exc:
-        raise CraftAIUnavailable(f"Gemini injoignable ({exc})") from exc
+    for attempt in range(2):
+        url = f"{GEMINI_API}/models/{gemini_model(refresh=attempt > 0)}:generateContent"
+        try:
+            response = httpx.post(url, json=body, headers={"x-goog-api-key": GEMINI_API_KEY}, timeout=60)
+        except httpx.HTTPError as exc:
+            raise CraftAIUnavailable(f"Gemini injoignable ({exc})") from exc
+        if response.status_code != 404:
+            break
     if response.status_code != 200:
         # 429 : quota gratuit atteint ; 400/403 : clé refusée ; 404 : modèle inconnu.
         raise CraftAIUnavailable(f"Gemini HTTP {response.status_code} : {response.text[:200]}")

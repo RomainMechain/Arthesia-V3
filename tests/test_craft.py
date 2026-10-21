@@ -57,7 +57,7 @@ class CraftTest(unittest.TestCase):
     def setUp(self):
         fakes.reset()
         # Aucune clé par défaut : chaque test active ce qu'il simule.
-        patcher = mock.patch.multiple(cs, GEMINI_API_KEY=None, ANTHROPIC_API_KEY=None)
+        patcher = mock.patch.multiple(cs, GEMINI_API_KEY=None, ANTHROPIC_API_KEY=None, GEMINI_MODEL="gemini-test", _gemini_model=None)
         patcher.start()
         self.addCleanup(patcher.stop)
 
@@ -98,6 +98,25 @@ class CraftTest(unittest.TestCase):
         for reply in (gemini_reply({}, status=429), broken):
             with mock.patch.object(cs, "GEMINI_API_KEY", "cle-de-test"), mock.patch.object(cs.httpx, "post", return_value=reply):
                 self.assertEqual(cs.generate_craft_item(FORGE, WEAPON, PARAMETERS, INPUTS, "r", 1)["origin"], "procedural")
+
+    def test_modele_gemini_choisi_puis_rechoisi_apres_un_404(self):
+        listing = {"models": [
+            {"name": "models/gemini-3.5-flash", "supportedGenerationMethods": ["generateContent"]},
+            {"name": "models/gemini-3.8-flash", "supportedGenerationMethods": ["generateContent"]},
+            {"name": "models/gemini-3.9-flash-preview", "supportedGenerationMethods": ["generateContent"]},
+            {"name": "models/gemini-3.9-flash-lite", "supportedGenerationMethods": ["generateContent"]},
+            {"name": "models/gemini-4-flash-tts", "supportedGenerationMethods": ["generateContent"]},
+            {"name": "models/text-embedding-9", "supportedGenerationMethods": ["embedContent"]},
+        ]}
+        item = {"name": "Lame", "category": "equipment", "coherence": "normale"}
+        # Le modèle configuré a été retiré (404) : le serveur en choisit un autre et réessaie.
+        with mock.patch.object(cs, "GEMINI_API_KEY", "cle-de-test"), \
+                mock.patch.object(cs.httpx, "get", return_value=mock.Mock(status_code=200, json=lambda: listing)), \
+                mock.patch.object(cs.httpx, "post", side_effect=[mock.Mock(status_code=404, text="introuvable"), gemini_reply(item)]) as post:
+            result = cs.generate_craft_item(FORGE, WEAPON, PARAMETERS, INPUTS, "r", 1)
+        self.assertEqual(result["origin"], "gemini")
+        self.assertIn("models/gemini-3.8-flash:", post.call_args.args[0])
+        self.assertEqual(cs._gemini_model, "gemini-3.8-flash")
 
     def test_un_craft_commun_ne_rapporte_pas(self):
         rich = [{**i, "base_value": 40} for i in INPUTS]   # 120 or d'ingrédients

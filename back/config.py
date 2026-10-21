@@ -14,7 +14,9 @@ CRAFT_PROMPT_FILE = PROJECT_ROOT / "generate_static_files" / "craft" / "arthesia
 # Craft inédit : Gemini (offre gratuite de Google) d'abord, Claude si une clé
 # est fournie, sinon le générateur sans IA (craft_procedural).
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
-GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+# Sans GEMINI_MODEL, le serveur choisit lui-même le meilleur modèle « flash »
+# disponible pour la clé (craft_service.gemini_model) : les noms changent souvent.
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL")
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 CRAFT_MODEL = "claude-sonnet-5"
 
