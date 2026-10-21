@@ -3,6 +3,7 @@
 import hashlib
 import json
 import re
+import time
 import unicodedata
 
 import anthropic
@@ -51,6 +52,10 @@ def save_craft_cache(recipe_key: str, output_item_id: str) -> None:
     })
 
 
+def ai_configured() -> bool:
+    return bool(GEMINI_API_KEY or ANTHROPIC_API_KEY)
+
+
 def load_craft_system_prompt() -> str:
     if not CRAFT_PROMPT_FILE.exists():
         raise HTTPException(500, f"Prompt de craft introuvable : {CRAFT_PROMPT_FILE}")
@@ -86,10 +91,16 @@ def craft_user_message(workshop: dict, item_type: dict, parameters: dict, inputs
 
 
 GEMINI_API = "https://generativelanguage.googleapis.com/v1beta"
-# Modèle retenu pour ce processus : GEMINI_MODEL, sinon découvert à la demande.
-_gemini_model: str | None = None
+# Modèles « flash » utilisables par la clé, du meilleur au moins bon : découverts
+# une fois par processus (GEMINI_MODEL, s'il est défini, passe en tête).
+_gemini_models: list[str] | None = None
 # Variantes de « flash » qu'on écarte : moins bonnes en texte, ou spécialisées.
 GEMINI_EXCLUDED_WORDS = ("lite", "image", "tts", "live", "audio", "embedding", "exp", "thinking", "8b")
+# Modèles essayés au plus par craft, et pause avant de réessayer un modèle surchargé.
+GEMINI_MAX_MODELS = 3
+GEMINI_RETRY_PAUSE_SECONDS = 1.5
+# Codes passagers : surcharge (503), erreur serveur (500), quota du modèle (429).
+GEMINI_TRANSIENT_STATUSES = (429, 500, 503)
 
 
 def gemini_version(name: str) -> tuple:
@@ -98,9 +109,9 @@ def gemini_version(name: str) -> tuple:
     return tuple(int(part) for part in match.group(1).split(".")) if match else ()
 
 
-def discover_gemini_model() -> str:
-    """Meilleur modèle « flash » que la clé peut utiliser pour générer du texte :
-    stable plutôt qu'en aperçu, puis la version la plus récente."""
+def discover_gemini_models() -> list[str]:
+    """Modèles « flash » que la clé peut utiliser pour générer du texte, du
+    meilleur au moins bon : stables avant les aperçus, puis du plus récent."""
     try:
         response = httpx.get(f"{GEMINI_API}/models", params={"pageSize": 1000},
                              headers={"x-goog-api-key": GEMINI_API_KEY}, timeout=30)
@@ -113,24 +124,31 @@ def discover_gemini_model() -> str:
         name = model.get("name", "")
         if ("flash" in name and "generateContent" in model.get("supportedGenerationMethods", [])
                 and not any(word in name for word in GEMINI_EXCLUDED_WORDS)):
-            candidates.append(name)
-    if not candidates:
-        raise CraftAIUnavailable("aucun modèle Gemini « flash » disponible pour cette clé")
-    best = max(candidates, key=lambda name: ("preview" not in name, gemini_version(name), "latest" not in name))
-    return best.removeprefix("models/")
+            candidates.append(name.removeprefix("models/"))
+    candidates.sort(key=lambda name: ("preview" not in name, gemini_version(name), "latest" not in name), reverse=True)
+    return candidates
 
 
-def gemini_model(refresh: bool = False) -> str:
-    global _gemini_model
-    if refresh or _gemini_model is None:
-        _gemini_model = GEMINI_MODEL if GEMINI_MODEL and not refresh else discover_gemini_model()
-        print(f"Craft IA : modèle Gemini retenu « {_gemini_model} »")
-    return _gemini_model
+def gemini_models() -> list[str]:
+    global _gemini_models
+    if _gemini_models is None:
+        try:
+            discovered = discover_gemini_models()
+        except CraftAIUnavailable:
+            if not GEMINI_MODEL:
+                raise
+            discovered = []
+        _gemini_models = list(dict.fromkeys(([GEMINI_MODEL] if GEMINI_MODEL else []) + discovered))
+        if not _gemini_models:
+            raise CraftAIUnavailable("aucun modèle Gemini « flash » disponible pour cette clé")
+        print(f"Craft IA : modèles Gemini retenus {_gemini_models[:GEMINI_MAX_MODELS]}")
+    return _gemini_models
 
 
 def ask_gemini(system: str, message: str) -> str:
-    """Appel REST à Gemini (Google AI Studio, offre gratuite), en mode JSON. Un
-    modèle inconnu (404, retiré par Google) fait choisir un autre modèle, une fois."""
+    """Appel REST à Gemini (Google AI Studio, offre gratuite), en mode JSON.
+    Un modèle surchargé ou à court de quota est réessayé une fois, puis on passe
+    au suivant ; un modèle inconnu (404, retiré par Google) est oublié."""
     if not GEMINI_API_KEY:
         raise CraftAIUnavailable("GEMINI_API_KEY absente")
     body = {
@@ -138,24 +156,36 @@ def ask_gemini(system: str, message: str) -> str:
         "contents": [{"role": "user", "parts": [{"text": message}]}],
         "generationConfig": {"responseMimeType": "application/json", "temperature": 0.9, "maxOutputTokens": 8192},
     }
-    for attempt in range(2):
-        url = f"{GEMINI_API}/models/{gemini_model(refresh=attempt > 0)}:generateContent"
-        try:
-            response = httpx.post(url, json=body, headers={"x-goog-api-key": GEMINI_API_KEY}, timeout=60)
-        except httpx.HTTPError as exc:
-            raise CraftAIUnavailable(f"Gemini injoignable ({exc})") from exc
-        if response.status_code != 404:
+    failures = []
+    for model in list(gemini_models())[:GEMINI_MAX_MODELS]:
+        for attempt in range(2):
+            try:
+                response = httpx.post(f"{GEMINI_API}/models/{model}:generateContent", json=body,
+                                      headers={"x-goog-api-key": GEMINI_API_KEY}, timeout=45)
+            except httpx.HTTPError as exc:
+                failures.append(f"{model} injoignable ({exc})")
+                break
+            if response.status_code in GEMINI_TRANSIENT_STATUSES and attempt == 0:
+                time.sleep(GEMINI_RETRY_PAUSE_SECONDS)
+                continue
             break
-    if response.status_code != 200:
-        # 429 : quota gratuit atteint ; 400/403 : clé refusée ; 404 : modèle inconnu.
-        raise CraftAIUnavailable(f"Gemini HTTP {response.status_code} : {response.text[:200]}")
-    try:
-        candidate = response.json()["candidates"][0]
-        if candidate.get("finishReason") not in (None, "STOP"):
-            raise CraftAIUnavailable(f"Gemini a arrêté sa réponse ({candidate.get('finishReason')})")
-        return "".join(part.get("text", "") for part in candidate["content"]["parts"])
-    except (KeyError, IndexError, ValueError) as exc:
-        raise CraftAIUnavailable("réponse Gemini inattendue") from exc
+        else:
+            response = None
+        if response is None or response.status_code != 200:
+            if response is not None:
+                failures.append(f"{model} HTTP {response.status_code} : {response.text[:120]}")
+                if response.status_code == 404 and model in _gemini_models:
+                    _gemini_models.remove(model)
+            continue
+        try:
+            candidate = response.json()["candidates"][0]
+            if candidate.get("finishReason") not in (None, "STOP"):
+                failures.append(f"{model} a arrêté sa réponse ({candidate.get('finishReason')})")
+                continue
+            return "".join(part.get("text", "") for part in candidate["content"]["parts"])
+        except (KeyError, IndexError, ValueError):
+            failures.append(f"{model} : réponse inattendue")
+    raise CraftAIUnavailable("Gemini indisponible : " + " ; ".join(failures))
 
 
 def ask_claude(system: str, message: str) -> str:
@@ -192,24 +222,33 @@ def parse_craft_item(raw_text: str) -> dict:
 CRAFT_AI_PROVIDERS = (("gemini", ask_gemini), ("claude", ask_claude))
 
 
+def invent_with_ai(workshop: dict, item_type: dict, parameters: dict, inputs_full: list[dict],
+                   generation: int) -> dict | None:
+    """Objet de base inventé par la première IA qui répond, ou None."""
+    system = load_craft_system_prompt()
+    message = craft_user_message(workshop, item_type, parameters, inputs_full)
+    for name, ask in CRAFT_AI_PROVIDERS:
+        try:
+            item = parse_craft_item(ask(system, message))
+        except CraftAIUnavailable as exc:
+            print(f"⚠ Craft IA ({name}) indisponible : {exc}")
+            continue
+        item["origin"] = name
+        return normalize_craft_item(item, inputs_full, item_type, generation)
+    return None
+
+
 def generate_craft_item(workshop: dict, item_type: dict, parameters: dict, inputs_full: list[dict], recipe_key: str,
                         generation: int) -> dict:
     """Objet de base d'un craft inédit, du type choisi : la première IA
     disponible l'invente, sinon le générateur sans IA le compose. Le craft ne
     tombe donc jamais en panne. Le résultat est toujours ramené dans les bornes
     d'équilibrage (normalize_craft_item)."""
-    system = load_craft_system_prompt()
-    message = craft_user_message(workshop, item_type, parameters, inputs_full)
-    for name, ask in CRAFT_AI_PROVIDERS:
-        try:
-            item = parse_craft_item(ask(system, message))
-            item["origin"] = name
-            break
-        except CraftAIUnavailable as exc:
-            print(f"⚠ Craft IA ({name}) indisponible : {exc}")
-    else:
-        item = procedural_craft_item(workshop, item_type, parameters, inputs_full, recipe_key)
-    return normalize_craft_item(item, inputs_full, item_type, generation)
+    item = invent_with_ai(workshop, item_type, parameters, inputs_full, generation)
+    if item is None:
+        item = normalize_craft_item(procedural_craft_item(workshop, item_type, parameters, inputs_full, recipe_key),
+                                    inputs_full, item_type, generation)
+    return item
 
 
 # Les objets inventés par un craft sont écrits comme templates locaux, et aussi

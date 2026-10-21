@@ -21,7 +21,7 @@ try:
     from .auth import require_player
     from .content_store import find_entry, find_quest_givers, load_ordered_floors, load_static_zone_content, load_template
     from .craft_service import (
-        build_recipe_key, generate_craft_item, get_cached_craft,
+        ai_configured, build_recipe_key, generate_craft_item, get_cached_craft, invent_with_ai,
         save_craft_cache, save_new_craft_item,
     )
     from .craft_rules import (
@@ -45,7 +45,7 @@ except ImportError:
     from auth import require_player
     from content_store import find_entry, find_quest_givers, load_ordered_floors, load_static_zone_content, load_template
     from craft_service import (
-        build_recipe_key, generate_craft_item, get_cached_craft,
+        ai_configured, build_recipe_key, generate_craft_item, get_cached_craft, invent_with_ai,
         save_craft_cache, save_new_craft_item,
     )
     from craft_rules import (
@@ -479,6 +479,18 @@ def craft(req: CraftRequest):
     recipe_key = build_recipe_key(req.workshop_id, inputs_for_key, req.parameters, item_type["id"])
     from_cache = True
     base_id = get_cached_craft(recipe_key)
+    # Quand une IA est configurée, un objet de base composé sans IA vient d'une
+    # panne passagère (surcharge, quota) : l'IA retente sa chance à chaque craft
+    # simple, dans la limite horaire. Si elle répond, son objet remplace celui de
+    # secours ; les exemplaires déjà fabriqués restent valables.
+    if (base_id is not None and not enchanting and req.times == 1 and ai_configured()
+            and load_template("item", base_id).get("origin") == "procedural"
+            and len(recent_new_recipes(player)) < MAX_NEW_RECIPES_PER_HOUR):
+        invented = invent_with_ai(workshop, item_type, req.parameters, inputs_full, generation)
+        if invented is not None:
+            base_id = save_new_craft_item(invented)
+            save_craft_cache(recipe_key, base_id)
+            from_cache = False
     if base_id is None:
         if req.times > 1:
             raise HTTPException(400, "Une recette inédite se fabrique une fois : tu pourras ensuite la refaire plusieurs fois d'un coup")

@@ -29,6 +29,8 @@ from back.craft_rules import rarity_odds, roll_rarity  # noqa: E402
 from back.craft_service import build_recipe_key, recipe_key_doc_id  # noqa: E402
 from back.rarity import split_variant_id  # noqa: E402
 
+# La vraie découverte des modèles, avant que setUp ne la remplace.
+REAL_DISCOVER_GEMINI_MODELS = cs.discover_gemini_models
 FORGE = load_template("workshop", "forge")
 WEAPON = next(t for t in FORGE["item_types"] if t["id"] == "arme")
 ALLOY = next(t for t in FORGE["item_types"] if t["id"] == "alliage")
@@ -57,7 +59,10 @@ class CraftTest(unittest.TestCase):
     def setUp(self):
         fakes.reset()
         # Aucune clé par défaut : chaque test active ce qu'il simule.
-        patcher = mock.patch.multiple(cs, GEMINI_API_KEY=None, ANTHROPIC_API_KEY=None, GEMINI_MODEL="gemini-test", _gemini_model=None)
+        # Aucun appel réseau : la liste des modèles Gemini est vide sauf si un test la simule.
+        patcher = mock.patch.multiple(cs, GEMINI_API_KEY=None, ANTHROPIC_API_KEY=None, GEMINI_MODEL="gemini-test",
+                                      _gemini_models=None, GEMINI_RETRY_PAUSE_SECONDS=0,
+                                      discover_gemini_models=mock.Mock(return_value=[]))
         patcher.start()
         self.addCleanup(patcher.stop)
 
@@ -99,7 +104,7 @@ class CraftTest(unittest.TestCase):
             with mock.patch.object(cs, "GEMINI_API_KEY", "cle-de-test"), mock.patch.object(cs.httpx, "post", return_value=reply):
                 self.assertEqual(cs.generate_craft_item(FORGE, WEAPON, PARAMETERS, INPUTS, "r", 1)["origin"], "procedural")
 
-    def test_modele_gemini_choisi_puis_rechoisi_apres_un_404(self):
+    def test_modeles_gemini_decouverts_et_tries(self):
         listing = {"models": [
             {"name": "models/gemini-3.5-flash", "supportedGenerationMethods": ["generateContent"]},
             {"name": "models/gemini-3.8-flash", "supportedGenerationMethods": ["generateContent"]},
@@ -108,15 +113,46 @@ class CraftTest(unittest.TestCase):
             {"name": "models/gemini-4-flash-tts", "supportedGenerationMethods": ["generateContent"]},
             {"name": "models/text-embedding-9", "supportedGenerationMethods": ["embedContent"]},
         ]}
-        item = {"name": "Lame", "category": "equipment", "coherence": "normale"}
-        # Le modèle configuré a été retiré (404) : le serveur en choisit un autre et réessaie.
         with mock.patch.object(cs, "GEMINI_API_KEY", "cle-de-test"), \
-                mock.patch.object(cs.httpx, "get", return_value=mock.Mock(status_code=200, json=lambda: listing)), \
-                mock.patch.object(cs.httpx, "post", side_effect=[mock.Mock(status_code=404, text="introuvable"), gemini_reply(item)]) as post:
+                mock.patch.object(cs.httpx, "get", return_value=mock.Mock(status_code=200, json=lambda: listing)):
+            models = REAL_DISCOVER_GEMINI_MODELS()
+        # Stables d'abord, du plus récent ; aperçus ensuite ; lite et modèles spécialisés écartés.
+        self.assertEqual(models, ["gemini-3.8-flash", "gemini-3.5-flash", "gemini-3.9-flash-preview"])
+
+    def test_modele_surcharge_puis_modele_suivant(self):
+        item = {"name": "Lame", "category": "equipment", "coherence": "normale"}
+        overloaded = mock.Mock(status_code=503, text="The model is overloaded")
+        with mock.patch.multiple(cs, GEMINI_API_KEY="cle-de-test", GEMINI_MODEL=None,
+                                 discover_gemini_models=mock.Mock(return_value=["gemini-3.8-flash", "gemini-3.5-flash"])), \
+                mock.patch.object(cs.httpx, "post", side_effect=[overloaded, overloaded, gemini_reply(item)]) as post:
             result = cs.generate_craft_item(FORGE, WEAPON, PARAMETERS, INPUTS, "r", 1)
         self.assertEqual(result["origin"], "gemini")
-        self.assertIn("models/gemini-3.8-flash:", post.call_args.args[0])
-        self.assertEqual(cs._gemini_model, "gemini-3.8-flash")
+        self.assertEqual(post.call_count, 3)   # deux essais du modèle surchargé, puis le suivant
+        self.assertIn("models/gemini-3.5-flash:", post.call_args.args[0])
+
+    def test_recette_de_secours_reinventee_par_l_ia(self):
+        fakes.new_player(inventory={"branche_morte": 4})
+        item = {"name": "Lame de Bois Mort", "category": "equipment", "coherence": "normale",
+                "equipment": {"slot": "weapon", "stat_bonuses": {"atk": 1}}}
+        with mock.patch.object(cs, "GEMINI_API_KEY", "cle-de-test"):
+            # Gemini surchargé : objet de secours, provisoire tant qu'une IA est configurée.
+            with mock.patch.object(cs.httpx, "post", return_value=mock.Mock(status_code=503, text="surcharge")):
+                first = ar.craft(request({"branche_morte": 2}))
+            fallback_id = split_variant_id(first["output_item_id"])[0]
+            self.forget_item(fallback_id)
+            self.assertEqual(first["output_item"]["origin"], "procedural")
+            # Au craft suivant, Gemini répond : son objet remplace celui de secours.
+            with mock.patch.object(cs.httpx, "post", return_value=gemini_reply(item)):
+                second = ar.craft(request({"branche_morte": 2}))
+        invented_id = split_variant_id(second["output_item_id"])[0]
+        self.forget_item(invented_id)
+        self.assertNotEqual(invented_id, fallback_id)
+        self.assertEqual(second["output_item"]["origin"], "gemini")
+        self.assertFalse(second["from_cache"])
+        cache = next(v for k, v in STORE.items() if k.startswith("craft_cache/"))
+        self.assertEqual(cache["output_item_id"], invented_id)
+        # L'exemplaire de secours déjà fabriqué reste dans le sac.
+        self.assertEqual(base_count(fakes.player()["inventory"], fallback_id), 1)
 
     def test_un_craft_commun_ne_rapporte_pas(self):
         rich = [{**i, "base_value": 40} for i in INPUTS]   # 120 or d'ingrédients
