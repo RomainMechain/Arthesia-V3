@@ -160,6 +160,20 @@ class ContenuTest(unittest.TestCase):
                 self.assertNotIn("generation_brief", zone)
                 self.assertEqual(len(zone["level_range"]), 2, zone["id"])
 
+    def test_fiches_chargees_d_un_coup(self):
+        from fastapi.testclient import TestClient
+        from back.main import app
+        client = TestClient(app)
+        response = client.post("/content/templates/item/batch", json={"ids": ["branche_morte", "pain_de_miel~rare", "n_existe_pas", "branche_morte"]})
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(sorted(data["templates"]), ["branche_morte", "pain_de_miel~rare"])
+        self.assertEqual(data["templates"]["pain_de_miel~rare"]["rarity"], "rare")
+        self.assertEqual(data["missing"], ["n_existe_pas"])
+        # Les conditions secrètes restent cachées, comme fiche par fiche.
+        skills = client.post("/content/templates/skill/batch", json={"ids": ["frappe"]}).json()["templates"]
+        self.assertNotIn("unlock_condition", skills["frappe"])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -2,6 +2,7 @@ from pathlib import Path
 import json
 
 from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
 
 try:
     from .content_store import load_template
@@ -145,6 +146,32 @@ def get_template(kind: str, template_id: str) -> dict:
         # évalue la condition.
         template = {k: v for k, v in template.items() if k != "unlock_condition"}
     return template
+
+
+# Fiches demandées d'un coup au plus (un sac, un atelier, une boutique).
+MAX_BATCH_TEMPLATES = 300
+
+
+class TemplateBatchRequest(BaseModel):
+    ids: list[str]
+
+
+@router.post("/templates/{kind}/batch")
+def get_templates_batch(kind: str, req: TemplateBatchRequest) -> dict:
+    """Plusieurs fiches en une seule requête (variantes de rang comprises) : un
+    écran charge tout son sac d'un coup au lieu d'un aller-retour par objet.
+    Les ids introuvables sont listés dans ``missing``."""
+    if len(req.ids) > MAX_BATCH_TEMPLATES:
+        raise HTTPException(400, f"Au plus {MAX_BATCH_TEMPLATES} fiches par requête")
+    templates, missing = {}, []
+    for template_id in dict.fromkeys(req.ids):
+        try:
+            templates[template_id] = get_template(kind, template_id)
+        except HTTPException as exc:
+            if exc.status_code == 400:
+                raise
+            missing.append(template_id)
+    return {"templates": templates, "missing": missing}
 
 
 @router.get("/templates/{kind}")
